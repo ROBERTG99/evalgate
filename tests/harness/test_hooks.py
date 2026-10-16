@@ -209,3 +209,20 @@ def test_settings_register_hooks_and_permissions() -> None:
     for rule in ["Read(./.env)", "Bash(git push --force*)", "Bash(terraform apply*)", "Bash(rm -rf /*)"]:
         assert rule in perms["deny"]
     assert "ask" not in perms
+
+
+def test_heredoc_bodies_are_data(tmp_path: Path) -> None:
+    env = {"EVALGATE_GUARD_ROOT": str(tmp_path)}
+    protected = tmp_path / "evals" / "datasets" / "toys"
+    protected.mkdir(parents=True)
+    (protected / "faq.v1.jsonl").write_text("")
+    command = (
+        "cat > docker/x.Dockerfile <<'EOF'\nRUN rm -rf /opt/app/bin\nCOPY evals/datasets/toys/faq.v1.jsonl /opt/\nEOF\n"
+        "echo done"
+    )
+    res = run_hook(
+        "pre_tool_guard.py", {"tool_name": "Bash", "tool_input": {"command": command}, "cwd": str(tmp_path)}, env=env
+    )
+    assert res.returncode == 0, res.stderr
+    commit = "git commit -F - <<'MSG'\nfeat: x\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nMSG\n"
+    assert bash(commit).returncode == 2

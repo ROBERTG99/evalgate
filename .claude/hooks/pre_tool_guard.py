@@ -210,7 +210,26 @@ def check_segment(toks: list[str], cwd: Path) -> str | None:
     return None
 
 
+COMMIT_LIKE = re.compile(r"\bgit\s+(?:-\S+\s+)*(commit|tag|notes)\b|\bgh\s+pr\s+(create|edit|comment)\b")
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1[^\n]*\n(.*?)\n\s*\2\s*(?:\n|$)", re.S)
+
+
+def split_heredocs(command: str) -> tuple[str, list[str]]:
+    """Remove heredoc bodies (data, not commands) and return them separately."""
+    bodies: list[str] = []
+
+    def keep_head(match: re.Match[str]) -> str:
+        bodies.append(match.group(3))
+        head = match.group(0).split("\n", 1)[0]
+        return head + "\n"
+
+    return HEREDOC.sub(keep_head, command), bodies
+
+
 def check_bash(command: str, cwd: Path) -> str | None:
+    command, bodies = split_heredocs(command)
+    if COMMIT_LIKE.search(command) and any(TRAILER.search(b) for b in bodies):
+        return "commit attribution trailers are forbidden"
     for segment in segments(command):
         # Unquoted newlines are not separators for shlex, so also check from every command-like token.
         starts = [0] + [i for i, t in enumerate(segment) if i and t in ("git", "gh", "terraform", "rm", "sed", "tee")]
