@@ -9,4 +9,3 @@ def test_attribution_key_empty(root: Path) -> None:
     assert not rule.startswith("---"), "git-commits rule must have no frontmatter"
     assert "Co-Authored-By" in rule
     assert "GIT_AUTHOR_" in rule
-

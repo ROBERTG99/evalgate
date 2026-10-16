@@ -19,9 +19,9 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 
 | ID | Title | Milestone | Status | Evidence |
 |---|---|---|---|---|
-| T-01 | Detect environment and repository hygiene | M0 | todo | |
-| T-02 | Commit attribution and identity check | M0 | todo | |
-| T-03 | Workspace, Makefile and progress files | M0 | todo | |
+| T-01 | Detect environment and repository hygiene | M0 | done | `uv run pytest tests/harness/test_repo_hygiene.py` → 1 passed; commit `chore: bootstrap repository` |
+| T-02 | Commit attribution and identity check | M0 | done | `uv run pytest tests/harness/test_settings.py` → 1 passed; authorship evidence above |
+| T-03 | Workspace, Makefile and progress files | M0 | done | `make bootstrap && make check-fast` → exit 0, 4 passed |
 | T-04 | CLAUDE.md, AGENTS.md and rules | M0 | todo | |
 | T-05 | Hooks and permissions | M0 | todo | |
 | T-06 | Subagents, skills, MCP and repository integrations | M0 | todo | |
