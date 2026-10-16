@@ -184,3 +184,29 @@ def test_crashing_metric_is_a_metric_error(tmp_path: Path) -> None:
         assert [f.reason for f in check(report, report_sha256="x").failures] == ["error"]
     finally:
         unregister("crash")
+
+
+def test_failed_cases_score_the_worst_value_for_lower_metrics(tmp_path: Path) -> None:
+    """A crash must never improve a lower-is-better metric: errored cases score 1.0 there, 0.0 for higher."""
+    lower = {
+        "name": "wrong",
+        "kind": "exact",
+        "params": {"actual": "output.label", "expected": "expected.label"},
+        "threshold": 0.6,
+        "direction": "lower",
+        "gate": True,
+    }
+    higher = {**lower, "name": "acc", "direction": "higher", "threshold": 0.5}
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        if case_input["i"] % 2:
+            raise TargetError("down")
+        return TargetResult(output={"label": "a"})  # exact match: 1.0 on both metrics
+
+    loaded = suite_for(tmp_path, 10, metrics=[lower, higher])
+    report = run_suite(loaded, opts(tmp_path, target=target)).report
+    errored = [c for c in report.cases if c.error]
+    assert len(errored) == 5
+    assert all(c.scores == {"wrong": 1.0, "acc": 0.0} for c in errored)
+    assert report.metrics["wrong"].value == 1.0  # healthy cases also score 1.0 (match), errors cannot lower it
+    assert report.metrics["acc"].value == 0.5

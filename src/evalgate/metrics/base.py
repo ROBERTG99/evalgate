@@ -25,6 +25,11 @@ def context(case: Case, result: TargetResult | None) -> dict[str, Any]:
     }
 
 
+def worst_score(direction: str) -> float:
+    """The score of a case that produced no output: scores live in [0, 1], so the worst end of the metric."""
+    return 1.0 if direction == "lower" else 0.0
+
+
 def clamp(value: float) -> float:
     if math.isnan(value):
         return 0.0

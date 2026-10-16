@@ -16,6 +16,7 @@ from pydantic import ValidationError
 from evalgate.accounting import percentile
 from evalgate.contracts import CaseReport, MetricScore, MetricSummary, Report, Suite
 from evalgate.errors import InvalidInputError
+from evalgate.metrics.base import worst_score
 from evalgate.suite.limits import MAX_REPORT_BYTES, check_file_size
 
 
@@ -72,7 +73,8 @@ def build_report(
     outcomes = sorted(outcomes, key=lambda o: o.case_id)
     metrics: dict[str, MetricSummary] = {}
     for spec in suite.metrics:
-        values = [next((s.value for s in o.scores if s.name == spec.name), 0.0) for o in outcomes]
+        missing = worst_score(spec.direction)
+        values = [next((s.value for s in o.scores if s.name == spec.name), missing) for o in outcomes]
         ci = mean_ci(values, seed=seed, resamples=resamples)
         value = ci.estimate
         if spec.threshold is None:

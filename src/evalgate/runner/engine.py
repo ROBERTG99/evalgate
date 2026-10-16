@@ -17,6 +17,7 @@ from evalgate.accounting import price_steps, step_cost
 from evalgate.contracts import Case, MetricScore, Report, StepRecord, TargetResult
 from evalgate.errors import EvalgateError, InvalidInputError
 from evalgate.ids import canonical_json, sha256_text, uuid7
+from evalgate.metrics.base import worst_score
 from evalgate.metrics.registry import build_metric
 from evalgate.report.build import CaseOutcome, build_report
 from evalgate.runner.retry import CaseFailure, call_with_retries
@@ -189,6 +190,14 @@ class Runner:
             scores.append(score)
         return scores
 
+    def _failed_scores(self, metrics: list[Any]) -> list[MetricScore]:
+        """Errored and timed-out cases score the worst value, so a crash never improves a lower-is-better metric."""
+        direction = {m.name: m.direction for m in self.suite.metrics}
+        return [
+            MetricScore(name=m.name, value=worst_score(direction.get(m.name, "higher")), passed=False, details={})
+            for m in metrics
+        ]
+
     async def run_case(self, target: Target, metrics: list[Any], case: Case, sem: asyncio.Semaphore) -> CaseOutcome:
         async with sem:
             with telemetry.span("evalgate.case", app__run_id=self.run_id, app__case_id=case.id):
@@ -197,7 +206,7 @@ class Runner:
                     with telemetry.span("evalgate.target", app__run_id=self.run_id, app__case_id=case.id):
                         result, attempts, latency = await self._call_target(target, case)
                 except CaseFailure as failure:
-                    scores = [MetricScore(name=m.name, value=0.0, passed=False, details={}) for m in metrics]
+                    scores = self._failed_scores(metrics)
                     telemetry.count("evalgate_case_errors_total")
                     return CaseOutcome(
                         case_id=case.id,
@@ -306,7 +315,7 @@ class Runner:
                             outcome = CaseOutcome(
                                 case_id=case.id,
                                 split=case.split,
-                                scores=[MetricScore(name=m.name, value=0.0, passed=False) for m in metrics],
+                                scores=self._failed_scores(metrics),
                                 passed=False,
                                 cost_usd=0.0,
                                 latency_ms=0.0,
