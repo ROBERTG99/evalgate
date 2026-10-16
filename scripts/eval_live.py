@@ -78,6 +78,7 @@ def run(
         "provider": name,
         "model": model,
         "created_at": stamp,
+        "git_sha": git_sha(),
         "estimate_usd": round(estimate.cost_usd, 6),
         "budget_usd": budget,
     }
