@@ -1,5 +1,6 @@
 """§17 workflows: present, least privilege, uv cache, Python 3.12/3.13 matrix, no Terraform."""
 
+import re
 from pathlib import Path
 
 import yaml
@@ -52,3 +53,14 @@ def test_release_only_on_tags_with_trusted_publishing() -> None:
     publish = release["jobs"]["pypi"]
     assert publish["permissions"]["id-token"] == "write"
     assert any(str(s.get("uses", "")).startswith("pypa/gh-action-pypi-publish") for s in publish["steps"])
+
+
+def test_actions_are_pinned_to_commit_shas() -> None:
+    """Supply chain: a moved tag must not change what runs in CI or in the publish job."""
+    files = [*WORKFLOWS.glob("*.yml"), ROOT / "action" / "action.yml"]
+    for path in files:
+        for line in path.read_text().splitlines():
+            ref = line.strip().removeprefix("- ").removeprefix("uses:").strip() if "uses:" in line else None
+            if ref is None or ref.startswith("./"):
+                continue
+            assert re.fullmatch(r"[\w.-]+/[\w./-]+@[0-9a-f]{40}( # \S+)?", ref), f"{path.name}: {ref}"

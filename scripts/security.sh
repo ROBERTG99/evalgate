@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # make security: gitleaks, bandit, pip-audit, licenses and trivy on both images (high/critical fail).
+# --no-images skips trivy (CI scans the images in the docker workflow).
 set -euo pipefail
+IMAGES=1
+[ "${1:-}" = "--no-images" ] && IMAGES=0
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 export PATH="$ROOT/.tools/bin:$PATH"
@@ -24,7 +27,9 @@ echo "== licenses"
 $RUN python scripts/check_licenses.py
 
 echo "== trivy (images)"
-if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
+if [ "$IMAGES" -eq 0 ]; then
+  echo "skipped (--no-images)"
+elif command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
   for image in evalgate toy-targets; do
     tag="evalgate-scan/${image}:local"
     docker build -q --network host --build-arg "HTTPS_PROXY=${HTTPS_PROXY:-}" -f "docker/${image}.Dockerfile" -t "$tag" . >/dev/null
