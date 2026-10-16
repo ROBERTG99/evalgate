@@ -31,7 +31,7 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-10 | DuckDB run store and migrations | M1 | done | `uv run pytest tests/integration/store` → 5 passed (migrate idempotent; tamper detected at seq 1; gc keeps chain verifiable) |
 | T-11 | Generator: toy datasets and FAQ corpus | M1 | done | `uv run python -m data.generator` → 3 × 150 rows (90 dev / 60 test) + 40 FAQ docs; `uv run pytest tests/unit/generator/test_toys.py` → 5 passed |
 | T-12 | Generator: variants, judge labels, Promptfoo sample | M1 | todo | |
-| T-13 | Pricing, cost meter and budgets | M1 | todo | |
+| T-13 | Pricing, cost meter and budgets | M1 | done | `uv run pytest tests/unit/test_accounting.py tests/unit/test_budget.py` → 7 passed; pricing.yaml cites source URL and 2026-10-16 |
 | T-14 | Runner and python target | M2 | todo | |
 | T-15 | HTTP and LangGraph targets | M2 | todo | |
 | T-16 | Deterministic metrics and registry | M2 | todo | |
