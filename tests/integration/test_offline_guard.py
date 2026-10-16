@@ -53,5 +53,5 @@ def test_full_offline_run_opens_no_socket(tmp_path: Path, monkeypatch: pytest.Mo
 
 @pytest.mark.filterwarnings("ignore::UserWarning")
 def test_socket_guard_is_on_by_default() -> None:
-    with pytest.raises(Exception, match="(?i)socket|host"):
+    with pytest.raises(Exception, match=r"(?i)socket|host"):
         socket.create_connection(("192.0.2.1", 80), timeout=1)  # TEST-NET-1, never routable
