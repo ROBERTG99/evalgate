@@ -1,0 +1,18 @@
+title = "evalgate gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic test values and fixtures"
+paths = [
+  '''tests/fixtures/provider_responses/.*''',
+  '''uv\.lock''',
+  '''tools/node/pnpm-lock\.yaml''',
+]
+regexes = [
+  '''sk-lf-test''',
+  '''pk-lf-test''',
+  '''s3cret''',
+  '''test-token''',
+]

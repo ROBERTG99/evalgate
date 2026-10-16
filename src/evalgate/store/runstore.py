@@ -242,9 +242,15 @@ class RunStore:
         audit_cut = current - timedelta(days=audit_keep_days)
         with self._lock:
             old = [r[0] for r in self.con.execute("SELECT run_id FROM runs WHERE created_at < ?", [run_cut]).fetchall()]
-            for table in ("steps", "metric_scores", "case_results", "runs"):
+            deletes = (
+                "DELETE FROM steps WHERE run_id = ?",
+                "DELETE FROM metric_scores WHERE run_id = ?",
+                "DELETE FROM case_results WHERE run_id = ?",
+                "DELETE FROM runs WHERE run_id = ?",
+            )
+            for statement in deletes:
                 for run_id in old:
-                    self.con.execute(f"DELETE FROM {table} WHERE run_id = ?", [run_id])  # noqa: S608 - fixed names
+                    self.con.execute(statement, [run_id])
             n_audit = self.con.execute("SELECT count(*) FROM gate_audit WHERE ts < ?", [audit_cut]).fetchone()
             last = self.con.execute(
                 "SELECT seq, hash FROM gate_audit WHERE ts < ? ORDER BY seq DESC LIMIT 1", [audit_cut]
