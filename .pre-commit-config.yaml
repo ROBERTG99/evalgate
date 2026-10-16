@@ -1,0 +1,24 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: gitleaks
+        name: gitleaks
+        entry: .tools/bin/gitleaks protect --staged --redact --no-banner
+        language: system
+        pass_filenames: false
+      - id: schemas
+        name: schema drift
+        entry: uv run python scripts/export_schemas.py --check
+        language: system
+        files: ^src/evalgate/contracts/
+        pass_filenames: false

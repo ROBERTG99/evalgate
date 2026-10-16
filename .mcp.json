@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "tools/node/node_modules/.bin/playwright-mcp",
+      "args": ["--headless", "--executable-path", "/opt/pw-browsers/chromium"]
+    },
+    "duckdb": {
+      "command": "uvx",
+      "args": ["mcp-server-motherduck", "--db-path", ".evalgate/runs.duckdb", "--read-only"]
+    }
+  }
+}
