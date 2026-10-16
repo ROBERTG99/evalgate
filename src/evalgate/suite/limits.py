@@ -10,6 +10,7 @@ MAX_SUITE_BYTES = 1_000_000
 MAX_ROW_BYTES = 1_000_000
 MAX_REPORT_BYTES = 50_000_000
 MAX_CASES = 100_000
+MAX_TARGET_OUTPUT_BYTES = 10_000_000  # one HTTP target response
 
 
 def check_file_size(path: Path, limit: int, what: str) -> None:

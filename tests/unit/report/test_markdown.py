@@ -87,3 +87,10 @@ def test_mentions_and_links_neutralised() -> None:
     out = esc("ping @org/team and see https://evil.example")
     assert "@org" not in out
     assert "https://" not in out
+
+
+def test_www_autolinks_are_broken() -> None:
+    from evalgate.report.markdown import esc
+
+    assert "www." not in esc("visit www.evil-phish.com/login now")
+    assert "WWW." not in esc("visit WWW.evil-phish.com now")

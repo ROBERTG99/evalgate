@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -10,6 +11,7 @@ import httpx
 from evalgate import config
 from evalgate.contracts import HttpTargetSpec, TargetResult
 from evalgate.errors import InvalidInputError
+from evalgate.suite.limits import MAX_TARGET_OUTPUT_BYTES
 from evalgate.targets.base import RetriableTargetError, Target, TargetError, coerce_result
 
 RETRIABLE_STATUS = {408, 429}
@@ -29,6 +31,18 @@ def check_allowed(url: str, allowed: set[str] | None = None) -> None:
         )
 
 
+async def _read_capped(resp: httpx.Response) -> bytes:
+    """Read the body but stop at ``MAX_TARGET_OUTPUT_BYTES``: target output is untrusted (memory DoS)."""
+    chunks: list[bytes] = []
+    size = 0
+    async for chunk in resp.aiter_bytes():
+        size += len(chunk)
+        if size > MAX_TARGET_OUTPUT_BYTES:
+            raise TargetError(f"response body is over the {MAX_TARGET_OUTPUT_BYTES}-byte limit")
+        chunks.append(chunk)
+    return b"".join(chunks)
+
+
 def http_target(spec: HttpTargetSpec, client: httpx.AsyncClient | None = None) -> Target:
     check_allowed(spec.url)
     shared = client
@@ -36,13 +50,13 @@ def http_target(spec: HttpTargetSpec, client: httpx.AsyncClient | None = None) -
     async def call(case_input: dict[str, Any]) -> TargetResult:
         own = shared is None
         http = shared or httpx.AsyncClient(timeout=spec.timeout_s)
+        kwargs: dict[str, Any] = {"params": case_input} if spec.method == "GET" else {"json": case_input}
         try:
-            if spec.method == "GET":
-                resp = await http.get(spec.url, params=case_input, headers=spec.headers, timeout=spec.timeout_s)
-            else:
-                resp = await http.request(
-                    spec.method, spec.url, json=case_input, headers=spec.headers, timeout=spec.timeout_s
-                )
+            async with http.stream(
+                spec.method, spec.url, headers=spec.headers, timeout=spec.timeout_s, **kwargs
+            ) as resp:
+                status = resp.status_code
+                content = await _read_capped(resp)
         except httpx.TimeoutException as exc:
             raise RetriableTargetError(f"http timeout: {exc.__class__.__name__}") from exc
         except httpx.TransportError as exc:
@@ -50,15 +64,15 @@ def http_target(spec: HttpTargetSpec, client: httpx.AsyncClient | None = None) -
         finally:
             if own:
                 await http.aclose()
-        if resp.status_code in RETRIABLE_STATUS or resp.status_code >= 500:
-            raise RetriableTargetError(f"http {resp.status_code}")
-        if resp.status_code >= 400:
-            raise TargetError(f"http {resp.status_code}: {resp.text[:200]}")
+        if status in RETRIABLE_STATUS or status >= 500:
+            raise RetriableTargetError(f"http {status}")
+        text = content.decode("utf-8", errors="replace")
+        if status >= 400:
+            raise TargetError(f"http {status}: {text[:200]}")
         try:
-            body = resp.json()
+            body = json.loads(text)
         except ValueError:
-            body = resp.text
-        result = coerce_result(body)
-        return result
+            body = text
+        return coerce_result(body)
 
     return call

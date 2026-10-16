@@ -35,3 +35,12 @@ def test_case_count_limit(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> No
     path.write_text("".join(json.dumps({"id": f"r{i}", "split": "test", "input": {}}) + "\n" for i in range(3)))
     with pytest.raises(InvalidInputError, match="3 cases, over the 2-case limit"):
         load_dataset(path)
+
+
+def test_deeply_nested_row_is_invalid_input(tmp_path: Path) -> None:
+    from evalgate.suite.loader import load_dataset
+
+    path = tmp_path / "deep.jsonl"
+    path.write_text("[" * 200_000 + "\n")
+    with pytest.raises(InvalidInputError, match="line 1"):
+        load_dataset(path, ["test"])

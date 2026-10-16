@@ -19,6 +19,7 @@ def esc(text: Any, limit: int = EXCERPT) -> str:
         s = s[:limit] + "…"
     s = _MD_SPECIAL.sub(r"\\\1", s)
     # Neutralise @mentions and autolinks so target output cannot ping people or link out.
+    s = re.sub(r"(?i)\bwww\.", lambda m: m.group(0)[:3] + "\u200b.", s)
     return s.replace("@", "@\u200b").replace("://", ":\u200b//")
 
 

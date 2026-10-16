@@ -135,3 +135,19 @@ def test_coerce_steps_is_lenient() -> None:
     steps = coerce_steps([{"name": "search", "kind": "weird", "input_tokens": -1}, "junk", {"node": "n"}])
     assert [s.node for s in steps] == ["search", "n"]
     assert steps[0].kind == "other"
+
+
+def test_oversized_response_body_is_a_case_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Target output is untrusted: a body over the limit fails the case without buffering it all."""
+    from evalgate.targets import http as http_module
+    from evalgate.targets.base import TargetError
+
+    monkeypatch.setattr(http_module, "MAX_TARGET_OUTPUT_BYTES", 1_000)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, content=b'{"answer": "' + b"x" * 5_000 + b'"}')
+
+    spec = HttpTargetSpec(url="http://localhost:8110/answer")
+    call = http_target(spec, client=client_with(handler))
+    with pytest.raises(TargetError, match="over the 1000-byte limit"):
+        asyncio.run(call({"q": 1}))

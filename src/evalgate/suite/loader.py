@@ -138,6 +138,8 @@ def load_dataset(path: Path, splits: list[str] | None = None) -> list[Case]:
                 data = json.loads(raw)
             except (json.JSONDecodeError, UnicodeDecodeError) as exc:
                 raise InvalidInputError(str(path), f"line {line_no}", f"invalid JSON: {exc}") from exc
+            except RecursionError as exc:
+                raise InvalidInputError(str(path), f"line {line_no}", "JSON nested too deeply") from exc
             if not isinstance(data, dict):
                 raise InvalidInputError(str(path), f"line {line_no}", "expected a JSON object")
             try:
