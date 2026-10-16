@@ -10,6 +10,7 @@ import asyncio
 import threading
 import time
 from collections import defaultdict
+from collections.abc import Awaitable, Callable
 from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException, Request, Response
@@ -133,27 +134,20 @@ def create_app() -> FastAPI:
         return version, None
 
     async def handle(system: str, payload: str, version: str | None, variant: str | None) -> dict[str, Any]:
-        start = time.perf_counter()
-        label = "invalid"
-        try:
-            label, entry = resolve(system, version, variant)
-            if entry is not None:
-                out = variants.apply(system, payload, entry)
-                delay = variants.latency_ms(entry)
-                if delay:
-                    await asyncio.sleep(delay / 1000)
-            elif system == "classify":
-                out = systems.classify(payload, label)
-            elif system == "extract":
-                out = systems.extract(payload, label)
-            else:
-                out = systems.answer(payload, label)
-            out.pop("_subtotal", None)
-            metrics.observe(system, label, 200, time.perf_counter() - start)
-            return out
-        except HTTPException as exc:
-            metrics.observe(system, label, exc.status_code, time.perf_counter() - start)
-            raise
+        label, entry = resolve(system, version, variant)
+        if entry is not None:
+            out = variants.apply(system, payload, entry)
+            delay = variants.latency_ms(entry)
+            if delay:
+                await asyncio.sleep(delay / 1000)
+        elif system == "classify":
+            out = systems.classify(payload, label)
+        elif system == "extract":
+            out = systems.extract(payload, label)
+        else:
+            out = systems.answer(payload, label)
+        out.pop("_subtotal", None)
+        return out
 
     @app.post("/classify", responses={200: {"model": ClassifyResponse}, 400: {"description": "Unknown version"}})
     async def classify(
@@ -186,6 +180,28 @@ def create_app() -> FastAPI:
     @app.get("/metrics", response_class=PlainTextResponse)
     async def prometheus() -> Response:
         return PlainTextResponse(metrics.render(), media_type="text/plain; version=0.0.4")
+
+    @app.middleware("http")
+    async def count_requests(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+        """Count every final status (handled 400s, 422 validation errors, 404s and crashes) for the error alert."""
+        path = request.url.path.strip("/")
+        if path in ("healthz", "metrics", "openapi.json", "docs", "redoc"):
+            return await call_next(request)
+        endpoint = path if path in ("classify", "extract", "answer") else "other"
+        variant = request.headers.get("x-toy-variant")
+        version = request.headers.get("x-toy-version") or "v1"
+        if variant is not None:
+            label = variant if variant in variants.catalogue() else "invalid"
+        else:
+            label = version if version in VERSIONS else "invalid"
+        start = time.perf_counter()
+        status = 500
+        try:
+            response = await call_next(request)
+            status = response.status_code
+            return response
+        finally:
+            metrics.observe(endpoint, label, status, time.perf_counter() - start)
 
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:

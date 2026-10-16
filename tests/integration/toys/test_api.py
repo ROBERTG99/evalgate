@@ -66,3 +66,22 @@ def test_every_variant_answers(toys_url: str) -> None:
         system = v["input"]["system"]
         resp = httpx.post(f"{toys_url}/{system}", json=samples[system], headers={"X-Toy-Variant": v["id"]})
         assert resp.status_code == 200, (v["id"], resp.text)
+
+
+def test_error_responses_are_counted() -> None:
+    """ToyTargetErrorRate must see validation errors, unknown paths and bad headers, not only handled 400s."""
+    from fastapi.testclient import TestClient
+
+    from toy_targets.app import create_app
+
+    client = TestClient(create_app())
+    assert client.post("/classify", json={"wrong": "field"}).status_code == 422
+    assert client.post("/nope", json={}).status_code == 404
+    assert client.post("/classify", json={"text": "x"}, headers={"X-Toy-Version": "v9"}).status_code == 400
+    assert client.post("/classify", json={"text": "x"}).status_code == 200
+    metrics = client.get("/metrics").text
+    assert 'toy_requests_total{endpoint="classify",version="v1",status="422"} 1' in metrics
+    assert 'toy_requests_total{endpoint="other",version="v1",status="404"} 1' in metrics
+    assert 'toy_requests_total{endpoint="classify",version="invalid",status="400"} 1' in metrics
+    assert 'toy_requests_total{endpoint="classify",version="v1",status="200"} 1' in metrics
+    assert 'endpoint="metrics"' not in metrics and 'endpoint="healthz"' not in metrics
