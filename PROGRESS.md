@@ -54,9 +54,9 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-33 | Calibration eval and live scripts | M5 | done | `uv run pytest tests/unit/test_eval_live.py` → 4 passed (refuses without key; estimate printed then stop before any call); `make calibrate` → 3 rubrics PASS (answer_correctness agreement 0.875, kappa 0.746 on 64 test items) |
 | T-34 | Eval report and CI gate | M5 | done | `uv run pytest tests/unit/test_build_report.py` → 2 passed (every number in REPORT.md traced to a report file); `scripts/build_eval_report.py --check` → all thresholds met |
 | T-35 | Bootstrap coverage simulation | M5 | done | `uv run pytest tests/unit/stats/test_coverage_sim.py` → 2 passed; coverage 0.9600 over 400 datasets × 10,000 resamples (evals/reports/bootstrap-coverage.json); stats-reviewer pending in M5 review |
-| T-36 | Telemetry and observability profile | M6 | todo | |
-| T-37 | Security hardening | M6 | todo | |
-| T-38 | Offline guard and benchmarks | M6 | todo | |
+| T-36 | Telemetry and observability profile | M6 | done | `uv run pytest tests/unit/test_telemetry.py` → 4 passed (1 run span, a case span per case, a step span per step with gen_ai.*/app.* attributes); `promtool test rules alerts.test.yml` → SUCCESS (prom/prometheus:v3.5.0) |
+| T-37 | Security hardening | M6 | done | `make security` → clean (gitleaks: no leaks; bandit: no medium/high; pip-audit: 2 documented ragas-extra findings; 198/198 licenses allowed; trivy HIGH/CRITICAL: 0 on both images); test_limits + test_security + test_secrets pass |
+| T-38 | Offline guard and benchmarks | M6 | done | `uv run pytest tests/integration/test_offline_guard.py` → 2 passed; `make bench` → all NFR-1..9 budgets met (NFR-1 2.8 s, NFR-2 p95 0.04 ms, NFR-3 1.3 s, NFR-6 3.7 ms, NFR-8 8 ms / 0.04 s); `make build` → wheel 109,879 bytes |
 | T-39 | Dockerfiles, compose and seed | M7 | todo | |
 | T-40 | Test containers | M7 | todo | |
 | T-41 | CI workflows | M7 | todo | |
