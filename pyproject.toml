@@ -1,0 +1,141 @@
+[project]
+name = "evalgate"
+version = "0.1.0"
+description = "Golden sets, deterministic metrics and calibrated LLM judges as a CI gate for quality, cost and latency regressions."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "ROBERTG99" }]
+requires-python = ">=3.12"
+classifiers = [
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+]
+dependencies = [
+  "pydantic>=2.11",
+  "typer>=0.16",
+  "pyyaml>=6.0.2",
+  "httpx>=0.28",
+  "numpy>=2.2",
+  "duckdb>=1.3",
+  "jinja2>=3.1.6",
+  "jsonschema>=4.24",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.70"]
+bedrock = ["anthropic[bedrock]>=0.70"]
+openai = ["openai>=1.90"]
+langgraph = ["langgraph>=0.6"]
+# The Langfuse exporter speaks the public ingestion HTTP API through httpx, so the
+# extra adds no packages; it is kept so `pip install evalgate[langfuse]` is stable.
+langfuse = []
+otel = ["opentelemetry-sdk>=1.30", "opentelemetry-exporter-otlp-proto-http>=1.30"]
+ragas = ["ragas>=0.3"]
+deepeval = ["deepeval>=3.0"]
+
+[project.scripts]
+evalgate = "evalgate.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ROBERTG99/evalgate"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evalgate"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"prompts/judge_answer_correctness.v1.md" = "evalgate/prompts/judge_answer_correctness.v1.md"
+"prompts/judge_pairwise_preference.v1.md" = "evalgate/prompts/judge_pairwise_preference.v1.md"
+"prompts/judge_rubric_adherence.v1.md" = "evalgate/prompts/judge_rubric_adherence.v1.md"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/evalgate", "prompts/judge_*.md", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.uv.workspace]
+members = ["examples/toy-targets"]
+
+[tool.uv.sources]
+toy-targets = { workspace = true }
+
+[dependency-groups]
+dev = [
+  "toy-targets",
+  "pytest>=8.4",
+  "pytest-cov>=6.2",
+  "pytest-socket>=0.7",
+  "pytest-timeout>=2.4",
+  "hypothesis>=6.135",
+  "ruff>=0.12",
+  "mypy>=1.17",
+  "types-PyYAML>=6.0",
+  "types-jsonschema>=4.24",
+  "bandit>=1.8",
+  "pip-audit>=2.9",
+  "pip-licenses>=5.0",
+  "schemathesis>=4.0",
+  "playwright>=1.54",
+  "axe-playwright-python>=0.1.4",
+  "langgraph>=0.6",
+  "opentelemetry-sdk>=1.30",
+  "opentelemetry-exporter-otlp-proto-http>=1.30",
+  "anthropic>=0.70",
+  "openai>=1.90",
+  "cyclonedx-bom>=6.0",
+  "pre-commit>=4.2",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+src = ["src", "tests", "scripts", "examples/toy-targets/src", "data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PT", "C4", "PL"]
+ignore = ["PLR0913", "PLR2004", "PLR0911", "PLR0912", "PLR0915", "S101", "RUF001", "RUF002", "RUF003", "PLC0415", "PLW0603"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "PLR", "B011", "PT011", "E501"]
+"scripts/**" = ["S603", "S607", "T201"]
+"data/**" = ["S311"]
+".claude/hooks/**" = ["S603", "S607"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["evalgate"]
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["langgraph.*", "ragas.*", "deepeval.*", "opentelemetry.*", "openai.*", "anthropic.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --disable-socket --allow-unix-socket --allow-hosts=127.0.0.1,localhost,::1 -p no:cacheprovider"
+markers = [
+  "e2e: browser tests against a running viewer",
+  "extras: tests that need optional extras",
+  "slow: simulations over a few seconds",
+  "docker: tests that need the docker daemon",
+]
+timeout = 300
+filterwarnings = ["ignore::DeprecationWarning:langgraph.*"]
+
+[tool.coverage.run]
+source = ["src/evalgate"]
+branch = false
+
+[tool.coverage.report]
+show_missing = false
+skip_covered = true
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]

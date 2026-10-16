@@ -29,3 +29,13 @@ test-results/
 .DS_Store
 .idea/
 .vscode/
+# evalgate
+.env.*
+!.env.example
+.evalgate/
+.tools/
+.hypothesis/
+.benchmarks/
+evals/reports/*.json
+*.egg-info/
+build/
