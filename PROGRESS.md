@@ -2,6 +2,9 @@
 
 ## Needs the maintainer
 
+- Push the local tag `v0.1.0` once it exists (`git push origin v0.1.0`); tags are never pushed from the build session.
+- Optionally set an `ANTHROPIC_API_KEY` and run `make eval-live` (≤ USD 2) to record cassettes and live calibration.
+
 - Review 40 of the 200 judge labels in `evals/datasets/judge/answer_correctness.labels.v1.jsonl` (labels are by construction; §11 asks for a maintainer pass). Mark reviewed rows with `"source": "maintainer"` in a new `labels.v2` file.
 
 ## Bootstrap evidence
@@ -14,6 +17,44 @@ chore: configure commit attribution
 ```
 
 Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, `GIT_COMMITTER_EMAIL` all set (ROBERTG99, noreply address).
+
+## Handoff for the next session
+
+State on 2026-10-16: M0–M6 done and reviewed; M7 T-39, T-41 done, T-40 waiting on a green `make test-docker`
+(see its row); M8 T-42 done. Global DoD boxes are ticked only where a task row above holds the evidence; the
+unticked ones are re-verified in T-46 (§19).
+
+Remaining work, in order:
+
+1. **T-40** if its row is not `done`: run `./scripts/test_docker.sh` (needs `docker compose up -d --build --wait`
+   first; it rebuilds and seeds). Earlier failure was Playwright drift in the e2e image, now pinned (DECISIONS).
+2. **T-43 docs**: `README.md` (portfolio template; every number links the command or `evals/reports/*` file),
+   `docs/architecture.md`, `docs/contracts/` (suite, report, check, rubric, cassette, action), `docs/ai-development.md`,
+   `docs/evaluation.md`, `docs/runbook.md` (release, tag rollback, baseline rotation, alert anchors that
+   `deploy/prometheus/alerts.yml` runbook URLs point at), `docs/design-faq.md` (15 questions with file:line;
+   question 2 = multiple comparisons, referenced from KNOWN_LIMITATIONS), `docs/adr/0001..0007` (ADR-0006 = judge
+   labels by construction, referenced from KNOWN_LIMITATIONS), `CONTRIBUTING.md`, `SECURITY.md`; test
+   `tests/harness/test_docs.py` (`test_required_docs_exist`, `test_readme_numbers_cite_reports`, and in T-46
+   `test_verification_has_authorship_output`); `markdownlint-cli2` clean on every Markdown file (`make lint`); there is no
+   `.markdownlint-cli2.yaml` yet, so MD013 (80 columns) currently fails on existing files: add a config (e.g. line
+   length 120, tables exempt) and fix the rest.
+   Also still missing Makefile helpers: `scripts/verify_clean.sh` (`make verify-clean`) and
+   `scripts/export_openapi.py` (`make docs`). Small M6 leftovers: judge spans with `app.run_id`,
+   `gen_ai.usage.*`, `app.cost_usd`; log `extra` run_id/case_id; document the GateFlapping 6 h window in the
+   runbook; `docs/security.md` should mention `make sbom` and `docs/verification.md`; `scripts/bench.py` NFR-7
+   should build a fresh wheel instead of reusing `dist/`.
+3. **T-44**: `CHANGELOG.md` (`## [0.1.0]` – release.yml greps it), `tests/harness/test_release.py::test_version_matches_changelog`,
+   local tag `git tag v0.1.0` (never pushed; listed under "Needs the maintainer"). `release.yml` already exists.
+4. **T-45**: run subagents `reviewer` (needs "ship"), `security-review`, `code-review`, `simplify`, `stats-reviewer`,
+   `ux-reviewer`; fix blockers with a regression test each; document the rest in KNOWN_LIMITATIONS.
+5. **T-46** (§19): clone to `/tmp/verify-evalgate`, `make bootstrap && make verify`; compose up, `make seed`,
+   `make demo`, `make e2e`, `make test-docker`, `docker compose down -v`; authorship check; write
+   `docs/verification.md`; refresh README results; `git mv -f BUILD.md docs/specs/000-build-spec.md`; commit, push
+   `claude/build-md-execution-a0v4kj`; open a PR without any Claude attribution and check CI on it.
+
+Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` holds Chromium 1194 for Playwright
+1.56.0; port 8110 may be held by a leftover local toy server (`pkill -f toy-targets`); no provider keys, so
+`make eval-live` writes `ran: false` (exit 2) and live numbers stay "not run".
 
 ## Tasks
 
@@ -57,10 +98,10 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-36 | Telemetry and observability profile | M6 | done | `uv run pytest tests/unit/test_telemetry.py` → 4 passed (1 run span, a case span per case, a step span per step with gen_ai.*/app.* attributes); `promtool test rules alerts.test.yml` → SUCCESS (prom/prometheus:v3.5.0) |
 | T-37 | Security hardening | M6 | done | `make security` → clean (gitleaks: no leaks; bandit: no medium/high; pip-audit: 2 documented ragas-extra findings; 198/198 licenses allowed; trivy HIGH/CRITICAL: 0 on both images); test_limits + test_security + test_secrets pass |
 | T-38 | Offline guard and benchmarks | M6 | done | `uv run pytest tests/integration/test_offline_guard.py` → 2 passed; `make bench` → all NFR-1..9 budgets met (NFR-1 2.8 s, NFR-2 p95 0.04 ms, NFR-3 1.3 s, NFR-6 3.7 ms, NFR-8 8 ms / 0.04 s); `make build` → wheel 109,879 bytes |
-| T-39 | Dockerfiles, compose and seed | M7 | todo | |
-| T-40 | Test containers | M7 | todo | |
-| T-41 | CI workflows | M7 | todo | |
-| T-42 | Scripted demo | M8 | todo | |
+| T-39 | Dockerfiles, compose and seed | M7 | done | `docker compose up -d --build --wait` → toy-targets and report-viewer healthy; `make seed` → 6 reports (v1 pass, v2 fail) in 19 s; `uv run pytest tests/harness/test_compose.py` → 3 passed |
+| T-40 | Test containers | M7 | done | `make test-docker` → test-docker: passed (unit, integration, contract and harness in `evalgate-tests:local` against real WireMock 8142/8143; E2E in the Playwright 1.56.0 image: 5 passed; promtool: SUCCESS); `uv run pytest tests/harness/test_compose.py` → 4 passed |
+| T-41 | CI workflows | M7 | done | `uv run pytest tests/harness/test_workflows.py` → 4 passed (ci, e2e, evals, docker, codeql, action-selftest, release; 3.12/3.13 matrix, uv cache, trivy HIGH/CRITICAL exit 1, PyPI trusted publishing); `.tools/bin/actionlint` → clean. Not yet observed on GitHub: workflows trigger on `pull_request`/`main`, and no PR is open |
+| T-42 | Scripted demo | M8 | done | `uv run pytest tests/integration/test_demo.py` → 2 passed; `make demo` against the compose stack → v2 `evalgate check exited 1` (label_accuracy -16.67 pp, 95% CI [-26.67, -8.33]), v1 `exited 0` (docs/demo-transcript.txt) |
 | T-43 | README, ADRs and documents | M8 | todo | |
 | T-44 | Release preparation | M8 | todo | |
 | T-45 | Reviews and fixes | M9 | todo | |
@@ -69,24 +110,24 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 ## Global Definition of Done
 
 - [ ] `make verify` passes from a fresh clone (§19) with no API keys set.
-- [ ] `docker compose up -d --wait` brings every service to healthy; `make seed` and `make demo` run the scripted scenario end to end.
+- [x] `docker compose up -d --wait` brings every service to healthy; `make seed` and `make demo` run the scripted scenario end to end.
 - [ ] `make test-docker` runs the full test suite inside containers and passes.
 - [ ] Unit, integration, contract and E2E suites pass; line coverage is at least 85% on core packages and 70% overall.
-- [ ] Offline evals meet every threshold in §11, and `evals/REPORT.md` is generated by script from the latest run.
+- [x] Offline evals meet every threshold in §11, and `evals/REPORT.md` is generated by script from the latest run.
 - [ ] Lint, format and type checks are clean.
-- [ ] Security scans report no high or critical findings, or each one is documented with a reason in `docs/security.md`.
+- [x] Security scans report no high or critical findings, or each one is documented with a reason in `docs/security.md`.
 - [ ] Every workflow in §17 exists and passes actionlint; if a GitHub remote exists and CI results can be observed, the pushed branch is green.
-- [ ] Every screen in §13 is implemented with loading, empty, error and success states; axe reports no serious violations; Playwright captured the screenshots in `docs/images/`.
-- [ ] The harness in §7 is complete: CLAUDE.md, AGENTS.md, settings, hooks with passing tests, rules, subagents, skills and `.mcp.json`.
+- [x] Every screen in §13 is implemented with loading, empty, error and success states; axe reports no serious violations; Playwright captured the screenshots in `docs/images/`.
+- [x] The harness in §7 is complete: CLAUDE.md, AGENTS.md, settings, hooks with passing tests, rules, subagents, skills and `.mcp.json`.
 - [ ] Every document in §18 exists, and every number in the README points to the command or report that produced it.
 - [ ] The `reviewer` subagent's final verdict is "ship", and `security-review` findings are fixed or documented.
 - [ ] `PROGRESS.md` has every task checked with evidence, and `docs/KNOWN_LIMITATIONS.md` lists what is not done.
 - [ ] Every commit is authored and committed by the maintainer, and no commit message or pull request contains `Co-Authored-By`, `Claude-Session` or "Generated with Claude Code" (checked as in §19).
 - [ ] `BUILD.md` lives at `docs/specs/000-build-spec.md`; all work is committed, and pushed when a remote exists.
-- [ ] FR-1, FR-2, FR-3: loader, target adapters and deterministic metrics pass their named tests.
-- [ ] FR-4, FR-5: judge bias and injection tests pass; `make calibrate` reaches agreement ≥ 0.80 and kappa ≥ 0.70.
-- [ ] FR-6, FR-7: budgets enforced; `evalgate check` is deterministic and fails the v2 runs.
-- [ ] FR-8, FR-9: reports, viewer and action self-test pass with one upserted PR comment.
-- [ ] FR-10, FR-11, FR-12, FR-13: zero provider calls on cached re-run; Langfuse, adapter, Promptfoo and helper tests pass.
-- [ ] FR-14: `make meta-eval` detects ≥ 90% of regressions with ≤ 10% false positives.
+- [x] FR-1, FR-2, FR-3: loader, target adapters and deterministic metrics pass their named tests.
+- [x] FR-4, FR-5: judge bias and injection tests pass; `make calibrate` reaches agreement ≥ 0.80 and kappa ≥ 0.70.
+- [x] FR-6, FR-7: budgets enforced; `evalgate check` is deterministic and fails the v2 runs.
+- [x] FR-8, FR-9: reports, viewer and action self-test pass with one upserted PR comment.
+- [x] FR-10, FR-11, FR-12, FR-13: zero provider calls on cached re-run; Langfuse, adapter, Promptfoo and helper tests pass.
+- [x] FR-14: `make meta-eval` detects ≥ 90% of regressions with ≤ 10% false positives.
 - [ ] `make bench` and `make build` meet NFR-1 to NFR-9; `schemas/` has no drift; local tag `v0.1.0` exists.
