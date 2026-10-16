@@ -86,13 +86,13 @@ class JudgeMetric(BaseMetric):
                 calls.append(await self.ctx.verdict(self.loaded, message, self.schema))
         except OutputError as exc:
             self.diag.errors += 1
-            return self.make(0.0, **base, error=f"invalid judge output: {exc}"[:300])
+            return self.make(0.0, **base, error=f"invalid judge output: {exc}"[:300], metric_error=True)
         except EvalgateError as exc:
             if exc.exit_code == 3:
                 raise
             self.diag.errors += 1
-            return self.make(0.0, **base, error=str(exc)[:300])
-        verdicts = [c.verdict.verdict for c in calls]
+            return self.make(0.0, **base, error=str(exc)[:300], metric_error=True)
+        verdicts: list[str] = [c.verdict.verdict for c in calls]
         if self.rubric.mode == "pairwise" and len(verdicts) == 2:
             verdicts[1] = MIRROR[verdicts[1]]
         cost = sum(c.cost_usd for c in calls)

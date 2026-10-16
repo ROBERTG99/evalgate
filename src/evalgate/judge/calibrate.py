@@ -61,7 +61,7 @@ def load_labels(path: Path) -> list[LabelRow]:
 
 
 def _label(value: object) -> str:
-    return {0: "0", 1: "1"}.get(value, str(value))  # type: ignore[call-overload]
+    return "1" if value == 1 else "0" if value == 0 else str(value)
 
 
 async def _run(metric: JudgeMetric, rows: list[LabelRow]) -> dict[str, Any]:

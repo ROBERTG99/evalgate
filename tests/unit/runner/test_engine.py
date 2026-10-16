@@ -144,3 +144,43 @@ def test_store_down_report_still_written(tmp_path: Path) -> None:
     result = run_suite(loaded, RunOptions(split="test", home=home, resamples=100))
     assert result.store_error is not None
     assert result.report.n_cases == 3
+
+
+def test_failing_case_is_not_a_metric_error(tmp_path: Path) -> None:
+    """Regression (M2 review): an ordinary failing case must not count as a metric error in the gate."""
+    from evalgate.stats.gate import check
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        return TargetResult(output={"total": "n/a" if case_input["i"] == 0 else 1.0})
+
+    metrics = [
+        {
+            "name": "tot",
+            "kind": "numeric_tolerance",
+            "threshold": 0.9,
+            "params": {"actual": "output.total", "expected": 1.0},
+        }
+    ]
+    loaded = suite_for(tmp_path, 20, metrics=metrics)
+    report = run_suite(loaded, opts(tmp_path, target=target)).report
+    assert report.metrics["tot"].value == 0.95
+    assert (report.extensions or {})["metric_errors"] == {}
+    assert check(report, report_sha256="x").passed
+
+
+def test_crashing_metric_is_a_metric_error(tmp_path: Path) -> None:
+    import evalgate
+    from evalgate.metrics.registry import unregister
+    from evalgate.stats.gate import check
+
+    @evalgate.metric("crash")
+    def crash(c, r):  # type: ignore[no-untyped-def]
+        raise ZeroDivisionError("boom")
+
+    try:
+        loaded = suite_for(tmp_path, 3, metrics=[{"name": "c", "kind": "custom", "params": {"metric": "crash"}}])
+        report = run_suite(loaded, opts(tmp_path)).report
+        assert (report.extensions or {})["metric_errors"] == {"c": 3}
+        assert [f.reason for f in check(report, report_sha256="x").failures] == ["error"]
+    finally:
+        unregister("crash")

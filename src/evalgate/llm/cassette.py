@@ -76,7 +76,7 @@ def save(root: Path, req: LLMRequest, response: dict[str, Any], input_tokens: in
         prompt_version=req.prompt_version,
         request_digest=request_digest(req),
         response=response,
-        usage={"input_tokens": input_tokens, "output_tokens": output_tokens},  # type: ignore[arg-type]
+        usage={"input_tokens": input_tokens, "output_tokens": output_tokens},
         recorded_at=datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
     )
     path = cassette_path(root, req.route, key)

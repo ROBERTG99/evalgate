@@ -112,9 +112,9 @@ def render_markdown(
             "| Case | Scores | Error |",
             "|---|---|---|",
         ]
-        for c in failed_cases[:max_cases]:
-            scores = ", ".join(f"{esc(k)} {v:.2f}" for k, v in sorted(c.scores.items()))
-            lines.append(f"| {code(c.id)} | {scores} | {esc(c.error or '')} |")
+        for case in failed_cases[:max_cases]:
+            scores = ", ".join(f"{esc(k)} {v:.2f}" for k, v in sorted(case.scores.items()))
+            lines.append(f"| {code(case.id)} | {scores} | {esc(case.error or '')} |")
     judge = ext.get("judge") or {}
     if judge:
         lines += ["", "### AI judge", ""]

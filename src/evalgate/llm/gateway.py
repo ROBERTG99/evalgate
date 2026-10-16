@@ -18,9 +18,9 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from evalgate import config, telemetry
-from evalgate.accounting import step_cost
+from evalgate.accounting import has_price, step_cost
 from evalgate.budget import SpendGuard
-from evalgate.errors import JudgeUnavailableError
+from evalgate.errors import BudgetAbortError, JudgeUnavailableError
 from evalgate.llm import cassette as cassettes
 from evalgate.llm.redact import redact
 from evalgate.llm.types import LLMRequest, LLMResponse, OutputError, ProviderError, RawResponse
@@ -66,7 +66,7 @@ class AnthropicProvider:
 
             if self.bedrock:
                 region = os.environ.get("AWS_REGION", "us-east-1")
-                self._client = anthropic.AsyncAnthropicBedrockMantle(  # type: ignore[attr-defined]
+                self._client = anthropic.AsyncAnthropicBedrockMantle(
                     aws_region=region, max_retries=0, timeout=self.timeout_s
                 )
             else:
@@ -86,7 +86,12 @@ class AnthropicProvider:
                 system=[{"type": "text", "text": req.system, "cache_control": {"type": "ephemeral"}}],
                 messages=req.messages,
                 thinking={"type": "adaptive"},
-                output_config={"effort": req.effort, "format": {"type": "json_schema", "schema": req.schema}},
+                # Structured outputs reject numeric and array constraints; the SDK moves them into
+                # descriptions and the gateway still validates the full schema client-side.
+                output_config={
+                    "effort": req.effort,
+                    "format": {"type": "json_schema", "schema": anthropic.transform_schema(req.schema)},
+                },
             )
         except anthropic.APIStatusError as exc:  # most specific first: status errors carry the code
             raise ProviderError(
@@ -234,6 +239,10 @@ class Gateway:
             max_tokens=req.max_tokens,
         )
         if self.live:
+            if not has_price(req.model):
+                raise BudgetAbortError(
+                    f"model {req.model!r} has no price in pricing.yaml, so LIVE_EVAL_BUDGET_USD cannot be enforced"
+                )
             self.guard.check()
         last: Exception | None = None
         for attempt in range(1, MAX_ATTEMPTS + 1):
@@ -259,7 +268,10 @@ class Gateway:
                 latency = (time.perf_counter() - start) * 1000
                 _validate(raw.data, req.schema)
                 if validate is not None:
-                    validate(raw.data)
+                    try:
+                        validate(raw.data)
+                    except ValueError as exc:  # pydantic ValidationError is a ValueError
+                        raise OutputError(f"output does not match the contract: {exc}".splitlines()[0]) from exc
                 model = raw.model or req.model
                 cost = step_cost(model, raw.input_tokens, raw.output_tokens) if self.live else 0.0
                 self.guard.add(cost)

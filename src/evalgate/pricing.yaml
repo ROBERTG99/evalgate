@@ -2,6 +2,8 @@
 # Source: Anthropic first-party API price table (https://platform.claude.com/docs/en/about-claude/pricing),
 # as cached in the Claude API reference on 2026-10-06; read 2026-10-16.
 # OpenAI prices are not listed: the openai provider is optional and its models must be added here before use.
+# The anthropic.* rows reuse first-party prices as an estimate: Amazon Bedrock pricing is set by AWS
+# (https://aws.amazon.com/bedrock/pricing/) and may differ.
 # `toy-model` is the synthetic model of the toy targets: priced so runs have non-zero, stable costs.
 source: https://platform.claude.com/docs/en/about-claude/pricing
 retrieved: 2026-10-16

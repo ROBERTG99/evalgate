@@ -172,13 +172,18 @@ class Runner:
                 except EvalgateError as exc:
                     if exc.exit_code == 3:
                         raise
-                    score = MetricScore(name=metric.name, value=0.0, passed=False, details={"error": str(exc)[:300]})
+                    score = MetricScore(
+                        name=metric.name,
+                        value=0.0,
+                        passed=False,
+                        details={"error": str(exc)[:300], "metric_error": True},
+                    )
                 except Exception as exc:
                     score = MetricScore(
                         name=metric.name,
                         value=0.0,
                         passed=False,
-                        details={"error": f"{exc.__class__.__name__}: {exc}"[:300]},
+                        details={"error": f"{exc.__class__.__name__}: {exc}"[:300], "metric_error": True},
                     )
             scores.append(score)
         return scores
@@ -323,7 +328,11 @@ class Runner:
         prompt_hashes: dict[str, str] = {}
         metric_errors = {
             m.name: sum(
-                1 for o in outcomes if not o.error for s in o.scores if s.name == m.name and "error" in s.details
+                1
+                for o in outcomes
+                if not o.error
+                for s in o.scores
+                if s.name == m.name and s.details.get("metric_error")
             )
             for m in self.suite.metrics
         }

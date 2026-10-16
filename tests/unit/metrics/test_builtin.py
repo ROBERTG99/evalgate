@@ -38,7 +38,8 @@ def test_json_schema() -> None:
     assert m.score(case(), result({"total": 1.5})).value == 1.0
     bad = m.score(case(), result({"total": "1.5"}))
     assert bad.value == 0.0
-    assert "total" in bad.details["error"]
+    assert "total" in bad.details["problem"]
+    assert "metric_error" not in bad.details
 
 
 def test_numeric_tolerance() -> None:

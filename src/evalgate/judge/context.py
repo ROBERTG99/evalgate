@@ -11,16 +11,17 @@ from pathlib import Path
 from typing import Any
 
 from evalgate import config, telemetry
+from evalgate.accounting import has_price
 from evalgate.budget import enforce_estimate, estimate_judge_cost
 from evalgate.contracts import JudgeVerdict, Rubric
 from evalgate.contracts.judge import VERDICT_SCHEMA_NAME
-from evalgate.errors import InvalidInputError
+from evalgate.errors import BudgetAbortError, InvalidInputError
 from evalgate.llm.cassette import request_digest, request_key
 from evalgate.llm.fake import FAKE_MODEL
 from evalgate.llm.types import LLMRequest
 
 EFFORT = {"judge": "low", "judge_hard": "medium"}
-MAX_TOKENS = 4096
+MAX_TOKENS = {"judge": 4096, "judge_hard": 8192}
 
 
 @dataclass
@@ -134,6 +135,12 @@ class JudgeContext:
             for m in metrics
             if hasattr(m, "calls_per_case")
         ]
+        unpriced = sorted({model for model, _ in plan if not has_price(model)})
+        if unpriced:
+            raise BudgetAbortError(
+                f"judge model(s) {', '.join(unpriced)} have no price in pricing.yaml; add them before a live run "
+                "so LIVE_EVAL_BUDGET_USD can be enforced (no provider call was made)"
+            )
         estimate = estimate_judge_cost(n_cases, plan)
         print(f"evalgate: {estimate.describe()}", file=sys.stderr)
         enforce_estimate(estimate)
@@ -149,7 +156,7 @@ class JudgeContext:
             schema_name=VERDICT_SCHEMA_NAME,
             schema=schema,
             effort=EFFORT[route],
-            max_tokens=MAX_TOKENS,
+            max_tokens=MAX_TOKENS[route],
         )
 
     async def verdict(self, loaded: LoadedRubric, user_message: str, schema: dict[str, Any]) -> JudgeCall:

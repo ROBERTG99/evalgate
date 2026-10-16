@@ -82,7 +82,8 @@ class RunStore:
 
     def finish_run(self, report: Report, report_path: str | None = None, report_sha256: str | None = None) -> None:
         split = (report.extensions or {}).get("split")
-        passed = all(m.passed for m in report.metrics.values())
+        gates = (report.extensions or {}).get("gates") or {}
+        passed = all(m.passed for name, m in report.metrics.items() if gates.get(name, True))
         with self._lock:
             self.con.execute(
                 "INSERT OR REPLACE INTO runs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

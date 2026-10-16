@@ -30,6 +30,48 @@ USER = (
 )
 
 
+def test_unpriced_live_model_refused() -> None:
+    from evalgate.errors import BudgetAbortError
+
+    provider = Scripted([VERDICT])
+    gw = Gateway(provider, provider_name="openai", budget_usd=1.0, sleep=no_sleep)
+    with pytest.raises(BudgetAbortError, match="no price"):
+        asyncio.run(gw.complete(request(model="gpt-unpriced")))
+    assert provider.calls == 0
+
+
+def test_sdk_errors_classified() -> None:
+    import anthropic
+    import httpx2
+
+    def status_error(code: int) -> Exception:
+        req = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+        return anthropic.APIStatusError("err", response=httpx2.Response(code, request=req), body=None)
+
+    def raising(exc: Exception) -> Any:
+        async def create(**kwargs: Any) -> Any:
+            raise exc
+
+        return type("C", (), {"messages": _Obj(create)})()
+
+    for code, retriable in [
+        (408, True),
+        (409, True),
+        (429, True),
+        (500, True),
+        (529, True),
+        (400, False),
+        (401, False),
+    ]:
+        with pytest.raises(ProviderError) as info:
+            asyncio.run(AnthropicProvider(client=raising(status_error(code))).complete(request()))
+        assert info.value.retriable is retriable, code
+    conn = anthropic.APIConnectionError(request=httpx2.Request("POST", "https://api.anthropic.com/v1/messages"))
+    with pytest.raises(ProviderError) as info:
+        asyncio.run(AnthropicProvider(client=raising(conn)).complete(request()))
+    assert info.value.retriable
+
+
 def request(**kw: Any) -> LLMRequest:
     base = dict(
         route="judge",
@@ -184,6 +226,9 @@ def test_anthropic_adapter_against_recorded_response() -> None:
     assert captured["thinking"] == {"type": "adaptive"}
     assert captured["output_config"]["effort"] == "low"
     assert captured["output_config"]["format"]["type"] == "json_schema"
+    sent = json.dumps(captured["output_config"]["format"]["schema"])
+    for unsupported in ('"minimum"', '"maximum"', '"maxItems"'):
+        assert unsupported not in sent  # moved into descriptions by anthropic.transform_schema
     assert "budget_tokens" not in json.dumps(captured)
     assert "tool_choice" not in captured
     assert captured["messages"][-1]["role"] == "user"  # no assistant prefill

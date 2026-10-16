@@ -50,7 +50,7 @@ class JsonSchemaMetric(BaseMetric):
         if errors:
             first = errors[0]
             where = "/".join(str(p) for p in first.path) or "<root>"
-            return self.make(0.0, error=f"{where}: {first.message}"[:300], n_errors=len(errors))
+            return self.make(0.0, problem=f"{where}: {first.message}"[:300], n_errors=len(errors))
         return self.make(1.0)
 
 
@@ -80,7 +80,7 @@ class NumericToleranceMetric(BaseMetric):
         actual = to_number(resolve(self.params.get("actual", "output"), ctx))
         expected = to_number(resolve(self.params.get("expected", "expected"), ctx))
         if actual is None or expected is None:
-            return self.make(0.0, error="not a number", actual=actual, expected=expected)
+            return self.make(0.0, problem="not a number", actual=actual, expected=expected)
         tol = max(float(self.params.get("abs_tol", 0.0)), float(self.params.get("rel_tol", 0.0)) * abs(expected))
         diff = abs(actual - expected)
         return self.make(1.0 if diff <= tol + 1e-12 else 0.0, actual=actual, expected=expected, diff=diff)
