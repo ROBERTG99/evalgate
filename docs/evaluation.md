@@ -67,7 +67,7 @@ The first two rubrics share `evals/datasets/judge/answer_correctness.labels.v1.j
 
 ## Bootstrap coverage simulation
 
-The gate's claim "the 95% CI of the delta excludes 0" is only as good as the interval's coverage. `src/evalgate/stats/simulation.py`, run by `make eval` (`scripts/run_evals.py`), draws 400 simulated paired datasets per scenario, with a latent per-case difficulty shared by both runs (correlation 0.6) and a known true delta, and counts how often the 95% paired percentile interval (10,000 resamples, seed 1337 plus the dataset index) contains it. Outcomes are binary except in `n60_continuous`, which uses graded scores in [0, 1]. The §11 target is coverage between 0.92 and 0.98 for the primary scenario.
+The gate's claim "the 95% CI of the delta excludes 0" is only as good as the interval's coverage. `src/evalgate/stats/simulation.py`, run by `make eval` (`scripts/run_evals.py`), draws 400 simulated paired datasets per scenario, with a latent per-case difficulty that each run reuses with probability 0.6 (`correlation` in the report; a latent correlation of 0.36, and less between the binary scores) and a known true delta, and counts how often the 95% paired percentile interval (10,000 resamples, seed 1337 plus the dataset index) contains it. Outcomes are binary except in `n60_continuous`, which uses graded scores in [0, 1]. The §11 target is coverage between 0.92 and 0.98 for the primary scenario.
 
 | Scenario | Cases | Baseline → candidate parameter | True delta | Coverage | Mean CI width (pp) |
 |---|---:|---|---:|---:|---:|
@@ -76,8 +76,9 @@ The gate's claim "the 95% CI of the delta excludes 0" is only as good as the int
 | `n60_continuous` | 60 | 0.70 → 0.65 | -4.12 pp | 0.935 | 14.9728 |
 | `n60_near_perfect` | 60 | 0.97 → 0.95 | -2.00 pp | 0.8875 | 11.1127 |
 | `n20_binary` | 20 | 0.85 → 0.80 | -5.00 pp | 0.8425 | 36.0381 |
+| `n10_binary` | 10 | 0.85 → 0.80 | -5.00 pp | 0.68 | 44.725 |
 
-Source: `evals/reports/bootstrap-coverage.json`. The primary scenario meets the target; the small-n and near-perfect scenarios under-cover, which is why the gate also requires the drop to exceed `--max-regression-pp` and at least 10 paired cases. See [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md).
+Source: `evals/reports/bootstrap-coverage.json`. The primary scenario meets the target; the small-n and near-perfect scenarios under-cover. They have a real drop, so they measure coverage (mostly lost on the side that understates the drop, i.e. power), not the false-alarm rate, which `make eval` does not measure in those regimes. `n10_binary` is the `MIN_PAIRED` floor. See [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md).
 
 ## Benchmarks
 

@@ -21,8 +21,10 @@ def coverage(
 ) -> dict[str, Any]:
     """Share of 95% CIs that contain the true delta over simulated paired binary datasets.
 
-    Each case has a latent difficulty shared by both runs (``correlation``), so the pairs are correlated
-    as they are in real regressions. The true delta is estimated from 2,000,000 simulated pairs.
+    Each case has a latent difficulty that each run reuses with probability ``correlation`` (otherwise it
+    draws its own), so the pairs are correlated as they are in real regressions. With 0.6 the latent
+    correlation is 0.36 (0.6 squared) and the binary scores correlate less, about 0.3. For continuous
+    scores the true delta is estimated from 2,000,000 simulated pairs.
     """
     rng = np.random.Generator(np.random.PCG64(seed))
 
@@ -68,6 +70,7 @@ SCENARIOS: dict[str, dict[str, Any]] = {
     "n60_binary": {"n_cases": 60, "p_base": 0.85, "p_cand": 0.80},
     "n60_near_perfect": {"n_cases": 60, "p_base": 0.97, "p_cand": 0.95},
     "n20_binary": {"n_cases": 20, "p_base": 0.85, "p_cand": 0.80},
+    "n10_binary": {"n_cases": 10, "p_base": 0.85, "p_cand": 0.80},  # MIN_PAIRED, the smallest n the gate accepts
     "n60_continuous": {"n_cases": 60, "p_base": 0.70, "p_cand": 0.65, "continuous": True},
 }
 

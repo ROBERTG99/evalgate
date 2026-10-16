@@ -29,3 +29,12 @@ def test_small_n_regimes_are_reported_not_hidden() -> None:
     assert set(result) == set(SCENARIOS)
     for name, r in result.items():
         assert 0.5 < r["coverage"] <= 1.0, name
+
+
+@pytest.mark.slow
+def test_continuous_scores_cover_in_range() -> None:
+    """Graded scores (n=60), the `n60_continuous` scenario of evals/REPORT.md, 400 datasets x 10,000 resamples."""
+    from evalgate.stats.simulation import SCENARIOS
+
+    result = coverage(n_datasets=400, **SCENARIOS["n60_continuous"])
+    assert 0.92 <= result["coverage"] <= 0.98, result
