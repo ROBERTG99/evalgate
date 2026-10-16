@@ -34,7 +34,7 @@ langgraph = ["langgraph>=0.6"]
 # extra adds no packages; it is kept so `pip install evalgate[langfuse]` is stable.
 langfuse = []
 otel = ["opentelemetry-sdk>=1.30", "opentelemetry-exporter-otlp-proto-http>=1.30"]
-ragas = ["ragas>=0.3"]
+ragas = ["ragas>=0.4", "langchain-community<0.4", "rapidfuzz>=3.9"]
 deepeval = ["deepeval>=3.0"]
 
 [project.scripts]

@@ -26,6 +26,8 @@ class ExactMetric(BaseMetric):
         ctx = context(case, result)
         actual = resolve(self.params.get("actual", "output"), ctx)
         expected = resolve(self.params.get("expected", "expected"), ctx)
+        if expected is None and self.params.get("skip_missing", False):
+            return self.make(1.0, skipped="no expected value for this case")
         if self.params.get("normalize", False):
             actual, expected = _norm(actual), _norm(expected)
         return self.make(1.0 if actual == expected else 0.0, actual=_excerpt(actual), expected=_excerpt(expected))
@@ -103,16 +105,25 @@ class ContainsAllMetric(BaseMetric):
 
 
 class RegexMetric(BaseMetric):
-    """1.0 when ``pattern`` matches the selected string (``re.search``)."""
+    """1.0 when ``pattern`` matches the selected string (``re.search``). ``pattern`` may be a selector."""
 
-    @cached_property
-    def pattern(self) -> re.Pattern[str]:
-        flags = re.IGNORECASE if "i" in str(self.params.get("flags", "")) else 0
-        return re.compile(str(self.params["pattern"]), flags)
+    def __init__(self, spec: MetricSpec) -> None:
+        super().__init__(spec)
+        self._compiled: dict[str, re.Pattern[str]] = {}
+
+    def compiled(self, pattern: str) -> re.Pattern[str]:
+        if pattern not in self._compiled:
+            flags = re.IGNORECASE if "i" in str(self.params.get("flags", "")) else 0
+            self._compiled[pattern] = re.compile(pattern, flags)
+        return self._compiled[pattern]
 
     def score(self, case: Case, result: TargetResult) -> MetricScore:
-        actual = resolve(self.params.get("actual", "output"), context(case, result))
-        ok = isinstance(actual, str) and self.pattern.search(actual) is not None
+        ctx = context(case, result)
+        pattern = resolve(self.params["pattern"], ctx)
+        if pattern is None and self.params.get("skip_missing", False):
+            return self.make(1.0, skipped="no pattern for this case")
+        actual = resolve(self.params.get("actual", "output"), ctx)
+        ok = isinstance(actual, str) and self.compiled(str(pattern)).search(actual) is not None
         return self.make(1.0 if ok else 0.0, actual=_excerpt(actual))
 
 

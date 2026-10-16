@@ -295,11 +295,14 @@ def import_promptfoo(
     config_path: Annotated[Path, typer.Argument(metavar="CONFIG", help="promptfooconfig.yaml")],
     out_dir: Annotated[Path, typer.Option("--out-dir", help="Where to write suite and dataset.")] = Path("."),
     name: Annotated[str | None, typer.Option("--name", help="Suite name.")] = None,
+    base_url: Annotated[
+        str | None, typer.Option("--base-url", help="Replace scheme and host of the provider URL.")
+    ] = None,
 ) -> None:
     """Convert a Promptfoo config into an evalgate suite and dataset."""
     from evalgate.adapters.promptfoo import import_promptfoo as run_import
 
-    suite_path, dataset_path, unsupported = run_import(config_path, out_dir, name=name)
+    suite_path, dataset_path, unsupported = run_import(config_path, out_dir, name=name, base_url=base_url)
     err(f"evalgate: wrote {suite_path} and {dataset_path}")
     if unsupported:
         err(f"evalgate: unsupported asserts listed in meta.unsupported_asserts: {', '.join(sorted(set(unsupported)))}")
