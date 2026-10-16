@@ -89,6 +89,7 @@ security: ## gitleaks, bandit, pip-audit, licenses, trivy
 
 schemas: ## Export JSON Schemas and fail on drift
 	$(RUN) python scripts/export_schemas.py --check
+	$(RUN) python scripts/export_openapi.py --check
 
 build: ## Wheel and sdist, 1 MB budget
 	rm -rf dist
