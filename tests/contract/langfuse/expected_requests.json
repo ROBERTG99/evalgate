@@ -24,7 +24,7 @@
         ],
         "metadata": {
           "case_id": "cls-000",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 18.444218515250483,
           "error": null,
@@ -88,7 +88,7 @@
         ],
         "metadata": {
           "case_id": "cls-001",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 17.579544029403024,
           "error": null,
@@ -152,7 +152,7 @@
         ],
         "metadata": {
           "case_id": "cls-002",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 14.205715808308451,
           "error": null,
@@ -216,7 +216,7 @@
         ],
         "metadata": {
           "case_id": "cls-003",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 12.589167502929634,
           "error": null,
@@ -280,7 +280,7 @@
         ],
         "metadata": {
           "case_id": "cls-004",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 15.112747213686085,
           "error": null,
@@ -344,7 +344,7 @@
         ],
         "metadata": {
           "case_id": "cls-005",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 14.049341374504143,
           "error": null,
@@ -408,7 +408,7 @@
         ],
         "metadata": {
           "case_id": "cls-006",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 17.837985890347724,
           "error": null,
@@ -472,7 +472,7 @@
         ],
         "metadata": {
           "case_id": "cls-007",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 13.033127260789275,
           "error": null,
@@ -536,7 +536,7 @@
         ],
         "metadata": {
           "case_id": "cls-008",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 14.765969541523559,
           "error": null,
@@ -600,7 +600,7 @@
         ],
         "metadata": {
           "case_id": "cls-009",
-          "passed": true,
+          "passed": false,
           "cost_usd": 0.0,
           "latency_ms": 15.833820394550312,
           "error": null,

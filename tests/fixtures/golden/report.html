@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>evalgate · classify · fail</title>
+<style>/* evalgate design tokens: &#34;lab notebook&#34;. Every colour in the viewer and HTML report comes from here. */
+:root {
+  --color-paper: #F7F7F2;
+  --color-surface: #FFFFFF;
+  --color-ink: #1B1F24;
+  --color-muted: #5B6470;
+  --color-rule: #D9DCD3;
+  --color-pass: #1A7F37;
+  --color-fail: #C62828;
+  --color-regression: #9A5B00;
+  --color-focus: #0B5FFF;
+  --color-row-alt: #EFEFE8;
+  --font-sans: system-ui, -apple-system, &#34;Segoe UI&#34;, Roboto, &#34;Helvetica Neue&#34;, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, &#34;Liberation Mono&#34;, monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --radius: 4px;
+  --rule-width: 1px;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.25rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=&#34;light&#34;]) {
+    --color-paper: #0F1216;
+    --color-surface: #171B21;
+    --color-ink: #E7EAEE;
+    --color-muted: #9BA5B3;
+    --color-rule: #2D333B;
+    --color-pass: #3FB950;
+    --color-fail: #F47067;
+    --color-regression: #D29922;
+    --color-focus: #6CA0FF;
+    --color-row-alt: #1C2129;
+    color-scheme: dark;
+  }
+}
+:root[data-theme=&#34;dark&#34;] {
+  --color-paper: #0F1216;
+  --color-surface: #171B21;
+  --color-ink: #E7EAEE;
+  --color-muted: #9BA5B3;
+  --color-rule: #2D333B;
+  --color-pass: #3FB950;
+  --color-fail: #F47067;
+  --color-regression: #D29922;
+  --color-focus: #6CA0FF;
+  --color-row-alt: #1C2129;
+  color-scheme: dark;
+}
+/* Layout and components. Uses only the tokens from tokens.css. */
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body {
+  margin: 0; background: var(--color-paper); color: var(--color-ink);
+  font-family: var(--font-sans); font-size: var(--text-md); line-height: 1.5;
+}
+a { color: var(--color-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; border-radius: var(--radius); }
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: var(--space-4); top: var(--space-2); background: var(--color-surface); padding: var(--space-2); }
+header.top {
+  display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between;
+  padding: var(--space-3) var(--space-4); border-bottom: var(--rule-width) solid var(--color-rule);
+  background: var(--color-surface);
+}
+header.top .brand { font-weight: 700; letter-spacing: 0.02em; text-decoration: none; }
+header.top nav { display: flex; gap: var(--space-4); align-items: center; }
+main { max-width: 1200px; margin: 0 auto; padding: var(--space-4); }
+h1 { font-size: var(--text-lg); margin: var(--space-2) 0 var(--space-4); }
+h2 { font-size: 1.05rem; margin: var(--space-6) 0 var(--space-2); }
+.muted { color: var(--color-muted); }
+.mono, td.num, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); color: var(--color-muted); font-size: var(--text-sm); }
+.badge {
+  display: inline-flex; align-items: center; gap: var(--space-1); padding: 0 var(--space-2);
+  border: var(--rule-width) solid currentColor; border-radius: var(--radius); font-size: var(--text-sm); font-weight: 600;
+  white-space: nowrap;
+}
+.status-pass { color: var(--color-pass); }
+.status-fail { color: var(--color-fail); }
+.status-regression { color: var(--color-regression); }
+.status-neutral { color: var(--color-muted); }
+.table-wrap { overflow-x: auto; border: var(--rule-width) solid var(--color-rule); border-radius: var(--radius); background: var(--color-surface); }
+table { border-collapse: collapse; width: 100%; font-size: var(--text-sm); }
+caption { text-align: left; padding: var(--space-2) var(--space-3); color: var(--color-muted); }
+th, td { padding: var(--space-1) var(--space-3); border-bottom: var(--rule-width) solid var(--color-rule); text-align: left; vertical-align: top; }
+th { font-weight: 600; white-space: nowrap; }
+td.num, th.num { text-align: right; }
+tbody tr:nth-child(even) { background: var(--color-row-alt); }
+.cards { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+.card { background: var(--color-surface); border: var(--rule-width) solid var(--color-rule); border-radius: var(--radius); padding: var(--space-3); }
+.card .value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 1.5rem; }
+.card h3 { margin: 0; font-size: var(--text-md); }
+.panel { border: var(--rule-width) solid var(--color-rule); border-left-width: 4px; border-radius: var(--radius); padding: var(--space-3); background: var(--color-surface); margin: var(--space-4) 0; }
+.panel.error { border-left-color: var(--color-fail); }
+.panel.empty { border-left-color: var(--color-muted); }
+.panel.loading { border-left-color: var(--color-focus); }
+.panel pre, pre.cmd { white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: var(--text-sm); }
+form.filters { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: end; margin-bottom: var(--space-3); }
+label { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); color: var(--color-muted); }
+select, input[type=&#34;text&#34;], button {
+  font: inherit; color: var(--color-ink); background: var(--color-surface); border: var(--rule-width) solid var(--color-muted);
+  border-radius: var(--radius); padding: var(--space-1) var(--space-2); min-height: 32px;
+}
+button { cursor: pointer; font-weight: 600; }
+.theme-toggle { min-width: 6rem; }
+.judge-tag { font-size: var(--text-sm); border: var(--rule-width) dashed var(--color-muted); border-radius: var(--radius); padding: 0 var(--space-1); color: var(--color-muted); }
+footer { max-width: 1200px; margin: 0 auto; padding: var(--space-4); color: var(--color-muted); font-size: var(--text-sm); }
+@media (min-width: 768px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main { padding: var(--space-4) var(--space-6); }
+}
+@media (min-width: 1200px) {
+  .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+</style>
+</head>
+<body>
+<header class="top"><span class="brand">evalgate</span><span class="muted">self-contained report · mode offline</span></header>
+<main>
+<h1>classify <span class="badge status-fail">✗ fail</span></h1>
+<div class="meta">
+  <span>run <span class="mono">00000000-0000-7000-8000-000000000000</span></span>
+  <span>mode offline</span>
+  <span>git <span class="mono">unknown</span></span>
+  <span>60 cases</span>
+  <span>2026-10-16T00:00:00Z</span>
+  <span>10,000 paired-bootstrap resamples, seed 1337</span>
+</div>
+<h2>Metrics</h2>
+<div class="table-wrap"><table>
+<caption>Metric values with 95% bootstrap intervals and paired deltas against run 00000000-0000-7000-8000-000000000000</caption>
+<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
+<tbody>
+
+<tr><th scope="row" class="mono">label_accuracy</th><td class="num">0.7667</td>
+<td class="num">n/a</td>
+<td class="num">≥ 0.90</td>
+<td class="num">-13.33</td>
+<td class="num">[-21.67, -5.00], n=60</td>
+<td><span class="badge status-fail">✗ regression</span></td>
+<td>offline</td></tr>
+
+<tr><th scope="row" class="mono">label_format</th><td class="num">1.0000</td>
+<td class="num">n/a</td>
+<td class="num">≥ 0.90</td>
+<td class="num">+0.00</td>
+<td class="num">[+0.00, +0.00], n=60</td>
+<td><span class="badge status-neutral">off</span></td>
+<td>offline</td></tr>
+
+</tbody></table></div>
+<p class="num">Cost USD 0.0042 (offline) · latency p50 50 ms, p95 100 ms (offline)</p>
+<div class="panel error" role="alert"><h2>Gate failures</h2><ul>
+<li><strong>threshold</strong> <span class="mono">label_accuracy</span>: 0.7666666666666667 vs 0.9</li><li><strong>regression</strong> <span class="mono">label_accuracy</span>: -13.33 pp (95% CI -21.67 to -5.00)</li>
+</ul></div>
+<h2>Cases</h2>
+<div class="table-wrap"><table>
+<caption>60 cases, failed first</caption>
+<thead><tr><th scope="col">Case</th><th scope="col">Split</th><th scope="col">Result</th><th scope="col" class="num">label_accuracy</th><th scope="col" class="num">label_format</th><th scope="col" class="num">Cost (USD)</th><th scope="col" class="num">Latency (ms)</th><th scope="col">Error</th></tr></thead>
+<tbody>
+<tr><th scope="row" class="mono">c-0000</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">20</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0001</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0002</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">11</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0003</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">11</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0004</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0005</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0006</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0007</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">13</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0054</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0055</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0056</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0057</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0058</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">16</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0059</th><td>test</td><td><span class="status-fail">✗ fail</span></td>
+<td class="num">0.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0008</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">16</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0009</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">16</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0010</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">16</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0011</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">12</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0012</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0013</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0014</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0015</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">20</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0016</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0017</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0018</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0019</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">13</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0020</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">10</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0021</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">10</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0022</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0023</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">13</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0024</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0025</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0026</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0027</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">16</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0028</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">12</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0029</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">10</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0030</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">13</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0031</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">11</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0032</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0033</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">20</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0034</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0035</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">12</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0036</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0037</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0038</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0039</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0040</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0041</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0042</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">14</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0043</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">20</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0044</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">20</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0045</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">12</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0046</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0047</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">17</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0048</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0049</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0050</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0051</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">19</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0052</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">15</td><td></td></tr>
+<tr><th scope="row" class="mono">c-0053</th><td>test</td><td><span class="status-pass">✓ pass</span></td>
+<td class="num">1.00</td><td class="num">1.00</td><td class="num">0.000070</td><td class="num">18</td><td></td></tr>
+
+</tbody></table></div>
+</main>
+<footer>evalgate report.v1 · generated offline from classify run 00000000-0000-7000-8000-000000000000</footer>
+</body>
+</html>

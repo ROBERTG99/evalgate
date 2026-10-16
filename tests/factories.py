@@ -88,7 +88,7 @@ def make_report(
             "id": ids[i],
             "split": "test",
             "scores": {m: v[i] for m, v in scores.items()},
-            "passed": True,
+            "passed": all(v[i] >= 1.0 for v in scores.values()),
             "cost_usd": cost / n if n else 0.0,
             "latency_ms": rng.uniform(10, 20),
             "error": None,

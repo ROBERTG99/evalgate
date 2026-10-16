@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>evalgate · {{ report.suite }} · {{ "pass" if passed else "fail" }}</title>
+<style>{{ css }}</style>
+</head>
+<body>
+<header class="top"><span class="brand">evalgate</span><span class="muted">self-contained report · mode {{ report.mode }}</span></header>
+<main>
+<h1>{{ report.suite }} <span class="badge {{ 'status-pass' if passed else 'status-fail' }}">{{ "✓ pass" if passed else "✗ fail" }}</span></h1>
+<div class="meta">
+  <span>run <span class="mono">{{ report.run_id }}</span></span>
+  <span>mode {{ report.mode }}</span>
+  <span>git <span class="mono">{{ (report.git_sha or "unknown")[:12] }}</span></span>
+  <span>{{ report.n_cases }} cases</span>
+  <span>{{ report.created_at }}</span>
+  {% if result %}<span>{{ "{:,}".format(result.resamples) }} paired-bootstrap resamples, seed {{ result.seed }}</span>{% endif %}
+</div>
+<h2>Metrics</h2>
+<div class="table-wrap"><table>
+<caption>Metric values with 95% bootstrap intervals{% if baseline %} and paired deltas against run {{ baseline.run_id }}{% endif %}</caption>
+<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
+<tbody>
+{% for name, m in report.metrics.items() %}{% set c = comps.get(name) %}
+<tr><th scope="row" class="mono">{{ name }}</th><td class="num">{{ "%.4f"|format(m.value) }}</td>
+<td class="num">{% if m.ci_low is not none %}[{{ "%.4f"|format(m.ci_low) }}, {{ "%.4f"|format(m.ci_high) }}]{% else %}n/a{% endif %}</td>
+<td class="num">{% if m.threshold is not none %}{{ "≥" if m.direction == "higher" else "≤" }} {{ "%.2f"|format(m.threshold) }}{% else %}n/a{% endif %}</td>
+<td class="num">{% if c %}{{ "%+.2f"|format(c.delta_pp) }}{% else %}n/a{% endif %}</td>
+<td class="num">{% if c %}[{{ "%+.2f"|format(c.ci_low_pp) }}, {{ "%+.2f"|format(c.ci_high_pp) }}], n={{ c.n_paired }}{% else %}n/a{% endif %}</td>
+<td>{% if name in failed %}<span class="badge status-fail">✗ {{ failed[name] }}</span>{% elif gates.get(name) is sameas false %}<span class="badge status-neutral">off</span>{% else %}<span class="badge status-pass">✓ pass</span>{% endif %}</td>
+<td>{{ report.mode }}</td></tr>
+{% endfor %}
+</tbody></table></div>
+<p class="num">Cost USD {{ "%.4f"|format(report.cost_usd_total) }} ({{ report.mode }}) · latency p50 {{ "%.0f"|format(report.latency_p50_ms) }} ms, p95 {{ "%.0f"|format(report.latency_p95_ms) }} ms ({{ report.mode }})</p>
+{% if result and result.failures %}<div class="panel error" role="alert"><h2>Gate failures</h2><ul>
+{% for f in result.failures %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {% if f.reason == "regression" %}{{ "%+.2f"|format(f.delta_pp) }} pp (95% CI {{ "%+.2f"|format(f.ci_low_pp) }} to {{ "%+.2f"|format(f.ci_high_pp) }}){% else %}{{ f.value }} vs {{ f.threshold }}{% endif %}</li>{% endfor %}
+</ul></div>{% endif %}
+<h2>Cases</h2>
+<div class="table-wrap"><table>
+<caption>{{ report.cases|length }} cases, failed first</caption>
+<thead><tr><th scope="col">Case</th><th scope="col">Split</th><th scope="col">Result</th>{% for name in report.metrics %}<th scope="col" class="num">{{ name }}</th>{% endfor %}<th scope="col" class="num">Cost (USD)</th><th scope="col" class="num">Latency (ms)</th><th scope="col">Error</th></tr></thead>
+<tbody>
+{% for c in cases %}<tr><th scope="row" class="mono">{{ c.id }}</th><td>{{ c.split }}</td><td>{% if c.passed %}<span class="status-pass">✓ pass</span>{% else %}<span class="status-fail">✗ fail</span>{% endif %}</td>
+{% for name in report.metrics %}<td class="num">{{ "%.2f"|format(c.scores.get(name, 0)) }}</td>{% endfor %}<td class="num">{{ "%.6f"|format(c.cost_usd) }}</td><td class="num">{{ "%.0f"|format(c.latency_ms) }}</td><td>{{ (c.error or "")[:200] }}</td></tr>
+{% endfor %}
+</tbody></table></div>
+</main>
+<footer>evalgate report.v1 · generated offline from {{ report.suite }} run {{ report.run_id }}</footer>
+</body>
+</html>

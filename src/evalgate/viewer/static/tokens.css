@@ -1,0 +1,54 @@
+/* evalgate design tokens: "lab notebook". Every colour in the viewer and HTML report comes from here. */
+:root {
+  --color-paper: #F7F7F2;
+  --color-surface: #FFFFFF;
+  --color-ink: #1B1F24;
+  --color-muted: #5B6470;
+  --color-rule: #D9DCD3;
+  --color-pass: #1A7F37;
+  --color-fail: #C62828;
+  --color-regression: #9A5B00;
+  --color-focus: #0B5FFF;
+  --color-row-alt: #EFEFE8;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --radius: 4px;
+  --rule-width: 1px;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.25rem;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-paper: #0F1216;
+    --color-surface: #171B21;
+    --color-ink: #E7EAEE;
+    --color-muted: #9BA5B3;
+    --color-rule: #2D333B;
+    --color-pass: #3FB950;
+    --color-fail: #F47067;
+    --color-regression: #D29922;
+    --color-focus: #6CA0FF;
+    --color-row-alt: #1C2129;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --color-paper: #0F1216;
+  --color-surface: #171B21;
+  --color-ink: #E7EAEE;
+  --color-muted: #9BA5B3;
+  --color-rule: #2D333B;
+  --color-pass: #3FB950;
+  --color-fail: #F47067;
+  --color-regression: #D29922;
+  --color-focus: #6CA0FF;
+  --color-row-alt: #1C2129;
+  color-scheme: dark;
+}
