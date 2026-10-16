@@ -135,10 +135,17 @@ def test_absent_expected_field_is_a_problem_not_a_pass(kind: str, params: dict[s
     skipping = BUILTIN[kind](
         MetricSpec(name="m", kind=kind, direction=direction, params={**params, "skip_missing": True})  # type: ignore[arg-type]
     )
-    assert "skipped" in skipping.score(case(expected={}), result({"answer": "x"})).details
+    skipped = skipping.score(case(expected={}), result({"answer": "x"}))
+    assert "skipped" in skipped.details
+    assert skipped.value == (1.0 if direction == "higher" else 0.0)  # neutral: the best value either way
 
 
 def test_explicit_null_expected_still_compares() -> None:
     m = build("exact", actual="output.v", expected="expected.v")
     assert m.score(case(expected={"v": None}), result({"v": None})).value == 1.0
     assert m.score(case(expected={"v": None}), result({})).value == 0.0  # an absent output is not a null one
+
+
+def test_contains_all_without_expected_or_values_is_a_problem() -> None:
+    score = build("contains_all", actual="output.answer").score(case(), result({"answer": "anything"}))
+    assert score.value == 0.0 and "problem" in score.details

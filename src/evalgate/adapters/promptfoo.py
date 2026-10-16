@@ -128,7 +128,7 @@ def import_promptfoo(
                 "name": "contains",
                 "kind": "contains_all",
                 "threshold": 1.0,
-                "params": {"actual": output, "expected": "expected.contains"},
+                "params": {"actual": output, "expected": "expected.contains", "skip_missing": True},
             }
         )
     if "regex" in kinds:

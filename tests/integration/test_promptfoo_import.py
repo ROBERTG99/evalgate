@@ -17,3 +17,6 @@ def test_imported_sample_suite_runs(tmp_path: Path, toys_url: str) -> None:
     assert all(c.error is None for c in report.cases)
     assert report.metrics["equals"].value >= 0.8
     assert report.metrics["regex"].value == 1.0
+    # rows without a contains assert are skipped, not scored as problems (T-45 review)
+    assert report.metrics["contains"].value == 1.0
+    assert not any("problem" in s.details for o in result.outcomes for s in o.scores)

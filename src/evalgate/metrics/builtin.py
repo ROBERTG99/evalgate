@@ -108,7 +108,9 @@ class ContainsAllMetric(BaseMetric):
     def score(self, case: Case, result: TargetResult) -> MetricScore:
         ctx = context(case, result)
         actual = resolve(self.params.get("actual", "output"), ctx)
-        values = resolve(self.params.get("expected", self.params.get("values", [])), ctx, default=MISSING)
+        if "expected" not in self.params and "values" not in self.params:
+            return self.make(0.0, problem="contains_all needs `expected` or `values`")
+        values = resolve(self.params.get("expected", self.params.get("values")), ctx, default=MISSING)
         if values is MISSING:
             return _missing_expected_score(self)
         if isinstance(values, str):
