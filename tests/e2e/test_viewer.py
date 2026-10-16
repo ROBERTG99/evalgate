@@ -72,7 +72,7 @@ def test_html_report_has_no_serious_axe_violations(browser: Any) -> None:
     from evalgate.stats.gate import check
 
     base = load_report(ROOT / "evals/baselines/classify.json")
-    cases = [c.model_copy(update={"scores": {k: 0.0 for k in c.scores}, "passed": False}) for c in base.cases[:10]]
+    cases = [c.model_copy(update={"scores": dict.fromkeys(c.scores, 0.0), "passed": False}) for c in base.cases[:10]]
     cand = base.model_copy(update={"cases": cases + base.cases[10:]})
     html = render_html(cand, check(cand, report_sha256="e2e", baseline=base, resamples=1000), base)
     problems = {}
