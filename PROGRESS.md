@@ -32,11 +32,11 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-11 | Generator: toy datasets and FAQ corpus | M1 | done | `uv run python -m data.generator` → 3 × 150 rows (90 dev / 60 test) + 40 FAQ docs; `uv run pytest tests/unit/generator/test_toys.py` → 5 passed |
 | T-12 | Generator: variants, judge labels, Promptfoo sample | M1 | todo | |
 | T-13 | Pricing, cost meter and budgets | M1 | done | `uv run pytest tests/unit/test_accounting.py tests/unit/test_budget.py` → 7 passed; pricing.yaml cites source URL and 2026-10-16 |
-| T-14 | Runner and python target | M2 | todo | |
-| T-15 | HTTP and LangGraph targets | M2 | todo | |
-| T-16 | Deterministic metrics and registry | M2 | todo | |
-| T-17 | LLM gateway, FakeLLM, cassettes and testing API | M2 | todo | |
-| T-18 | Response cache | M2 | todo | |
+| T-14 | Runner and python target | M2 | done | `uv run pytest tests/unit/runner` → 9 passed (peak in-flight = 4 of 40; timeout case error "timeout", scores 0) |
+| T-15 | HTTP and LangGraph targets | M2 | done | `uv run pytest tests/unit/targets tests/integration/targets` → 13 passed (503 twice then ok = 3 attempts; one StepRecord per LangGraph node) |
+| T-16 | Deterministic metrics and registry | M2 | done | `uv run pytest tests/unit/metrics` → 20 passed incl. Hypothesis (exact reflexive, tool-call subsequence); read_doc(doc_id="faq-07", max_chars=500) after search_faq → 1.0 |
+| T-17 | LLM gateway, FakeLLM, cassettes and testing API | M2 | done | `uv run pytest tests/unit/llm tests/unit/test_public_api.py` → 13 passed (digest mismatch raises CassetteMismatch; PII redacted; only 408/409/429/5xx/connection retried; adapters against response fixtures) |
+| T-18 | Response cache | M2 | done | `uv run pytest tests/integration/cache` → 4 passed (re-run: provider_calls 0, cache_hits = judge_calls = 12; lock held → read-only fallback) |
 | T-19 | Judge metric and FakeJudge | M2 | todo | |
 | T-20 | Calibration command | M2 | todo | |
 | T-21 | Bootstrap and gate rule | M2 | todo | |

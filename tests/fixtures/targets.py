@@ -17,3 +17,7 @@ async def slow(case_input: dict[str, Any]) -> dict[str, Any]:
 
 def boom(case_input: dict[str, Any]) -> dict[str, Any]:
     raise RuntimeError("target exploded")
+
+
+def echo_answer(case_input: dict[str, Any]) -> dict[str, Any]:
+    return {"answer": case_input.get("answer", "")}

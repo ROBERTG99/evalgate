@@ -63,6 +63,7 @@ def content_words(text: str) -> set[str]:
 
 def fact_check(reference: str, candidate: str) -> tuple[int, int, int, list[str]]:
     """Return (facts present, facts total, contradictions, missing)."""
+    candidate = re.sub(r"\[faq-\d+\]|\(source: faq-\d+\)", " ", candidate)  # citations are not facts
     ref_nums, cand_nums = numbers(reference), numbers(candidate)
     ref_ents = entities(reference)
     facts = sorted(ref_nums) + sorted(ref_ents)
