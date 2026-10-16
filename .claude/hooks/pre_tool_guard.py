@@ -111,9 +111,12 @@ def check_git(args: list[str], cwd: Path) -> str | None:
                 return "force pushes are forbidden"
             if arg.startswith("+") or re.search(r"(^|:)refs/tags/|^v\d+\.\d+\.\d+$", arg):
                 return "force pushes and tag pushes are forbidden"
-    if sub == "config":
-        if any(a.lower().startswith("user.") for a in rest) and not any(a in CONFIG_READ for a in rest):
-            return "changing git identity is forbidden"
+    if (
+        sub == "config"
+        and any(a.lower().startswith("user.") for a in rest)
+        and not any(a in CONFIG_READ for a in rest)
+    ):
+        return "changing git identity is forbidden"
     if sub in ("commit", "tag", "notes", "merge"):
         values = option_values(rest, {"-m", "--message", "--trailer"}, cwd, {"-F", "--file"})
         if message_blocked(values, cwd):
