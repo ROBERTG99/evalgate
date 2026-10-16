@@ -10,6 +10,7 @@ import json
 import os
 import re
 import shlex
+import subprocess
 import sys
 from pathlib import Path
 
@@ -51,9 +52,22 @@ def protected(path_text: str, cwd: Path) -> str | None:
         rel = path.resolve().relative_to(ROOT.resolve()).as_posix()
     except ValueError:
         return None
-    if (rel.startswith(PROTECTED_DIRS) or rel + "/" in PROTECTED_DIRS or rel in ("evals",)) and path.exists():
+    if (rel.startswith(PROTECTED_DIRS) or rel + "/" in PROTECTED_DIRS or rel == "evals") and committed(rel, path):
         return rel
     return None
+
+
+def committed(rel: str, path: Path) -> bool:
+    """Committed (tracked) files are append-only; outside a git checkout, any existing file is."""
+    if not (ROOT / ".git").exists():
+        return path.exists()
+    try:
+        out = subprocess.run(
+            ["git", "-C", str(ROOT), "ls-files", "--", rel], capture_output=True, text=True, timeout=10, check=False
+        )
+    except (OSError, subprocess.SubprocessError):
+        return path.exists()
+    return bool(out.stdout.strip())
 
 
 def message_blocked(values: list[str], cwd: Path) -> bool:
