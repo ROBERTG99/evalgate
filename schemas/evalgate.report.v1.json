@@ -1,0 +1,253 @@
+{
+  "$defs": {
+    "CaseReport": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "split": {
+          "enum": [
+            "dev",
+            "test"
+          ],
+          "title": "Split",
+          "type": "string"
+        },
+        "scores": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Scores",
+          "type": "object"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "cost_usd": {
+          "minimum": 0,
+          "title": "Cost Usd",
+          "type": "number"
+        },
+        "latency_ms": {
+          "minimum": 0,
+          "title": "Latency Ms",
+          "type": "number"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error"
+        }
+      },
+      "required": [
+        "id",
+        "split",
+        "scores",
+        "passed",
+        "cost_usd",
+        "latency_ms"
+      ],
+      "title": "CaseReport",
+      "type": "object"
+    },
+    "MetricSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold"
+        },
+        "direction": {
+          "default": "higher",
+          "enum": [
+            "higher",
+            "lower"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "ci_low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ci Low"
+        },
+        "ci_high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ci High"
+        }
+      },
+      "required": [
+        "value",
+        "passed"
+      ],
+      "title": "MetricSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The stable run report. ``extensions`` is free-form and may be ignored by consumers.",
+  "properties": {
+    "schema": {
+      "const": "evalgate.report.v1",
+      "title": "Schema",
+      "type": "string"
+    },
+    "suite": {
+      "title": "Suite",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "git_sha": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Git Sha"
+    },
+    "mode": {
+      "enum": [
+        "offline",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "models": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Models",
+      "type": "array"
+    },
+    "prompt_hashes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Prompt Hashes",
+      "type": "object"
+    },
+    "n_cases": {
+      "minimum": 0,
+      "title": "N Cases",
+      "type": "integer"
+    },
+    "metrics": {
+      "additionalProperties": {
+        "$ref": "#/$defs/MetricSummary"
+      },
+      "title": "Metrics",
+      "type": "object"
+    },
+    "cost_usd_total": {
+      "minimum": 0,
+      "title": "Cost Usd Total",
+      "type": "number"
+    },
+    "cost_usd_per_case": {
+      "minimum": 0,
+      "title": "Cost Usd Per Case",
+      "type": "number"
+    },
+    "latency_p50_ms": {
+      "minimum": 0,
+      "title": "Latency P50 Ms",
+      "type": "number"
+    },
+    "latency_p95_ms": {
+      "minimum": 0,
+      "title": "Latency P95 Ms",
+      "type": "number"
+    },
+    "cases": {
+      "items": {
+        "$ref": "#/$defs/CaseReport"
+      },
+      "title": "Cases",
+      "type": "array"
+    },
+    "extensions": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Extensions"
+    }
+  },
+  "required": [
+    "schema",
+    "suite",
+    "run_id",
+    "created_at",
+    "mode",
+    "n_cases",
+    "metrics",
+    "cost_usd_total",
+    "cost_usd_per_case",
+    "latency_p50_ms",
+    "latency_p95_ms",
+    "cases"
+  ],
+  "title": "evalgate.report.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/evalgate.report.v1.json"
+}

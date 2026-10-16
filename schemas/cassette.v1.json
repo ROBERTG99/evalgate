@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "CassetteUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": {
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "input_tokens",
+        "output_tokens"
+      ],
+      "title": "CassetteUsage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "A recorded provider response: ``tests/fixtures/llm/<route>/<key>.json``.",
+  "properties": {
+    "key": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Key",
+      "type": "string"
+    },
+    "route": {
+      "title": "Route",
+      "type": "string"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "prompt_version": {
+      "title": "Prompt Version",
+      "type": "string"
+    },
+    "request_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Digest",
+      "type": "string"
+    },
+    "response": {
+      "additionalProperties": true,
+      "title": "Response",
+      "type": "object"
+    },
+    "usage": {
+      "$ref": "#/$defs/CassetteUsage"
+    },
+    "recorded_at": {
+      "title": "Recorded At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "key",
+    "route",
+    "model",
+    "prompt_version",
+    "request_digest",
+    "response",
+    "usage",
+    "recorded_at"
+  ],
+  "title": "cassette.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/cassette.v1.json"
+}
