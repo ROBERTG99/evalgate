@@ -165,4 +165,7 @@ def load_suite(path: str | Path, split: str | None = None) -> LoadedSuite:
     if split is not None and split not in suite.splits:
         raise InvalidInputError(str(suite_path), "$.splits", f"split {split!r} is not declared by the suite")
     cases = load_dataset(dataset_path, [split] if split else list(suite.splits))
+    if not cases:  # an empty run would pass every gate
+        wanted = split or ", ".join(suite.splits)
+        raise InvalidInputError(str(dataset_path), "", f"no cases for split {wanted!r}")
     return LoadedSuite(suite=suite, path=suite_path, dataset_path=dataset_path, cases=cases)

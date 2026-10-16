@@ -117,6 +117,17 @@ class RunStore:
             return rows(self.con, "SELECT * FROM runs WHERE suite = ? ORDER BY created_at DESC", [suite])
         return rows(self.con, "SELECT * FROM runs ORDER BY created_at DESC")
 
+    def delete_cases(self, run_id: str, case_ids: list[str]) -> None:
+        """Forget stored cases (errored or out of scope) before a resumed run writes them again."""
+        if not case_ids:
+            return
+        with self._lock:
+            for table in ("case_results", "metric_scores", "steps"):
+                self.con.executemany(
+                    f"DELETE FROM {table} WHERE run_id = ? AND case_id = ?",  # noqa: S608 - fixed table names
+                    [[run_id, case_id] for case_id in case_ids],
+                )
+
     def get_cases(self, run_id: str) -> list[CaseOutcome]:
         cases = rows(self.con, "SELECT * FROM case_results WHERE run_id = ? ORDER BY case_id", [run_id])
         scores = rows(self.con, "SELECT * FROM metric_scores WHERE run_id = ?", [run_id])

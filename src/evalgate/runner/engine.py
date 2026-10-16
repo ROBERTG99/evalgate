@@ -6,6 +6,7 @@ import asyncio
 import importlib
 import logging
 import random
+import re
 import sys
 import time
 from dataclasses import dataclass, field
@@ -16,7 +17,7 @@ from evalgate import config, telemetry
 from evalgate.accounting import price_steps, step_cost
 from evalgate.contracts import Case, MetricScore, Report, StepRecord, TargetResult
 from evalgate.errors import EvalgateError, InvalidInputError
-from evalgate.ids import canonical_json, sha256_text, uuid7
+from evalgate.ids import RUN_ID_PATTERN, canonical_json, sha256_text, uuid7
 from evalgate.metrics.base import worst_score
 from evalgate.metrics.registry import build_metric
 from evalgate.report.build import CaseOutcome, build_report
@@ -92,6 +93,8 @@ class Runner:
         self.store: Any = None
         self.store_error: str | None = None
         self.judge_ctx: Any = None
+        if options.resume is not None and not re.fullmatch(RUN_ID_PATTERN, options.resume):
+            raise InvalidInputError("--resume", "", f"{options.resume!r} is not a run id")
         self.run_id = options.resume or uuid7()
         self._owned_client: Any = None
 
@@ -291,7 +294,13 @@ class Runner:
                 self.judge_ctx.preflight(n_cases=len(cases), metrics=metrics)
             done: dict[str, CaseOutcome] = {}
             if self.options.resume and self.store is not None:
-                done = {o.case_id: o for o in self.store.get_cases(self.run_id)}
+                # Keep only finished cases of the current dataset and split; errored ones run again.
+                current = {c.id: c for c in cases}
+                stored = self.store.get_cases(self.run_id)
+                done = {o.case_id: o for o in stored if o.case_id in current and o.error is None}
+                for outcome in done.values():
+                    outcome.tags = current[outcome.case_id].tags
+                self.store.delete_cases(self.run_id, [o.case_id for o in stored if o.case_id not in done])
             pending = [c for c in cases if c.id not in done]
             sem = asyncio.Semaphore(self.suite.concurrency)
             queue: asyncio.Queue[CaseOutcome | None] = asyncio.Queue(maxsize=1000)

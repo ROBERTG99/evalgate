@@ -67,6 +67,8 @@ def check(
     comparisons: list[Comparison] = []
     ext = report.extensions or {}
     gated = gated_metrics(report)
+    if report.n_cases == 0 or not report.cases:  # nothing was measured: fail closed
+        failures.append(CheckFailure(metric="n_cases", reason="error", value=0.0))
     for name in gated:
         summary = report.metrics[name]
         if summary.threshold is not None:

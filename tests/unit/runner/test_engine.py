@@ -210,3 +210,59 @@ def test_failed_cases_score_the_worst_value_for_lower_metrics(tmp_path: Path) ->
     assert all(c.scores == {"wrong": 1.0, "acc": 0.0} for c in errored)
     assert report.metrics["wrong"].value == 1.0  # healthy cases also score 1.0 (match), errors cannot lower it
     assert report.metrics["acc"].value == 0.5
+
+
+def test_resume_reruns_errored_cases_and_ignores_other_splits(tmp_path: Path) -> None:
+    calls: list[int] = []
+    fail = {1}
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        calls.append(case_input["i"])
+        if case_input["i"] in fail:
+            raise TargetError("down")
+        return TargetResult(output={"label": "a"})
+
+    loaded = suite_for(tmp_path, 4)
+    first = run_suite(loaded, RunOptions(split="test", home=tmp_path / "home", target=target, resamples=100))
+    assert sum(1 for c in first.report.cases if c.error) == 1
+    calls.clear()
+    fail.clear()
+    resumed = run_suite(
+        loaded,
+        RunOptions(split="test", home=tmp_path / "home", target=target, resume=first.report.run_id, resamples=100),
+    )
+    assert calls == [1]  # only the errored case runs again
+    assert not any(c.error for c in resumed.report.cases)
+    assert resumed.report.metrics["acc"].value == 1.0
+
+    other = load_suite(write_suite(tmp_path / "s2.yaml", write_dataset(tmp_path / "d2.jsonl", rows(2))), split="test")
+    again = run_suite(
+        other,
+        RunOptions(split="test", home=tmp_path / "home", target=target, resume=first.report.run_id, resamples=100),
+    )
+    assert again.report.n_cases == 2  # stored cases outside the current dataset are not reported
+
+
+def test_resume_rejects_a_malformed_run_id(tmp_path: Path) -> None:
+    from evalgate.errors import InvalidInputError
+
+    with pytest.raises(InvalidInputError, match="run id"):
+        run_suite(suite_for(tmp_path, 2), opts(tmp_path, resume="../../etc"))
+
+
+def test_empty_split_is_invalid_input(tmp_path: Path) -> None:
+    from evalgate.errors import InvalidInputError
+
+    data = write_dataset(tmp_path / "d.jsonl", rows(3, split="dev"))
+    with pytest.raises(InvalidInputError, match="no cases"):
+        load_suite(write_suite(tmp_path / "s.yaml", data), split="test")
+
+
+def test_gate_fails_closed_on_a_report_without_cases() -> None:
+    from evalgate.stats.gate import check
+    from tests.factories import make_report
+
+    report = make_report({"acc": [1.0]}).model_copy(update={"cases": [], "n_cases": 0})
+    result = check(report, report_sha256="x", resamples=10)
+    assert not result.passed
+    assert [(f.metric, f.reason) for f in result.failures] == [("n_cases", "error")]
