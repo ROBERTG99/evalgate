@@ -92,7 +92,7 @@ evalgate run evals/suites/classify.yaml --split test --out report.json
 evalgate check report.json --baseline evals/baselines/classify.json --max-regression-pp 1.0
 ```
 
-Exit codes: 0 pass, 1 gate failed, 2 invalid input, 3 budget stop before or during a live run, 4 internal error or judge unavailable after retries, 5 exporter failure with `--strict` ([`docs/contracts/check.md`](docs/contracts/check.md)).
+Exit codes: 0 pass, 1 gate failed, 2 invalid input, 3 budget stop before or during a live run, 4 internal error, 5 exporter failure with `--strict`. A judge that stays unavailable after retries is a metric error, so `run` still writes the report and `check` fails closed with exit 1 ([`docs/contracts/check.md`](docs/contracts/check.md)).
 
 In GitHub Actions, from any repository (the target can be any HTTP service, so the system under test need not be Python):
 
@@ -104,7 +104,7 @@ In GitHub Actions, from any repository (the target can be any HTTP service, so t
     max-regression-pp: "1.0"
 ```
 
-The action runs the suite, gates it, uploads the reports and upserts one PR comment per suite ([`docs/contracts/action.md`](docs/contracts/action.md)).
+The action runs the suite, gates it, writes the Markdown report to the job summary and upserts one PR comment per suite; [`evals.yml`](.github/workflows/evals.yml) also uploads the reports as artifacts ([`docs/contracts/action.md`](docs/contracts/action.md)).
 
 ## Architecture
 
