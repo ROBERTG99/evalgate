@@ -287,3 +287,14 @@ def test_redaction_is_linear_on_hostile_input() -> None:
     assert time.perf_counter() - start < 3.0  # quadratic patterns took minutes on these inputs
     assert redact("x" * 300_000).endswith("[TRUNCATED]")
     assert redact("call 06.12.34.56.78 on 15.03.2024") == "call [PHONE] on 15.03.2024"
+
+
+def test_invalid_output_still_counts_against_the_live_budget() -> None:
+    """A paid call is spent even when its output fails validation; the budget guard must see it."""
+    bad = {"verdict": "maybe"}  # fails the schema
+    provider = Scripted([bad, bad])
+    gw = Gateway(provider, provider_name="anthropic", budget_usd=1.0, sleep=no_sleep)
+    for _ in range(2):
+        with pytest.raises(OutputError):
+            asyncio.run(gw.complete(request()))
+    assert gw.guard.spent_usd > 0

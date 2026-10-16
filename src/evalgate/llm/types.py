@@ -54,3 +54,5 @@ class ProviderError(Exception):
 
 class OutputError(Exception):
     """The model answered but the output is unusable (refusal, max_tokens, invalid JSON or schema)."""
+
+    cost_usd: float = 0.0  # what the unusable answer still cost (set by the gateway)

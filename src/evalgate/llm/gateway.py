@@ -274,15 +274,19 @@ class Gateway:
                 last = exc
             else:
                 latency = (time.perf_counter() - start) * 1000
-                _validate(raw.data, req.schema)
-                if validate is not None:
-                    try:
-                        validate(raw.data)
-                    except ValueError as exc:  # pydantic ValidationError is a ValueError
-                        raise OutputError(f"output does not match the contract: {exc}".splitlines()[0]) from exc
                 model = raw.model or req.model
                 cost = self._cost(model, raw)
-                self.guard.add(cost)
+                self.guard.add(cost)  # paid even if the output turns out unusable
+                try:
+                    _validate(raw.data, req.schema)
+                    if validate is not None:
+                        try:
+                            validate(raw.data)
+                        except ValueError as exc:  # pydantic ValidationError is a ValueError
+                            raise OutputError(f"output does not match the contract: {exc}".splitlines()[0]) from exc
+                except OutputError as exc:
+                    exc.cost_usd = cost
+                    raise
                 if self.live and self.record:
                     cassettes.save(self.cassette_dir, req, raw.data, raw.input_tokens, raw.output_tokens)
                 return LLMResponse(
