@@ -52,6 +52,8 @@ def protected(path_text: str, cwd: Path) -> str | None:
         rel = path.resolve().relative_to(ROOT.resolve()).as_posix()
     except ValueError:
         return None
+    if rel.endswith("MANIFEST.json"):  # regenerated whenever a new dataset version is added
+        return None
     if (rel.startswith(PROTECTED_DIRS) or rel + "/" in PROTECTED_DIRS or rel == "evals") and committed(rel, path):
         return rel
     return None
