@@ -266,3 +266,19 @@ def test_gate_fails_closed_on_a_report_without_cases() -> None:
     result = check(report, report_sha256="x", resamples=10)
     assert not result.passed
     assert [(f.metric, f.reason) for f in result.failures] == [("n_cases", "error")]
+
+
+def test_broken_target_cache_is_a_miss(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from evalgate.cache import ResponseCache
+
+    def broken(self: Any, *args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("corrupt row")
+
+    monkeypatch.setattr(ResponseCache, "get", broken)
+    monkeypatch.setattr(ResponseCache, "put", broken)
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        return TargetResult(output={"label": "a"})
+
+    report = run_suite(suite_for(tmp_path, 3), opts(tmp_path, target=target, cache_targets=True)).report
+    assert report.n_cases == 3 and not any(c.error for c in report.cases)

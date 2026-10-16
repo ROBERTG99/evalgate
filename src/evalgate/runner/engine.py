@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import importlib
 import logging
 import random
@@ -144,25 +145,32 @@ class Runner:
         key = None
         if self.options.cache_targets and self.cache is not None:
             key = _target_cache_key(self.suite.name, self.suite.target.model_dump_json(), case.input)
-            hit = self.cache.get(key)
-            if hit is not None:
-                return TargetResult.model_validate(hit["response"]), 0, float(hit.get("latency_ms") or 0.0)
+            try:  # a broken cache is a miss, never a failed run
+                hit = await asyncio.to_thread(self.cache.get, key)
+                if hit is not None:
+                    return TargetResult.model_validate(hit["response"]), 1, float(hit.get("latency_ms") or 0.0)
+            except Exception as exc:
+                log.warning("target cache read failed, calling the target: %s", exc)
         start = time.perf_counter()
         result, attempts = await call_with_retries(
             target, case.input, retries=self.retries, timeout_s=self.case_timeout, rng=self.rng
         )
         latency = (time.perf_counter() - start) * 1000
         if key is not None and self.cache is not None:
-            self.cache.put(
-                key,
-                route="target",
-                model=None,
-                prompt_version=None,
-                request_digest=key,
-                response=result.model_dump(mode="json"),
-                cost_usd=result.cost_usd,
-                latency_ms=latency,
-            )
+            try:
+                await asyncio.to_thread(
+                    self.cache.put,
+                    key,
+                    route="target",
+                    model=None,
+                    prompt_version=None,
+                    request_digest=key,
+                    response=result.model_dump(mode="json"),
+                    cost_usd=result.cost_usd,
+                    latency_ms=latency,
+                )
+            except Exception as exc:
+                log.warning("target cache write failed: %s", exc)
         return result, attempts, latency
 
     async def _score(self, metrics: list[Any], case: Case, result: TargetResult) -> list[MetricScore]:
@@ -273,7 +281,9 @@ class Runner:
                 except Exception as exc:
                     self.store_error = f"{exc.__class__.__name__}: {exc}"
                     log.warning("run store write failed: %s", self.store_error)
-                    self.store = None
+                    store, self.store = self.store, None
+                    with contextlib.suppress(Exception):  # already broken; the report is still written
+                        store.close()
 
     async def run(self) -> RunResult:
         _import_plugins(self.suite.plugins, self.loaded.path)
@@ -317,6 +327,8 @@ class Runner:
                     )
                     for task in unfinished:
                         task.cancel()
+                    # Let cancelled cases unwind before the cache, store and client below are closed.
+                    await asyncio.gather(*unfinished, return_exceptions=True)
                     for case, task in zip(pending, tasks, strict=True):
                         if task in finished:
                             outcome = task.result()

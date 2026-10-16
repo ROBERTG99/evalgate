@@ -36,7 +36,12 @@ class ResponseCache:
         if mode == "rw":
             try:
                 self.con = connect(path, read_only=False, lock_timeout_s=lock_timeout_s)
-                migrate(self.con, package="evalgate.cache")
+                try:
+                    migrate(self.con, package="evalgate.cache")
+                except Exception:
+                    self.con.close()
+                    self.con = None
+                    raise
                 return
             except duckdb.IOException as exc:
                 self.fallback = f"cache locked for {lock_timeout_s:.0f}s, read-only fallback: {exc}"
@@ -54,9 +59,10 @@ class ResponseCache:
             self.con = None
 
     def close(self) -> None:
-        if self.con is not None:
-            self.con.close()
-            self.con = None
+        with self._lock:  # never while a worker thread is reading or writing
+            if self.con is not None:
+                self.con.close()
+                self.con = None
 
     def get(self, key: str, ttl_days: int | None = None) -> dict[str, Any] | None:
         """The row for ``key`` unless it is older than ``ttl_days`` (default EVALGATE_CACHE_TTL_DAYS)."""

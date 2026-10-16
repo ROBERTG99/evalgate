@@ -33,10 +33,15 @@ class RunStore:
         self.con = connect(path, read_only=read_only)
         self._lock = threading.Lock()
         if not read_only:
-            migrate(self.con)
+            try:
+                migrate(self.con)
+            except Exception:
+                self.con.close()
+                raise
 
     def close(self) -> None:
-        self.con.close()
+        with self._lock:
+            self.con.close()
 
     # writes ----------------------------------------------------------------------------------
     def insert_case(self, run_id: str, o: CaseOutcome) -> None:
