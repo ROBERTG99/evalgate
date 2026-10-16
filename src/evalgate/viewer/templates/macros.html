@@ -1,0 +1,4 @@
+{% macro badge(passed, reason=None) -%}
+{% if passed %}<span class="badge status-pass"><span aria-hidden="true">✓</span> pass</span>{% else %}<span class="badge status-fail"><span aria-hidden="true">✗</span> fail{% if reason %} · {{ reason }}{% endif %}</span>{% endif %}
+{%- endmacro %}
+{% macro mode_tag(mode) -%}<span class="badge status-neutral">{{ mode }}</span>{%- endmacro %}

@@ -385,6 +385,9 @@ class Runner:
                 o.case_id: {s.name: s.details for s in o.scores if s.name in judged and s.details}
                 for o in sorted(outcomes, key=lambda o: o.case_id)
             }
+        tags = {o.case_id: o.tags for o in sorted(outcomes, key=lambda o: o.case_id) if o.tags}
+        if tags:
+            ext["case_tags"] = tags
         if self.store_error:
             ext["store_error"] = self.store_error
         ext.update(self.options.extra_extensions)

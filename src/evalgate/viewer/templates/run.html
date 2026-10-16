@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge, mode_tag %}
+{% block title %}{{ r.suite }} run {{ r.run_id[:8] }}{% endblock %}
+{% block content %}
+<h1>{{ r.suite }} {{ badge(gate.passed, gate.reasons|join(", ")) }}</h1>
+<div class="meta">
+  <span>run <span class="mono">{{ r.run_id }}</span></span>
+  <span>mode {{ mode_tag(r.mode) }}</span>
+  <span>split {{ ext.split or "n/a" }}</span>
+  <span>git <span class="mono">{{ (r.git_sha or "unknown")[:12] }}</span></span>
+  <span>{{ r.created_at }}</span>
+  <span>{{ r.n_cases }} cases</span>
+  <span>health {{ ext.run_health or "n/a" }}</span>
+</div>
+<h2>Metrics</h2>
+<div class="cards">
+{% for name, m in r.metrics.items() %}
+  <section class="card" aria-labelledby="metric-{{ loop.index }}">
+    <h3 id="metric-{{ loop.index }}"><span class="mono">{{ name }}</span>{% if name in judge %} <span class="judge-tag">AI judge · {{ judge[name].rubric }}</span>{% endif %}</h3>
+    <p class="value">{{ "%.4f"|format(m.value) }}</p>
+    <p class="muted num">95% CI {% if m.ci_low is not none %}[{{ "%.4f"|format(m.ci_low) }}, {{ "%.4f"|format(m.ci_high) }}]{% else %}n/a{% endif %}
+      · threshold {% if m.threshold is not none %}{{ "≥" if m.direction == "higher" else "≤" }} {{ m.threshold }}{% else %}none{% endif %}
+      · {% if gates.get(name) is sameas false %}not gated{% else %}gated{% endif %}</p>
+    <p>{{ badge(m.passed) }}</p>
+  </section>
+{% endfor %}
+  <section class="card" aria-labelledby="metric-cost">
+    <h3 id="metric-cost">Cost and latency</h3>
+    <p class="value">USD {{ "%.4f"|format(r.cost_usd_total) }}</p>
+    <p class="muted num">USD {{ "%.6f"|format(r.cost_usd_per_case) }} per case · p50 {{ "%.0f"|format(r.latency_p50_ms) }} ms · p95 {{ "%.0f"|format(r.latency_p95_ms) }} ms</p>
+  </section>
+</div>
+{% if judge %}
+<h2>AI judge</h2>
+<ul>
+{% for name, d in judge.items() %}
+  <li><span class="judge-tag">AI judge</span> <span class="mono">{{ name }}</span>: rubric {{ d.rubric }}, prompt <span class="mono">{{ d.prompt_version }}</span>,
+    {{ d.position_inconsistent }} position-inconsistent, {{ d.injections_blocked }} injections blocked, {{ d.errors }} errors; models {{ r.models|join(", ") or "none" }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+<h2 id="cases">Cases</h2>
+<form class="filters" method="get" action="/runs/{{ r.run_id }}" aria-label="Filter cases">
+  <label>Status
+    <select name="status">
+      <option value="">All</option>
+      <option value="failed"{% if status_filter == "failed" %} selected{% endif %}>Failed</option>
+      <option value="passed"{% if status_filter == "passed" %} selected{% endif %}>Passed</option>
+    </select>
+  </label>
+  {% if all_tags %}
+  <label>Tag
+    <select name="tag">
+      <option value="">Any tag</option>
+      {% for t in all_tags %}<option value="{{ t }}"{% if tag == t %} selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <button type="submit">Filter</button>
+  <a href="/runs/{{ r.run_id }}?status=failed">Only failed cases</a>
+</form>
+<div class="table-wrap">
+<table>
+  <caption>{{ cases|length }} of {{ r.cases|length }} cases{% if status_filter %}, status {{ status_filter }}{% endif %}{% if tag %}, tag {{ tag }}{% endif %}, failed first</caption>
+  <thead><tr><th scope="col">Case</th><th scope="col">Result</th>
+  {% for name in r.metrics %}<th scope="col" class="num">{{ name }}</th>{% endfor %}
+  <th scope="col" class="num">Cost (USD)</th><th scope="col" class="num">Latency (ms)</th><th scope="col">Details</th></tr></thead>
+  <tbody>
+  {% for c in cases %}
+  <tr>
+    <th scope="row" class="mono">{{ c.id }}</th>
+    <td>{{ badge(c.passed) }}</td>
+    {% for name in r.metrics %}<td class="num">{{ "%.2f"|format(c.scores.get(name, 0)) }}</td>{% endfor %}
+    <td class="num">{{ "%.6f"|format(c.cost_usd) }}</td>
+    <td class="num">{{ "%.0f"|format(c.latency_ms) }}</td>
+    <td>
+      {% if c.error %}<span class="status-fail">error: {{ c.error[:200] }}</span>{% endif %}
+      {% for metric, d in (judge_details.get(c.id) or {}).items() %}
+        <div><span class="judge-tag">AI judge · {{ d.rubric }}</span> {{ d.verdict }}{% if d.position_inconsistent %} (position inconsistent){% endif %}{% if d.injection %} (injection blocked){% endif %}{% if d.reasons %}: {{ d.reasons|join("; ") }}{% endif %}{% if d.error %} error: {{ d.error }}{% endif %}</div>
+      {% endfor %}
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="{{ r.metrics|length + 5 }}">No cases match these filters.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p><a href="/api/runs/{{ r.run_id }}">Raw report JSON</a></p>
+{% endblock %}
