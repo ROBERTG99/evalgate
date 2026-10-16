@@ -102,8 +102,8 @@ Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` hold
 | T-40 | Test containers | M7 | done | `make test-docker` → test-docker: passed (unit, integration, contract and harness in `evalgate-tests:local` against real WireMock 8142/8143; E2E in the Playwright 1.56.0 image: 5 passed; promtool: SUCCESS); `uv run pytest tests/harness/test_compose.py` → 4 passed |
 | T-41 | CI workflows | M7 | done | `uv run pytest tests/harness/test_workflows.py` → 4 passed (ci, e2e, evals, docker, codeql, action-selftest, release; 3.12/3.13 matrix, uv cache, trivy HIGH/CRITICAL exit 1, PyPI trusted publishing); `.tools/bin/actionlint` → clean. Not yet observed on GitHub: workflows trigger on `pull_request`/`main`, and no PR is open |
 | T-42 | Scripted demo | M8 | done | `uv run pytest tests/integration/test_demo.py` → 2 passed; `make demo` against the compose stack → v2 `evalgate check exited 1` (label_accuracy -16.67 pp, 95% CI [-26.67, -8.33]), v1 `exited 0` (docs/demo-transcript.txt) |
-| T-43 | README, ADRs and documents | M8 | todo | |
-| T-44 | Release preparation | M8 | todo | |
+| T-43 | README, ADRs and documents | M8 | done | `uv run pytest tests/harness/test_docs.py` → test_required_docs_exist, test_readme_numbers_cite_reports, test_runbook_has_alert_anchors pass (test_relative_links_resolve waits for docs/verification.md, T-46); `make lint` → lint: clean (markdownlint 0 issues in 73 files, shellcheck, hadolint, actionlint) |
+| T-44 | Release preparation | M8 | in progress | `uv run pytest tests/harness/test_release.py` → 3 passed (CHANGELOG `## [0.1.0] - 2026-10-16`, pyproject and `evalgate.__version__` agree, README pins `action@v0.1.0`); `release.yml` in place; local tag `v0.1.0` is created on the final commit in T-46 |
 | T-45 | Reviews and fixes | M9 | todo | |
 | T-46 | Final verification | M9 | todo | |
 
