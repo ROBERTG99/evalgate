@@ -73,7 +73,7 @@ def generate(n: int = 150, n_dev: int = 90) -> list[dict[str, Any]]:
         total = round(subtotal + tax, 2)
         date_style = r.randint(0, 2)
         number_label = r.choice(["Invoice No:", "Invoice #:", "Invoice number"])
-        hard = r.random() < 0.04
+        hard = r.random() < 0.025
         total_label = "Please pay" if hard else r.choice(["Total due:", "TOTAL:", "Amount due:", "Balance due:"])
         body = [
             vendor,

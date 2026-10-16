@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 import yaml
+
 from data.generator.classify import generate as classify_rows
 
 

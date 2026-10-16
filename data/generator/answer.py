@@ -175,78 +175,67 @@ SCHEMAS: list[tuple[str, str, list[Fact]]] = [
 ]
 
 # Extra phrasings so every row asks a distinct question (no dev/test leakage).
-EXTRA_QUESTIONS: dict[str, list[str]] = {
+EXTRA_QUESTIONS: dict[str, list[tuple[int, str]]] = {
     "returns": [
-        "What is the return window for unused {line}?",
-        "Can unused {line} be returned, and for how many days?",
-        "When will my refund for returned {line} reach my payment method?",
-        "How many business days until a refund for returned {line} arrives?",
+        (0, "What is the return window for unused {line}?"),
+        (0, "Can unused {line} be returned, and for how many days?"),
+        (1, "When will my refund for returned {line} reach my payment method?"),
+        (1, "How many business days until a refund for returned {line} reaches my payment method?"),
     ],
     "warranty": [
-        "How many years of warranty do {line} have?",
-        "Is there a warranty against defects on {line}?",
-        "Which documents does a warranty claim for {line} need?",
-        "What should I include when I claim the warranty on {line}?",
+        (0, "How many years of warranty do {line} have?"),
+        (0, "Is there a warranty against defects on {line}?"),
+        (1, "Which documents does a warranty claim for {line} need?"),
+        (1, "What does a warranty claim for {line} need?"),
     ],
     "shipping_cost": [
-        "What does standard shipping of {line} cost?",
-        "When is standard shipping free for {line} orders?",
-        "How much do I pay for standard shipping of {line}?",
+        (0, "What does standard shipping of {line} cost?"),
+        (0, "When is standard shipping free for {line} orders?"),
+        (0, "How much do I pay for standard shipping of {line}?"),
     ],
     "delivery_time": [
-        "Until what time can I order {line} for same-day shipping?",
-        "How long does standard delivery of {line} take?",
-        "When must {line} orders be placed to ship the same business day?",
-        "How many business days should I expect for standard delivery of {line}?",
+        (0, "Until what time can I order {line} for same-day shipping?"),
+        (1, "How long does standard delivery of {line} take?"),
+        (0, "When must {line} orders be placed to ship the same business day?"),
+        (1, "How many business days should I expect for standard delivery of {line}?"),
     ],
     "support_hours": [
-        "When can I call the {line} support team on weekdays?",
-        "What time does the {line} support chat close on Saturdays?",
-        "From what time does the {line} support team answer calls on weekdays?",
-        "Is the {line} support chat open on Saturdays, and until when?",
+        (0, "When can I call the {line} support team on weekdays?"),
+        (1, "What time does the {line} support chat close on Saturdays?"),
+        (0, "From what time does the {line} support team answer calls on weekdays?"),
+        (1, "Is the {line} support chat open on Saturdays, and until when?"),
     ],
     "price_match": [
-        "How long after purchase can I ask for a price match on {line}?",
-        "Do you match the price of {line} sold by another shop, and for how many days?",
-        "What is the price match period for {line}?",
+        (0, "How long after purchase can I ask for a price match on {line}?"),
+        (0, "Do you match the price of {line} sold by another shop, and for how many days?"),
+        (0, "What is the price match period for {line}?"),
     ],
     "bulk": [
-        "Is there a discount for bulk orders of {line}?",
-        "What percentage off do bulk orders of {line} get?",
-        "From how many units does a bulk discount on {line} apply?",
+        (0, "Is there a discount for bulk orders of {line}?"),
+        (0, "What percentage off do bulk orders of {line} get?"),
+        (0, "From how many units does a bulk discount on {line} apply?"),
     ],
     "gift_cards": [
-        "For how many years can I use gift cards for {line}?",
-        "Do gift cards for {line} expire?",
-        "What is the validity period of gift cards for {line}?",
+        (0, "For how many years can I use gift cards for {line}?"),
+        (0, "Do gift cards for {line} expire?"),
+        (0, "What is the validity period of gift cards for {line}?"),
     ],
     "repairs": [
-        "What is the starting price for out-of-warranty repairs of {line}?",
-        "How long until a repaired item from the {line} range is sent back?",
-        "What do out-of-warranty repairs of {line} start at?",
-        "How many days does a repair of {line} take before it is sent back?",
+        (0, "What is the starting price for out-of-warranty repairs of {line}?"),
+        (1, "How long until a repaired item from the {line} range is sent back?"),
+        (0, "What do out-of-warranty repairs of {line} start at?"),
+        (1, "How many days until a repaired item from the {line} range is sent back?"),
     ],
     "damaged": [
-        "What is the deadline to report damaged {line} after delivery?",
-        "How many hours do I have to report damaged {line}?",
-        "Within how many hours should damaged {line} be reported for a free replacement?",
+        (0, "What is the deadline to report damaged {line} after delivery?"),
+        (0, "How many hours do I have to report damaged {line}?"),
+        (0, "Within how many hours should damaged {line} be reported for a free replacement?"),
     ],
 }
 
 
 def _fill(template: str, values: dict[str, Any]) -> str:
     return template.format(**values)
-
-
-def _words(text: str) -> set[str]:
-    return {w.strip("?.,!").lower() for w in text.split() if len(w.strip("?.,!")) > 3}
-
-
-def _belongs(question: str, schema_facts: list[Fact], k: int, j: int) -> bool:
-    """An extra question belongs to the fact whose sentence shares the most words with it."""
-    overlaps = [len(_words(question) & _words(f[0])) for f in schema_facts]
-    best = max(range(len(schema_facts)), key=lambda i: (overlaps[i], -i))
-    return best == k
 
 
 def build_corpus() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -266,8 +255,8 @@ def build_corpus() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
                 intro = f"This page explains {topic.replace('_', ' ')} for {line} bought in our {region}."
                 sentences = [intro]
                 extras = EXTRA_QUESTIONS.get(topic, [])
-                for k, (sentence_t, _slots, key_t, questions_t) in enumerate(schema_facts):
-                    questions_t = questions_t + [q for j, q in enumerate(extras) if _belongs(q, schema_facts, k, j)]
+                for k, (sentence_t, _slots, key_t, base_questions) in enumerate(schema_facts):
+                    questions_t = base_questions + [q for idx, q in extras if idx == k]
                     sentence = _fill(sentence_t, values)
                     sentence = sentence[:-1] + f" in our {region}."
                     sentences.append(sentence)
