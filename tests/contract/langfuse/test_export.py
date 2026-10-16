@@ -41,3 +41,13 @@ def test_langfuse_down_retries_then_fails() -> None:
     outcome = LangfuseExporter("http://127.0.0.1:9", "pk", "sk", backoff_s=0).export(ten_case_report())
     assert not outcome.ok
     assert "after 3 attempts" in (outcome.error or "")
+
+
+def test_non_json_success_is_a_failed_export_not_a_crash() -> None:
+    import httpx
+
+    client = httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, text="<html>proxy</html>")))
+    outcome = LangfuseExporter("http://langfuse.local", "pk", "sk", client=client, backoff_s=0).export(
+        ten_case_report()
+    )
+    assert not outcome.ok and "without JSON" in (outcome.error or "")

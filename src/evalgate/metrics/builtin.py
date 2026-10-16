@@ -124,8 +124,10 @@ class RegexMetric(BaseMetric):
     def score(self, case: Case, result: TargetResult) -> MetricScore:
         ctx = context(case, result)
         pattern = resolve(self.params["pattern"], ctx)
-        if pattern is None and self.params.get("skip_missing", False):
-            return self.make(1.0, skipped="no pattern for this case")
+        if pattern is None:
+            if self.params.get("skip_missing", False):
+                return self.make(1.0, skipped="no pattern for this case")
+            return self.make(0.0, problem="no pattern for this case")
         actual = resolve(self.params.get("actual", "output"), ctx)
         ok = isinstance(actual, str) and self.compiled(str(pattern)).search(actual) is not None
         return self.make(1.0 if ok else 0.0, actual=_excerpt(actual))

@@ -106,7 +106,10 @@ class LangfuseExporter:
                     f"{self.host}/api/public/ingestion", json={"batch": batch}, auth=self.auth, timeout=10.0
                 )
                 if resp.status_code in (200, 201, 207):
-                    body = resp.json() if resp.content else {}
+                    try:
+                        body = resp.json() if resp.content else {}
+                    except ValueError as exc:  # a proxy page or other non-JSON success body
+                        raise RuntimeError(f"langfuse answered {resp.status_code} without JSON") from exc
                     errors = body.get("errors") if isinstance(body, dict) else None
                     if errors:
                         raise RuntimeError(f"langfuse rejected {len(errors)} events: {str(errors[0])[:200]}")

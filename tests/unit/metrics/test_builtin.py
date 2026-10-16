@@ -76,3 +76,9 @@ def test_missing_output_scores_zero_not_crash(kind: str) -> None:
     m = build(kind, **params)
     s = m.score(case(), result("plain string"))
     assert 0.0 <= s.value <= 1.0
+
+
+def test_regex_without_pattern_scores_zero() -> None:
+    """A missing pattern must not compile the literal string "None" and match it."""
+    m = build("regex", actual="output.label", pattern="expected.pattern")
+    assert m.score(case(expected={}), result({"label": "None"})).value == 0.0
