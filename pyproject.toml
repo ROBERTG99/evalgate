@@ -98,7 +98,7 @@ src = ["src", "tests", "scripts", "examples/toy-targets/src", "data"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PT", "C4", "PL"]
-ignore = ["PLR0913", "PLR2004", "PLR0911", "PLR0912", "PLR0915", "S101", "RUF001", "RUF002", "RUF003", "PLC0415", "PLW0603", "PT018", "PLR0917", "PLR6301", "PLC2701"]
+ignore = ["PLR0913", "PLR2004", "PLR0911", "PLR0912", "PLR0915", "S101", "RUF001", "RUF002", "RUF003", "PLC0415", "PLW0603", "PT018", "PLR0917", "PLR6301", "PLC2701", "SIM108"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S", "PLR", "B011", "PT011", "E501", "RUF005", "SIM105", "PLW"]
