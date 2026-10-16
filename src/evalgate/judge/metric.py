@@ -66,6 +66,8 @@ class JudgeMetric(BaseMetric):
         self.diag.cases += 1
         base = {"label": "AI judge", "rubric": self.loaded.label, "prompt_version": self.loaded.prompt_version}
         hit = injection_match(candidate)
+        if hit is None and self.rubric.mode == "pairwise":
+            hit = injection_match(candidate_b)
         if hit:
             self.diag.injections_blocked += 1
             self.diag.verdicts["injection"] = self.diag.verdicts.get("injection", 0) + 1

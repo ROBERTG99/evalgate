@@ -17,8 +17,13 @@ TAG = re.compile(r"<(task_input|reference|candidate_output)(?: id=\"([AB])\")?>(
 RUBRIC_TAG = re.compile(r'<rubric name="([a-z0-9_]+)" version="(\d+)" mode="(\w+)" scale="(\w+)">')
 
 
+MAX_FIELD_CHARS = 40_000  # per escaped field: four fields stay well under the gateway's redaction cap
+
+
 def esc(text: str) -> str:
-    return html.escape(text, quote=False)
+    """Escape one field and cut it inside its tag, so an oversized field can never push out the others."""
+    out = html.escape(text, quote=False)
+    return out if len(out) <= MAX_FIELD_CHARS else out[:MAX_FIELD_CHARS] + " [TRUNCATED]"
 
 
 def render_user(
