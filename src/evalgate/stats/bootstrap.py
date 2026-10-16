@@ -49,8 +49,8 @@ def mean_ci(
 
 
 def paired_delta_ci(
-    baseline: Sequence[float],
-    candidate: Sequence[float],
+    baseline: Sequence[float] | np.ndarray,
+    candidate: Sequence[float] | np.ndarray,
     seed: int,
     resamples: int = DEFAULT_RESAMPLES,
     level: float = 0.95,
