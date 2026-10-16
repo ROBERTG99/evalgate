@@ -21,7 +21,7 @@
     <p class="muted num">95% CI {% if m.ci_low is not none %}[{{ "%.4f"|format(m.ci_low) }}, {{ "%.4f"|format(m.ci_high) }}]{% else %}n/a{% endif %}
       · threshold {% if m.threshold is not none %}{{ "≥" if m.direction == "higher" else "≤" }} {{ m.threshold }}{% else %}none{% endif %}
       · {% if gates.get(name) is sameas false %}not gated{% else %}gated{% endif %}</p>
-    <p>{{ badge(m.passed) }}</p>
+    <p>{% if metric_errors.get(name) %}{{ badge(false, "error in " ~ metric_errors[name] ~ " cases") }}{% else %}{{ badge(m.passed) }}{% endif %}</p>
   </section>
 {% endfor %}
   <section class="card" aria-labelledby="metric-cost">

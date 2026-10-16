@@ -361,6 +361,7 @@ class Handler(BaseHTTPRequestHandler):
             judge=ext.get("judge") or {},
             judge_details=ext.get("judge_details") or {},
             gates=ext.get("gates") or {},
+            metric_errors=ext.get("metric_errors") or {},
         )
 
     def compare_page(self) -> None:

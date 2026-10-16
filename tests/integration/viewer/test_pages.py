@@ -137,3 +137,10 @@ def test_hostile_files_do_not_break_pages(tmp_path: Path) -> None:
     assert page.status_code == 200
     assert [r["run_id"] for r in api["runs"]] == [RUN_A]
     assert {e["file"] for e in api["errors"]} == {"deep.json", "binary.json"}
+
+
+def test_metric_with_errors_is_not_shown_as_passing(tmp_path: Path) -> None:
+    write(tmp_path / "r.json", RUN_A, [1.0] * 10, extensions={"metric_errors": {"acc": 3}})
+    with viewer(tmp_path) as url:
+        page = httpx.get(f"{url}/runs/{RUN_A}").text
+    assert "error in 3 cases" in page
