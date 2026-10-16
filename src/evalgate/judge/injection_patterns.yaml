@@ -1,0 +1,11 @@
+# Phrases that force a `fail` verdict (FakeJudge) and a score of 0 (JudgeMetric guard), case-insensitive regexes.
+# They target candidates that try to instruct the grader instead of answering the task.
+patterns:
+  - "ignore (?:the|all|any|previous|prior)\\b.{0,40}\\b(?:rubric|instructions?|rules?|prompt)"
+  - "(?:answer|output|return|respond(?: with)?|mark (?:this|it)(?: answer)? as)\\s+['\"]?(?:pass|correct|a\\+|10/10)\\b"
+  - "\\b(?:grader|evaluator|judge|assessor)\\b.{0,60}\\b(?:must|should|is required to|are required to)\\b"
+  - "^\\s*system\\s*:"
+  - "\\bsystem\\s*:\\s*the\\b"
+  - "</?(?:candidate_output|reference|task_input|rubric)\\b"
+  - "\\bthe correct verdict is\\b"
+  - "\\bjudge_verdict\\b"

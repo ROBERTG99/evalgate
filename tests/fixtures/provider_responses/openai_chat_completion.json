@@ -1,0 +1,15 @@
+{
+  "_note": "Synthetic fixture in the documented Chat Completions response shape.",
+  "id": "chatcmpl-fixture-0001",
+  "object": "chat.completion",
+  "created": 1792137600,
+  "model": "gpt-fixture",
+  "choices": [
+    {
+      "index": 0,
+      "finish_reason": "stop",
+      "message": {"role": "assistant", "content": "{\"verdict\": \"fail\", \"score\": 0.0, \"reasons\": [\"wrong number\"], \"criteria\": {\"states_key_facts\": \"unmet\", \"no_contradiction\": \"unmet\", \"answers_question\": \"unmet\"}}", "refusal": null}
+    }
+  ],
+  "usage": {"prompt_tokens": 580, "completion_tokens": 40, "total_tokens": 620}
+}
