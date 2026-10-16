@@ -51,9 +51,8 @@ def main() -> int:
         lic = row["License"]
         if lic in ("UNKNOWN", "", "None"):
             lic = row["License"] = from_license_file(row["Name"])
-        if FORBIDDEN.search(lic) and not ALLOWED.search(lic.split(" OR ")[0]):
-            bad.append(row)
-        elif not ALLOWED.search(lic):
+        forbidden_only = FORBIDDEN.search(lic) and not ALLOWED.search(lic.split(" OR ")[0])
+        if forbidden_only or not ALLOWED.search(lic):
             bad.append(row)
     out = ROOT / "dist" / "licenses.json"
     out.parent.mkdir(exist_ok=True)
