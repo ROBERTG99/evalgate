@@ -120,3 +120,20 @@ def test_json_report_sizes(tmp_path: Path, monkeypatch) -> None:  # type: ignore
     assert errors[0]["status"] == 413
     assert "over the 50 MB limit" in errors[0]["error"]
     assert json.dumps(errors)
+
+
+def test_hostile_files_do_not_break_pages(tmp_path: Path) -> None:
+    write(tmp_path / "good.json", RUN_A, [1.0] * 4)
+    (tmp_path / "deep.json").write_text("[" * 200_000)
+    (tmp_path / "binary.json").write_bytes(b"\xff\xfe\x00junk")
+    outside = tmp_path.parent / f"{tmp_path.name}-outside.json"
+    write(outside, RUN_B, [1.0] * 2)
+    (tmp_path / "link.json").symlink_to(outside)
+    with viewer(tmp_path) as url:
+        page = httpx.get(url + "/")
+        api = httpx.get(url + "/api/runs").json()
+        assert httpx.get(f"{url}/runs/{RUN_A}").status_code == 200
+        assert httpx.get(f"{url}/runs/{RUN_B}").status_code == 404  # the symlinked file is never read
+    assert page.status_code == 200
+    assert [r["run_id"] for r in api["runs"]] == [RUN_A]
+    assert {e["file"] for e in api["errors"]} == {"deep.json", "binary.json"}

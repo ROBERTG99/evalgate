@@ -59,7 +59,12 @@ class ReportIndex:
         files = sorted(p for p in self.root.rglob("*.json") if p.is_file()) if self.root.is_dir() else []
         with self._lock:
             for path in files:
-                stat = path.stat()
+                if not path.resolve().is_relative_to(self.root.resolve()):
+                    continue  # never follow a symlink out of the reports directory
+                try:
+                    stat = path.stat()
+                except OSError:
+                    continue  # deleted between listing and stat
                 cached = self._cache.get(path)
                 if cached and cached[0] == stat.st_mtime and cached[1] == stat.st_size:
                     entries.append(cached[2])
@@ -75,12 +80,14 @@ class ReportIndex:
             return Entry(path, error=f"{rel}: report is {size} bytes, over the 50 MB limit", status=413)
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-            return Entry(path, error=f"{rel}: invalid JSON: {exc}")
+        except (ValueError, RecursionError, OSError) as exc:  # ValueError covers JSON and Unicode errors
+            return Entry(path, error=f"{rel}: invalid JSON: {exc.__class__.__name__}: {str(exc)[:200]}")
         if not isinstance(data, dict) or not str(data.get("schema", "")).startswith("evalgate.report"):
             return Entry(path, error=f"{rel}: not an evalgate report (missing schema evalgate.report.v1)")
         try:
             return Entry(path, report=Report.model_validate(data))
+        except RecursionError:
+            return Entry(path, error=f"{rel}: report is nested too deeply")
         except ValidationError as exc:
             first = exc.errors()[0]
             where = "$" + "".join(f"[{p}]" if isinstance(p, int) else f".{p}" for p in first["loc"])
@@ -112,6 +119,8 @@ class CompareJobs:
         with self.lock:
             job = self.jobs.get(key)
             if job is None or job.get("signature") != (base.created_at, cand.created_at):
+                if len(self.jobs) >= 128:  # bounded memory: forget the oldest comparison
+                    self.jobs.pop(next(iter(self.jobs)))
                 job = {"status": "running", "signature": (base.created_at, cand.created_at), "started": time.time()}
                 self.jobs[key] = job
                 threading.Thread(target=self._run, args=(job, base, cand), daemon=True).start()
@@ -143,6 +152,10 @@ class RateLimiter:
             q = self.hits[client]
             while q and now - q[0] > 1.0:
                 q.popleft()
+            if len(self.hits) > 10_000:  # bounded memory: drop idle clients
+                for key in [k for k, v in self.hits.items() if not v or now - v[-1] > 1.0]:
+                    del self.hits[key]
+                q = self.hits[client]
             if len(q) >= self.per_second:
                 return False
             q.append(now)
@@ -174,6 +187,7 @@ class Viewer:
 
 
 class Handler(BaseHTTPRequestHandler):
+    timeout = 30  # seconds a slow client may hold a worker thread
     server_version = "evalgate-viewer"
     sys_version = ""
     viewer: Viewer
@@ -354,7 +368,10 @@ class Handler(BaseHTTPRequestHandler):
                 "compare.html", state="error", base=base, cand=cand, error=job["error"], reports=reports, status=500
             )
         result: CheckResult = job["result"]
-        failures = {f.metric: f for f in result.failures}
+        failures: dict[str, Any] = {}
+        for f in result.failures:  # regressions win the badge; every reason is listed
+            if f.metric not in failures or f.reason == "regression":
+                failures[f.metric] = f
         base_scores = {c.id: c.scores for c in base.cases}
         moved: list[dict[str, Any]] = []
         for c in cand.cases:

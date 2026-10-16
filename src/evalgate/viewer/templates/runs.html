@@ -32,7 +32,7 @@
   <button type="submit">Filter</button>
 </form>
 <form method="get" action="/compare" aria-label="Compare two runs">
-<div class="table-wrap">
+<div class="table-wrap" tabindex="0" role="region" aria-label="Runs table (scrolls horizontally)">
 <table>
   <caption>{{ rows|length }} run{{ "s" if rows|length != 1 }}, newest first. Pick a baseline and a candidate to compare.</caption>
   <thead><tr>

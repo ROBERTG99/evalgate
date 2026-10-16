@@ -51,8 +51,8 @@ def test_no_serious_axe_violations(viewer_url: str, browser: Any) -> None:
         f"{viewer_url}/runs/00000000-0000-0000-0000-000000000000",
     ]
     problems = {}
-    for scheme in ("light", "dark"):
-        context = browser.new_context(color_scheme=scheme)
+    for scheme, width in (("light", 1280), ("dark", 1280), ("light", 375), ("dark", 375)):
+        context = browser.new_context(color_scheme=scheme, viewport={"width": width, "height": 900})
         page = context.new_page()
         for target in targets:
             page.goto(target)
@@ -60,7 +60,7 @@ def test_no_serious_axe_violations(viewer_url: str, browser: Any) -> None:
                 wait_compare(page)
             found = serious(page)
             if found:
-                problems[f"{scheme} {target}"] = found
+                problems[f"{scheme} {width}px {target}"] = found
         context.close()
     assert problems == {}
 

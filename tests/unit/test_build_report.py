@@ -33,7 +33,7 @@ def test_numbers_come_from_reports(tmp_path: Path) -> None:
     reports = tmp_path / "reports"
     shutil.copytree(FIXTURES, reports)
     out = tmp_path / "REPORT.md"
-    text, passed, missing = build_eval_report.build(reports, out)
+    text, _passed, missing = build_eval_report.build(reports, out)
     assert missing == []
     allowed: set[str] = set()
     for path in reports.glob("*.json"):

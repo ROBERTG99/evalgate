@@ -33,13 +33,13 @@
 {% elif state == "error" %}
 <section class="panel error" role="alert"><h2>The comparison failed</h2><pre>{{ error }}</pre></section>
 {% else %}
-<h2>Result {{ badge(result.passed, failures.values()|map(attribute="reason")|unique|join(", ")) }}</h2>
+<h2>Result {{ badge(result.passed, result.failures|map(attribute="reason")|unique|join(", ")) }}</h2>
 <p class="muted">Paired bootstrap, {{ "{:,}".format(result.resamples) }} resamples, seed {{ result.seed }}, max regression {{ result.max_regression_pp }} pp{% if seconds is not none %}, computed in {{ seconds }} s{% endif %}.</p>
-<div class="table-wrap">
+<div class="table-wrap" tabindex="0" role="region" aria-label="Metric deltas table (scrolls horizontally)">
 <table>
   <caption>Metric deltas, candidate minus baseline, in percentage points</caption>
   <thead><tr><th scope="col">Metric</th><th scope="col" class="num">Baseline</th><th scope="col" class="num">Candidate</th>
-  <th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ (pp)</th><th scope="col" class="num">Paired n</th><th scope="col">Gate</th></tr></thead>
+  <th scope="col" class="num">Δ (pp)</th><th scope="col" class="num">95% CI of Δ (pp)</th><th scope="col" class="num">Paired n</th><th scope="col">Gate</th></tr></thead>
   <tbody>
   {% for c in result.comparisons %}
   <tr>
@@ -57,7 +57,7 @@
 {% set other = result.failures|rejectattr("reason", "equalto", "regression")|list %}
 {% if other %}<section class="panel error" role="alert"><h2>Other gate failures</h2><ul>{% for f in other %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {{ f.value }} vs {{ f.threshold }}</li>{% endfor %}</ul></section>{% endif %}
 <h2>Cases that moved</h2>
-<div class="table-wrap">
+<div class="table-wrap" tabindex="0" role="region" aria-label="Cases that moved table (scrolls horizontally)">
 <table>
   <caption>{{ moved|length }} cases changed score, regressed cases first</caption>
   <thead><tr><th scope="col">Case</th><th scope="col">Change</th><th scope="col">Baseline scores</th><th scope="col">Candidate scores</th></tr></thead>
