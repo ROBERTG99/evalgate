@@ -64,9 +64,21 @@ runs:
         ACTION_PATH: ${{ github.action_path }}
       run: |
         set -euo pipefail
-        spec="${ACTION_PATH}/.."
-        if [ -n "${EXTRAS}" ]; then spec="${spec}[${EXTRAS}]"; fi
-        python -m pip install --disable-pip-version-check --quiet "${spec}"
+        # Dependencies come from uv.lock with hashes (never fresh resolution at run time); evalgate itself
+        # is installed from the action's checkout without re-resolving.
+        project="${ACTION_PATH}/.."
+        python -m pip install --disable-pip-version-check --quiet "uv==0.11.32"
+        extra_args=()
+        IFS=',' read -r -a extras <<< "${EXTRAS}"
+        for extra in "${extras[@]}"; do
+          extra="$(echo "${extra}" | tr -d '[:space:]')"
+          if [ -n "${extra}" ]; then extra_args+=(--extra "${extra}"); fi
+        done
+        reqs="${RUNNER_TEMP}/evalgate-requirements.txt"
+        uv export --project "${project}" --package evalgate --frozen --no-dev --no-emit-workspace \
+          --quiet "${extra_args[@]}" -o "${reqs}"
+        python -m pip install --disable-pip-version-check --quiet --require-hashes -r "${reqs}"
+        python -m pip install --disable-pip-version-check --quiet --no-deps "${project}"
     - name: Run suite
       id: run
       shell: bash

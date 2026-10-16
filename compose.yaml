@@ -120,7 +120,7 @@ services:
 
   langfuse-web:
     profiles: ["langfuse"]
-    image: langfuse/langfuse:3
+    image: langfuse/langfuse:3.225.11
     depends_on: [langfuse-postgres, langfuse-redis, langfuse-clickhouse, langfuse-minio]
     environment: &langfuse-env
       DATABASE_URL: postgresql://langfuse:${LANGFUSE_DB_PASSWORD:-langfuse-local}@langfuse-postgres:5432/langfuse
@@ -148,7 +148,7 @@ services:
 
   langfuse-worker:
     profiles: ["langfuse"]
-    image: langfuse/langfuse-worker:3
+    image: langfuse/langfuse-worker:3.225.11
     depends_on: [langfuse-postgres, langfuse-redis, langfuse-clickhouse, langfuse-minio]
     environment: *langfuse-env
 
