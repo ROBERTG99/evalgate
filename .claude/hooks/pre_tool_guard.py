@@ -51,7 +51,7 @@ def protected(path_text: str, cwd: Path) -> str | None:
         rel = path.resolve().relative_to(ROOT.resolve()).as_posix()
     except ValueError:
         return None
-    if rel.startswith(PROTECTED_DIRS) and path.exists():
+    if (rel.startswith(PROTECTED_DIRS) or rel + "/" in PROTECTED_DIRS or rel in ("evals",)) and path.exists():
         return rel
     return None
 
