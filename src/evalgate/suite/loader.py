@@ -50,7 +50,9 @@ def _describe(err: Any) -> tuple[str, str]:
 
 
 def validation_error(path: Path | str, exc: ValidationError, prefix: str = "") -> InvalidInputError:
-    location, problem = _describe(exc.errors()[0])
+    # Unknown keys first: a typo such as `metircs` also causes a "missing key" error for `metrics`.
+    errors = sorted(exc.errors(), key=lambda e: e["type"] != "extra_forbidden")
+    location, problem = _describe(errors[0])
     extra = len(exc.errors()) - 1
     if extra:
         problem += f" (and {extra} more problem{'s' if extra > 1 else ''})"
