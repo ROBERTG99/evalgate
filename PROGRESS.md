@@ -48,7 +48,7 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-27 | Composite action and PR comment | M3 | done | `uv run pytest tests/integration/test_pr_comment.py tests/harness/test_action.py` → 4 passed (two runs → 1 POST + 1 PATCH; 403 skipped); `.tools/bin/actionlint` clean |
 | T-28 | Viewer tokens, runs list and run detail | M4 | done | `uv run pytest tests/unit/viewer tests/integration/viewer/test_pages.py` → 11 passed (all light/dark text pairs ≥ 4.5:1; malformed report shown in an error panel) |
 | T-29 | Comparison page | M4 | done | `uv run pytest tests/integration/viewer/test_compare.py` → 2 passed (aria-busy loading page, then deltas with CIs and regressed cases first) |
-| T-30 | Playwright, axe and screenshots | M4 | todo | |
+| T-30 | Playwright, axe and screenshots | M4 | done | `make e2e` → 5 passed (no serious/critical axe violations on 7 pages × light/dark); wrote docs/images/{runs-list,run-detail-dark,compare-regression,mobile-375}.png and demo.webm |
 | T-31 | Toy suites, rubrics and baselines | M5 | done | `uv run pytest tests/integration/evals/test_v1_suites.py` → 4 passed (v1 passes, v2 fails with a regression for classify, extract, answer); baselines recorded in docs/DECISIONS.md |
 | T-32 | Meta-evaluation | M5 | todo | |
 | T-33 | Calibration eval and live scripts | M5 | todo | |
