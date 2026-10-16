@@ -58,15 +58,19 @@ class ResponseCache:
             self.con.close()
             self.con = None
 
-    def get(self, key: str) -> dict[str, Any] | None:
+    def get(self, key: str, ttl_days: int | None = None) -> dict[str, Any] | None:
+        """The row for ``key`` unless it is older than ``ttl_days`` (default EVALGATE_CACHE_TTL_DAYS)."""
         if self.con is None:
             return None
+        from evalgate import config
+
+        cut = datetime.now(UTC).replace(tzinfo=None) - timedelta(days=ttl_days or config.cache_ttl_days())
         with self._lock:
             try:
                 row = self.con.execute(
-                    "SELECT response, input_tokens, output_tokens, cost_usd, latency_ms, model FROM responses "
-                    "WHERE key = ?",
-                    [key],
+                    "SELECT response, input_tokens, output_tokens, cost_usd, latency_ms, model, request_digest "
+                    "FROM responses WHERE key = ? AND created_at >= ?",
+                    [key, cut],
                 ).fetchone()
             except duckdb.CatalogException:  # read-only file without the table yet
                 return None
@@ -83,6 +87,7 @@ class ResponseCache:
             "cost_usd": row[3],
             "latency_ms": row[4],
             "model": row[5],
+            "request_digest": row[6],
         }
 
     def put(

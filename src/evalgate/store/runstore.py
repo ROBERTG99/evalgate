@@ -210,8 +210,13 @@ class RunStore:
     def verify_audit(self) -> tuple[bool, int | None]:
         """Recompute the hash chain. Returns ``(ok, first_bad_seq)``."""
         audit = rows(self.con, "SELECT * FROM gate_audit ORDER BY seq")
-        # After retention pruned the head, the chain continues from the oldest kept row's prev_hash.
-        prev = GENESIS if not audit or audit[0]["seq"] == 1 else audit[0]["prev_hash"]
+        prev = GENESIS
+        if audit and audit[0]["seq"] != 1:
+            # Retention pruned the head: the chain must continue from a recorded anchor.
+            anchor = self.con.execute("SELECT hash FROM audit_anchor WHERE seq = ?", [audit[0]["seq"] - 1]).fetchone()
+            if anchor is None or anchor[0] != audit[0]["prev_hash"]:
+                return False, int(audit[0]["seq"])
+            prev = anchor[0]
         for row in audit:
             record = {
                 "seq": row["seq"],
@@ -241,5 +246,10 @@ class RunStore:
                 for run_id in old:
                     self.con.execute(f"DELETE FROM {table} WHERE run_id = ?", [run_id])  # noqa: S608 - fixed names
             n_audit = self.con.execute("SELECT count(*) FROM gate_audit WHERE ts < ?", [audit_cut]).fetchone()
+            last = self.con.execute(
+                "SELECT seq, hash FROM gate_audit WHERE ts < ? ORDER BY seq DESC LIMIT 1", [audit_cut]
+            ).fetchone()
+            if last is not None:
+                self.con.execute("INSERT OR REPLACE INTO audit_anchor VALUES (?, ?, ?)", [last[0], last[1], current])
             self.con.execute("DELETE FROM gate_audit WHERE ts < ?", [audit_cut])
         return {"runs": len(old), "audit": int(n_audit[0]) if n_audit else 0}

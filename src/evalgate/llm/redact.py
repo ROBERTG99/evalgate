@@ -26,7 +26,12 @@ def _card(match: re.Match[str]) -> str:
     return "[CARD]" if 13 <= len(digits) <= 19 and luhn_ok(digits) else match.group(0)
 
 
+DATE = re.compile(r"\d{4}-\d{2}-\d{2}|\d{1,2}[./]\d{1,2}[./]\d{2,4}")
+
+
 def _phone(match: re.Match[str]) -> str:
+    if DATE.search(match.group(0)):
+        return match.group(0)
     digits = re.sub(r"\D", "", match.group(0))
     return "[PHONE]" if 9 <= len(digits) <= 15 else match.group(0)
 

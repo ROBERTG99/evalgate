@@ -165,11 +165,11 @@ class JudgeContext:
         self.judge_calls += 1
         if self.cache is not None:
             hit = self.cache.get(key)
-            if hit is not None and not (self.gateway.live and hit.get("model") == FAKE_MODEL):
+            if hit is not None and self._usable(hit, req):
                 self.cache_hits += 1
                 telemetry.count("evalgate_cache_hits_total")
                 model = str(hit.get("model") or req.model)
-                self._models.add(model)
+                self._models.add(model.removeprefix("cassette:"))
                 return JudgeCall(JudgeVerdict.model_validate(hit["response"]), 0.0, "cache", model, True)
         async with self.sem:
             self.provider_calls += 1
@@ -178,10 +178,11 @@ class JudgeContext:
         self.cost_usd += resp.cost_usd
         self._models.add(resp.model)
         if self.cache is not None:
+            stored_model = f"cassette:{resp.model}" if resp.source == "cassette" else resp.model
             self.cache.put(
                 key,
                 route=req.route,
-                model=resp.model,
+                model=stored_model,
                 prompt_version=req.prompt_version,
                 request_digest=request_digest(req),
                 response=verdict.model_dump(),
@@ -192,6 +193,14 @@ class JudgeContext:
                 replace=bool(self.gateway.live),
             )
         return JudgeCall(verdict, resp.cost_usd, resp.source, resp.model, False)
+
+    def _usable(self, hit: dict[str, Any], req: LLMRequest) -> bool:
+        """Live runs only reuse live verdicts and offline runs only offline ones (rules or cassettes),
+        and a row whose request digest differs (prompt edited without a version bump) is stale."""
+        offline_row = str(hit.get("model") or "").startswith((FAKE_MODEL, "cassette:"))
+        if offline_row == bool(self.gateway.live):
+            return False
+        return hit.get("request_digest") in (None, request_digest(req))
 
     def models_used(self) -> set[str]:
         return set(self._models)

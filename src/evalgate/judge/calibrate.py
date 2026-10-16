@@ -73,12 +73,15 @@ async def _run(metric: JudgeMetric, rows: list[LabelRow]) -> dict[str, Any]:
     injection_passes = 0
     padded_shift: list[float] = []
     disagreements = []
+    errors = 0
     for row in rows:
         score = await metric.judge(row.input, row.reference, row.candidate, row.candidate_b or "")
         if rubric.mode == "pairwise":
             pred = {1.0: "A", 0.0: "B"}.get(score.value, "tie")
         else:
             pred = "1" if score.passed else "0"
+        if score.details.get("metric_error"):
+            errors += 1
         if score.details.get("position_inconsistent"):
             inconsistent += 1
         if row.meta.get("construction") == "injection":
@@ -104,6 +107,7 @@ async def _run(metric: JudgeMetric, rows: list[LabelRow]) -> dict[str, Any]:
         "verbosity_bias": round(sum(padded_shift) / len(padded_shift), 6) if padded_shift else 0.0,
         "injection_items": injections,
         "injection_pass_through": round(injection_passes / injections, 6) if injections else 0.0,
+        "judge_errors": errors,
         "disagreements": disagreements[:50],
     }
 
@@ -128,6 +132,7 @@ def calibrate(
         "position_inconsistency": stats["position_inconsistency"] <= t.position_inconsistency_max,
         "verbosity_bias": abs(stats["verbosity_bias"]) <= t.verbosity_bias_max,
         "injection_pass_through": stats["injection_pass_through"] == 0.0,
+        "judge_errors": stats["judge_errors"] == 0,
     }
     return {
         "schema": "evalgate.calibration.v1",

@@ -111,3 +111,29 @@ def test_gc_prunes_by_ttl(tmp_path: Path) -> None:
     cache.put("new", route="judge", model="m", prompt_version="p", request_digest="d", response={})
     assert cache.gc(90) == 1
     assert cache.get("old") is None and cache.get("new") is not None
+
+
+def test_offline_and_live_namespaces_and_stale_digest(tmp_path: Path) -> None:
+    import asyncio
+
+    from evalgate.contracts import MetricSpec
+    from evalgate.judge.context import JudgeContext
+    from evalgate.judge.metric import JudgeMetric
+    from tests.judge_helpers import Scripted, verdict
+
+    cache = ResponseCache(tmp_path / "c.duckdb", "rw")
+    spec = MetricSpec(name="j", kind="judge", params={"rubric": "evals/rubrics/answer_correctness.v1.yaml"})
+    crit = {"states_key_facts": "met", "no_contradiction": "met", "answers_question": "met"}
+    offline = JudgeContext(Gateway(provider_name="fake"), cache)
+    asyncio.run(JudgeMetric(spec, offline).judge("q", "Within 30 days.", "Within 30 days."))
+    assert offline.provider_calls == 2
+    provider = Scripted(always=verdict("pass", 1.0, crit))
+    live = JudgeContext(Gateway(provider, provider_name="anthropic", budget_usd=1.0), cache)
+    asyncio.run(JudgeMetric(spec, live).judge("q", "Within 30 days.", "Within 30 days."))
+    assert live.cache_hits == 0  # offline verdicts never satisfy a live run
+    assert provider.calls == 2
+    offline_again = JudgeContext(Gateway(provider_name="fake"), cache)
+    asyncio.run(JudgeMetric(spec, offline_again).judge("q", "Within 30 days.", "Within 30 days."))
+    assert offline_again.cache_hits == 0  # live verdicts never leak into an offline run
+    assert offline_again.provider_calls == 2
+    cache.close()

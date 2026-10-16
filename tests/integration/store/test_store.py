@@ -111,3 +111,14 @@ def test_gc_prunes_old_runs_and_audit(tmp_path: Path) -> None:
     assert store.get_cases(old.run_id) == []
     assert store.verify_audit() == (True, None)
     store.close()
+
+
+def test_audit_head_deleted_without_gc_detected(tmp_path: Path) -> None:
+    store = RunStore(tmp_path / "runs.duckdb")
+    for i in range(3):
+        store.audit_append(
+            report_sha256=f"r{i}", baseline_sha256=None, git_sha=None, decision="pass", failures=[], actor=None
+        )
+    store.con.execute("DELETE FROM gate_audit WHERE seq = 1")  # not through gc: no anchor
+    assert store.verify_audit() == (False, 2)
+    store.close()
