@@ -14,7 +14,11 @@ def test_loading_then_result(tmp_path: Path) -> None:
         first = httpx.get(f"{url}/compare?base={RUN_A}&cand={RUN_B}")
         assert first.status_code == 200
         assert 'aria-busy="true"' in first.text
-        assert '<meta http-equiv="refresh" content="1">' in first.text
+        # WCAG 2.2.1: no meta refresh; app.js reloads every second, and a link refreshes without JavaScript
+        assert 'http-equiv="refresh"' not in first.text
+        assert (
+            f'<a href="/compare?base={RUN_A}&amp;cand={RUN_B}" data-auto-refresh="1000">Refresh now</a>' in first.text
+        )
         deadline = time.monotonic() + 10
         while True:
             page = httpx.get(f"{url}/compare?base={RUN_A}&cand={RUN_B}")

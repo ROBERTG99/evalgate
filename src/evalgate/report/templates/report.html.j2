@@ -19,7 +19,7 @@
   {% if result %}<span>{{ "{:,}".format(result.resamples) }} paired-bootstrap resamples, seed {{ result.seed }}</span>{% endif %}
 </div>
 <h2>Metrics</h2>
-<div class="table-wrap"><table>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Metrics table (scrolls horizontally)"><table>
 <caption>Metric values with 95% bootstrap intervals{% if baseline %} and paired deltas against run {{ baseline.run_id }}{% endif %}</caption>
 <thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
 <tbody>
@@ -38,7 +38,7 @@
 {% for f in result.failures %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {% if f.reason == "regression" %}{{ "%+.2f"|format(f.delta_pp) }} pp (95% CI {{ "%+.2f"|format(f.ci_low_pp) }} to {{ "%+.2f"|format(f.ci_high_pp) }}){% else %}{{ f.value }} vs {{ f.threshold }}{% endif %}</li>{% endfor %}
 </ul></div>{% endif %}
 <h2>Cases</h2>
-<div class="table-wrap"><table>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Cases table (scrolls horizontally)"><table>
 <caption>{{ report.cases|length }} cases, failed first</caption>
 <thead><tr><th scope="col">Case</th><th scope="col">Split</th><th scope="col">Result</th>{% for name in report.metrics %}<th scope="col" class="num">{{ name }}</th>{% endfor %}<th scope="col" class="num">Cost (USD)</th><th scope="col" class="num">Latency (ms)</th><th scope="col">Error</th></tr></thead>
 <tbody>
@@ -47,6 +47,6 @@
 {% endfor %}
 </tbody></table></div>
 </main>
-<footer>evalgate report.v1 · generated offline from {{ report.suite }} run {{ report.run_id }}</footer>
+<footer>evalgate report.v1 · self-contained HTML for {{ report.suite }} run {{ report.run_id }} ({{ report.mode }})</footer>
 </body>
 </html>

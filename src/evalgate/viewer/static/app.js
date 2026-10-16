@@ -7,6 +7,11 @@
     if (saved === "light" || saved === "dark") { root.setAttribute("data-theme", saved); }
   } catch (e) { /* storage unavailable */ }
   document.addEventListener("DOMContentLoaded", function () {
+    // Loading pages: reload until the result is ready (a meta refresh would fail WCAG 2.2.1).
+    var refresh = document.querySelector("[data-auto-refresh]");
+    if (refresh) {
+      window.setTimeout(function () { window.location.reload(); }, Number(refresh.getAttribute("data-auto-refresh")));
+    }
     var button = document.querySelector("[data-theme-toggle]");
     if (!button) { return; }
     var current = function () {

@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% from "macros.html" import badge, mode_tag %}
-{% block head %}{% if state == "loading" %}<meta http-equiv="refresh" content="1">{% endif %}{% endblock %}
 {% block title %}Compare{% endblock %}
 {% block main_attrs %}{% if state == "loading" %}aria-busy="true"{% else %}aria-busy="false"{% endif %}{% endblock %}
 {% block content %}
@@ -28,7 +27,8 @@
 {% if state == "loading" %}
 <section class="panel loading" role="status" aria-live="polite">
   <h2>Computing the paired bootstrap…</h2>
-  <p>10,000 resamples per metric run in the background. This page refreshes every second.</p>
+  <p>10,000 resamples per metric run in the background. With JavaScript on, this page refreshes every second.</p>
+  <p><a href="/compare?base={{ base.run_id }}&amp;cand={{ cand.run_id }}" data-auto-refresh="1000">Refresh now</a></p>
 </section>
 {% elif state == "error" %}
 <section class="panel error" role="alert"><h2>The comparison failed</h2><pre>{{ error }}</pre></section>
