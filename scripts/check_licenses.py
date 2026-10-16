@@ -17,6 +17,9 @@ ALLOWED = re.compile(
     r"(\bMIT|\b0?BSD|\bApache|\bISC|\bPSF|Python Software Foundation|\bMPL-2\.0|Mozilla Public License 2\.0)",
     re.IGNORECASE,
 )
+# Permissive licenses of components bundled inside an allowed package (numpy: Zlib, CC0; regex: CNRI-Python,
+# the PSF-family license of early Python). Accepted only as parts of an AND expression (docs/DECISIONS.md).
+BUNDLED = re.compile(r"^(Zlib|CC0-1\.0|CNRI-Python)$", re.IGNORECASE)
 FORBIDDEN = re.compile(r"\b(A?GPL|LGPL|SSPL|BUSL|Commons Clause|Proprietary|Commercial)\b", re.IGNORECASE)
 IGNORE = {"evalgate", "toy-targets"}  # this repository (MIT)
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,8 +54,20 @@ def main() -> int:
         lic = row["License"]
         if lic in ("UNKNOWN", "", "None"):
             lic = row["License"] = from_license_file(row["Name"])
-        forbidden_only = FORBIDDEN.search(lic) and not ALLOWED.search(lic.split(" OR ")[0])
-        if forbidden_only or not ALLOWED.search(lic):
+        # "A OR B": one allowed option is enough; "A AND B": every part must be allowed.
+        if "\n" in lic or len(lic) > 200:  # full license text: its title line names the license
+            options = [lic.strip().splitlines()[0]]
+        else:
+            options = [o.strip("() ") for o in lic.split(" OR ")]
+        acceptable = any(
+            all(
+                (ALLOWED.search(part) or (BUNDLED.match(part.strip()) and " AND " in option))
+                and not FORBIDDEN.search(part)
+                for part in option.split(" AND ")
+            )
+            for option in options
+        )
+        if not acceptable:
             bad.append(row)
     out = ROOT / "dist" / "licenses.json"
     out.parent.mkdir(exist_ok=True)

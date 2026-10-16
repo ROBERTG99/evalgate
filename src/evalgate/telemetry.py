@@ -67,7 +67,10 @@ def setup(enabled: bool = False, exporter: Any = None, metric_reader: Any = None
         log.warning("opentelemetry-sdk is not installed; install evalgate[otel] to emit spans")
         _tracer = None
         return False
-    resource = Resource.create({"service.name": "evalgate"})
+    import uuid
+
+    # One instance id per process, so cumulative counters from separate CLI runs stay separate series.
+    resource = Resource.create({"service.name": "evalgate", "service.instance.id": str(uuid.uuid4())})
     _tracer_provider = TracerProvider(resource=resource)
     if exporter is not None:
         _tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
@@ -123,7 +126,7 @@ def count(name: str, value: float = 1.0, **labels: str) -> None:
     instrument = _instruments.get(name)
     if instrument is None:
         if name in HISTOGRAMS:
-            instrument = _meter.create_histogram(name, unit="ms")
+            instrument = _meter.create_histogram(name)  # the name carries the unit
         elif name in GAUGES:
             instrument = _meter.create_gauge(name)
         else:

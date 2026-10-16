@@ -177,6 +177,7 @@ class Viewer:
         self.jobs = CompareJobs()
         self.limiter = RateLimiter()
         self.token = config.serve_token() if token is None else token
+        self.allowed_hosts = {"localhost", "127.0.0.1", "::1"} | config.serve_allowed_hosts()
         self.env = Environment(
             loader=PackageLoader("evalgate.viewer", "templates"),
             autoescape=select_autoescape(["html", "j2"]),
@@ -227,6 +228,15 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.html("error.html", status=status, title=title, detail=detail, status_code=status)
 
+    def host_allowed(self) -> bool:
+        """Reject foreign Host headers (DNS rebinding against a loopback viewer)."""
+        host = (self.headers.get("Host") or "").strip().lower()
+        if host.startswith("["):
+            name = host[1 : host.find("]")] if "]" in host else host
+        else:
+            name = host.rsplit(":", 1)[0] if host.count(":") == 1 else host
+        return name in self.viewer.allowed_hosts
+
     def authorized(self) -> bool:
         if not self.viewer.token:
             return True
@@ -242,6 +252,9 @@ class Handler(BaseHTTPRequestHandler):
         parts = urlsplit(self.path)
         self.path_only = parts.path
         self.query = parse_qs(parts.query, keep_blank_values=False)
+        if not self.host_allowed():
+            self.send(421, b"Unexpected Host header", "text/plain; charset=utf-8")
+            return
         if self.path_only == "/healthz":
             self.json_body({"status": "ok", "version": __version__})
             return
@@ -434,7 +447,7 @@ class Handler(BaseHTTPRequestHandler):
         if name not in STATIC_FILES:
             return self.error_page(404, "Not found", "No such static file.")
         body = resources.files("evalgate.viewer").joinpath("static").joinpath(name).read_bytes()
-        self.send(200, body, f"{STATIC_FILES[name]}; charset=utf-8", {"Cache-Control": "max-age=300"})
+        self.send(200, body, f"{STATIC_FILES[name]}; charset=utf-8")
 
 
 def make_server(
@@ -448,6 +461,8 @@ def make_server(
 
 
 def serve(reports_dir: Path, host: str = "127.0.0.1", port: int = 8100) -> None:
+    if host not in ("127.0.0.1", "localhost", "::1") and not config.serve_token():
+        print("evalgate: warning: serving on a non-loopback address without EVALGATE_SERVE_TOKEN", flush=True)
     server = make_server(reports_dir, host=host, port=port)
     print(
         f"evalgate viewer on http://{host}:{server.server_address[1]} serving {Path(reports_dir).resolve()}", flush=True

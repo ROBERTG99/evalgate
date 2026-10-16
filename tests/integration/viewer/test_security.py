@@ -38,3 +38,15 @@ def test_binds_loopback_by_default() -> None:
     from evalgate.viewer import server
 
     assert inspect.signature(server.serve).parameters["host"].default == "127.0.0.1"
+
+
+def test_foreign_host_rejected(tmp_path: Path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    write(tmp_path / "a.json", RUN_A, [1.0] * 3)
+    with viewer(tmp_path) as url:
+        assert httpx.get(url + "/", headers={"Host": "evil.example"}).status_code == 421
+        assert httpx.get(url + "/healthz", headers={"Host": "attacker.test:8100"}).status_code == 421
+        assert httpx.get(url + "/", headers={"Host": "localhost:8100"}).status_code == 200
+        assert httpx.get(url + "/", headers={"Host": "[::1]:8100"}).status_code == 200
+    monkeypatch.setenv("EVALGATE_SERVE_ALLOWED_HOSTS", "report-viewer")
+    with viewer(tmp_path) as url:
+        assert httpx.get(url + "/", headers={"Host": "report-viewer:8100"}).status_code == 200

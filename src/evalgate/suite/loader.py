@@ -15,6 +15,7 @@ from pydantic import BaseModel, ValidationError
 from evalgate.contracts import Case, Suite
 from evalgate.errors import InvalidInputError
 from evalgate.suite.limits import (
+    MAX_ROW_BYTES,
     MAX_SUITE_BYTES,
     check_case_count,
     check_file_size,
@@ -124,7 +125,12 @@ def load_dataset(path: Path, splits: list[str] | None = None) -> list[Case]:
     cases: list[Case] = []
     seen: dict[str, int] = {}
     with path.open("rb") as fh:
-        for line_no, raw in enumerate(fh, start=1):
+        line_no = 0
+        while True:
+            raw = fh.readline(MAX_ROW_BYTES + 2)  # never read more than one row's limit into memory
+            if not raw:
+                break
+            line_no += 1
             check_row_size(path, line_no, raw)
             if not raw.strip():
                 continue

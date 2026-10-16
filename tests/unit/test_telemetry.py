@@ -92,3 +92,18 @@ def test_gauge_and_counter_semantics() -> None:
     c = telemetry.counters()
     assert c['evalgate_gate_last_decision{suite="s"}'] == 0.0
     assert c["evalgate_cache_hits_total"] == 2.0
+
+
+def test_env_endpoint_alone_enables_export(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[bool] = []
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://127.0.0.1:9")
+    monkeypatch.setattr(telemetry, "setup", lambda enabled=False, **kw: calls.append(enabled) or True)
+    monkeypatch.setattr(telemetry, "shutdown", lambda: calls.append(True))
+    data = write_dataset(tmp_path / "d.jsonl", rows(1))
+    loaded = load_suite(write_suite(tmp_path / "s.yaml", data), split="test")
+    run_suite(loaded, RunOptions(split="test", home=tmp_path, use_store=False, resamples=10))
+    assert calls == [False, True]  # setup consulted without --otel, then flushed
+    monkeypatch.undo()
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://127.0.0.1:9")
+    assert telemetry.setup() is True
+    telemetry.shutdown()

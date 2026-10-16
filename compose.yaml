@@ -34,6 +34,7 @@ services:
     command: ["serve", "/reports", "--host", "0.0.0.0", "--port", "8100"]
     environment:
       EVALGATE_SERVE_TOKEN: "${EVALGATE_SERVE_TOKEN:-}"
+      EVALGATE_SERVE_ALLOWED_HOSTS: report-viewer
     ports:
       - "127.0.0.1:8100:8100"
     volumes:

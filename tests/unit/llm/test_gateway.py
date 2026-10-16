@@ -276,3 +276,14 @@ def test_only_gateway_imports_provider_sdks() -> None:
         )
     ]
     assert offenders == []
+
+
+def test_redaction_is_linear_on_hostile_input() -> None:
+    import time
+
+    start = time.perf_counter()
+    for text in ("1" * 200_000, "a" * 200_000, ("a." * 100_000) + "@", "-1" * 100_000):
+        redact(text)
+    assert time.perf_counter() - start < 3.0  # quadratic patterns took minutes on these inputs
+    assert redact("x" * 300_000).endswith("[TRUNCATED]")
+    assert redact("call 06.12.34.56.78 on 15.03.2024") == "call [PHONE] on 15.03.2024"

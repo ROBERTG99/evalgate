@@ -37,5 +37,6 @@ test-results/
 .hypothesis/
 .benchmarks/
 evals/reports/*.json
+evals/reports/*.md
 *.egg-info/
 build/

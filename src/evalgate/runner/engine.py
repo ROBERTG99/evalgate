@@ -406,12 +406,13 @@ class Runner:
 
 async def run_suite_async(loaded: LoadedSuite, options: RunOptions | None = None) -> RunResult:
     options = options or RunOptions()
-    if options.otel:
-        telemetry.setup(enabled=True)
+    exporting = False
+    if not telemetry.enabled():  # an embedding application may have configured telemetry already
+        exporting = telemetry.setup(enabled=options.otel)  # also on when OTEL_EXPORTER_OTLP_ENDPOINT is set
     try:
         return await Runner(loaded, options).run()
     finally:
-        if options.otel:
+        if exporting:
             telemetry.shutdown()
 
 

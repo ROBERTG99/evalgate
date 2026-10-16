@@ -18,6 +18,7 @@ from evalgate.contracts import LabelRow, MetricSpec
 from evalgate.errors import InvalidInputError
 from evalgate.judge.context import JudgeContext
 from evalgate.judge.metric import JudgeMetric
+from evalgate.suite.limits import MAX_REPORT_BYTES, check_file_size
 
 # Neutral padding (no facts, no numbers) for the verbosity probe: ~20 words.
 VERBOSE_PREFIX = (
@@ -49,6 +50,7 @@ def confusion(labels: list[str], preds: list[str]) -> dict[str, dict[str, int]]:
 def load_labels(path: Path) -> list[LabelRow]:
     if not path.is_file():
         raise InvalidInputError(str(path), "", "labels file not found")
+    check_file_size(path, MAX_REPORT_BYTES, "labels file")
     rows = []
     for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
         if not line.strip():
