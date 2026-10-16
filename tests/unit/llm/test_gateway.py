@@ -298,3 +298,24 @@ def test_invalid_output_still_counts_against_the_live_budget() -> None:
         with pytest.raises(OutputError):
             asyncio.run(gw.complete(request()))
     assert gw.guard.spent_usd > 0
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "call 5551234567 now",
+        "call (555) 123-4567 now",
+        "call +1 (555) 123-4567 now",
+        "phone +15551234567 now",
+        "call 555-123-4567 now",
+        "call +44 20 7946 0958 now",
+    ],
+)
+def test_redacts_common_phone_formats(text: str) -> None:
+    assert redact(text) == "call [PHONE] now" if text.startswith("call") else redact(text) == "phone [PHONE] now"
+
+
+def test_redacts_dotted_card_numbers_and_keeps_dates() -> None:
+    assert redact("card 4111.1111.1111.1111 ok") == "card [CARD] ok"
+    assert redact("due 2026-10-16 and 16.10.2026") == "due 2026-10-16 and 16.10.2026"
+    assert redact("order 42 of 7") == "order 42 of 7"

@@ -5,8 +5,13 @@ from __future__ import annotations
 import re
 
 EMAIL = re.compile(r"[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]{1,63}(?:\.[A-Za-z0-9-]{1,63}){0,8}\.[A-Za-z]{2,24}")
-CARD = re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")
-PHONE = re.compile(r"(?<![\w])(?:\+\d{1,3}[ .-]?)?(?:\(\d{2,4}\)[ .-]?)?\d{2,4}(?:[ .-]\d{2,4}){2,4}(?![\w])")
+CARD = re.compile(r"(?<!\d)(?:\d[ .-]?){12,18}\d(?!\d)")
+# Best effort, all bounded: grouped numbers, "(555) 123-4567" with an optional "+1 ", and 10-15 contiguous digits.
+PHONE = re.compile(
+    r"(?<![\w+])(?:\+\d{1,3}[ .-]?)?"
+    r"(?:\(\d{2,4}\)[ .-]?\d{2,4}(?:[ .-]\d{2,4}){1,3}|\d{2,4}(?:[ .-]\d{2,4}){2,4}|\d{10,15})"
+    r"(?![\w])"
+)
 
 
 def luhn_ok(digits: str) -> bool:
