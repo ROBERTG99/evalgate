@@ -18,7 +18,8 @@ def render_check_text(result: CheckResult, report: Report) -> str:
     ]
     for name, m in report.metrics.items():
         threshold = "" if m.threshold is None else f" threshold {m.threshold}"
-        lines.append(f"  metric {name}: {m.value:.4f}{threshold} ({'ok' if m.passed else 'below'})")
+        missed = "below" if m.direction == "higher" else "above"
+        lines.append(f"  metric {name}: {m.value:.4f}{threshold} ({'ok' if m.passed else missed})")
     for c in result.comparisons:
         lines.append(
             f"  delta {c.metric}: {c.baseline:.4f} -> {c.candidate:.4f} = {fmt_pp(c.delta_pp)} "

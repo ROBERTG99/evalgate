@@ -55,3 +55,10 @@ def test_git_sha_sources(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("GITHUB_SHA")
     monkeypatch.setattr(build.shutil, "which", lambda _: None)
     assert git_sha() is None
+
+
+def test_check_text_says_above_for_lower_is_better_metrics() -> None:
+    report = make_report({"latency": [0.9] * 20}, threshold=0.5, direction="lower")
+    report.metrics["latency"].passed = False  # the factory leaves summaries passing; the runner computes this
+    text = render_check_text(check(report, report_sha256="x", resamples=100), report)
+    assert "metric latency: 0.9000 threshold 0.5 (above)" in text

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from evalgate.contracts.suite import Direction
 
@@ -13,7 +13,7 @@ CHECK_SCHEMA = "evalgate.check.v1"
 
 
 class MetricSummary(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     value: float
     threshold: float | None = None
@@ -24,7 +24,7 @@ class MetricSummary(BaseModel):
 
 
 class CaseReport(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     id: str
     split: Literal["dev", "test"]
@@ -38,7 +38,7 @@ class CaseReport(BaseModel):
 class Report(BaseModel):
     """The stable run report. ``extensions`` is free-form and may be ignored by consumers."""
 
-    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+    model_config = ConfigDict(extra="forbid", populate_by_name=True, allow_inf_nan=False)
 
     schema_: Literal["evalgate.report.v1"] = Field(alias="schema")
     suite: str
@@ -57,12 +57,22 @@ class Report(BaseModel):
     cases: list[CaseReport]
     extensions: dict[str, Any] | None = None
 
+    @model_validator(mode="after")
+    def _unique_case_ids(self) -> Report:
+        """Pairing is by case id: a duplicate would be paired twice and inflate ``n_paired``."""
+        seen: set[str] = set()
+        for case in self.cases:
+            if case.id in seen:
+                raise ValueError(f"duplicate case id {case.id!r}")
+            seen.add(case.id)
+        return self
+
 
 FailureReason = Literal["threshold", "regression", "budget_cost", "budget_p95", "error"]
 
 
 class CheckFailure(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     metric: str
     reason: FailureReason
@@ -74,7 +84,7 @@ class CheckFailure(BaseModel):
 
 
 class Comparison(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
     metric: str
     baseline: float
@@ -86,7 +96,7 @@ class Comparison(BaseModel):
 
 
 class CheckResult(BaseModel):
-    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+    model_config = ConfigDict(extra="forbid", populate_by_name=True, allow_inf_nan=False)
 
     schema_: Literal["evalgate.check.v1"] = Field(default="evalgate.check.v1", alias="schema")
     report_sha256: str
