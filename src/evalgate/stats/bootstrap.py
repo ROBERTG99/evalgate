@@ -35,7 +35,8 @@ def _resampled_means(values: np.ndarray, rng: np.random.Generator, resamples: in
 
 
 def mean_ci(
-    values: Sequence[float] | np.ndarray, seed: int, resamples: int = DEFAULT_RESAMPLES, level: float = 0.95) -> Interval:
+    values: Sequence[float] | np.ndarray, seed: int, resamples: int = DEFAULT_RESAMPLES, level: float = 0.95
+) -> Interval:
     """Percentile CI of the mean of ``values``."""
     arr = np.asarray(values, dtype=np.float64)
     if arr.size == 0:
