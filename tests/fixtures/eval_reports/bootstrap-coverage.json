@@ -1,0 +1,13 @@
+{
+  "n_datasets": 400,
+  "n_cases": 150,
+  "p_base": 0.85,
+  "p_cand": 0.8,
+  "correlation": 0.6,
+  "resamples": 10000,
+  "seed": 1337,
+  "true_delta": -0.049945,
+  "coverage": 0.96,
+  "mean_ci_width_pp": 14.227,
+  "command": "make eval (scripts/run_evals.py)"
+}

@@ -1,0 +1,1293 @@
+{
+  "schema": "evalgate.report.v1",
+  "suite": "extract",
+  "run_id": "01a14634-aa08-7ed5-a655-9850fac17d61",
+  "created_at": "2026-10-16T19:33:41Z",
+  "git_sha": "837dfa218e86cb905096989aeac1b47d8aba4301",
+  "mode": "offline",
+  "models": [
+    "toy-model"
+  ],
+  "prompt_hashes": {},
+  "n_cases": 60,
+  "metrics": {
+    "schema_valid": {
+      "value": 1.0,
+      "threshold": 1.0,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "total_tolerance": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "invoice_number_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "date_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "currency_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "vendor_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    }
+  },
+  "cost_usd_total": 0.0090855,
+  "cost_usd_per_case": 0.000151425,
+  "latency_p50_ms": 22.018,
+  "latency_p95_ms": 46.051,
+  "cases": [
+    {
+      "id": "ext-002",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001475,
+      "latency_ms": 17.257,
+      "error": null
+    },
+    {
+      "id": "ext-003",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 17.338,
+      "error": null
+    },
+    {
+      "id": "ext-006",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 18.09,
+      "error": null
+    },
+    {
+      "id": "ext-007",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000157,
+      "latency_ms": 19.556,
+      "error": null
+    },
+    {
+      "id": "ext-008",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 20.961,
+      "error": null
+    },
+    {
+      "id": "ext-009",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 24.622,
+      "error": null
+    },
+    {
+      "id": "ext-013",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 26.777,
+      "error": null
+    },
+    {
+      "id": "ext-015",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000161,
+      "latency_ms": 26.972,
+      "error": null
+    },
+    {
+      "id": "ext-017",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 14.475,
+      "error": null
+    },
+    {
+      "id": "ext-019",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 15.455,
+      "error": null
+    },
+    {
+      "id": "ext-020",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 36.182,
+      "error": null
+    },
+    {
+      "id": "ext-024",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001425,
+      "latency_ms": 28.529,
+      "error": null
+    },
+    {
+      "id": "ext-026",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 33.786,
+      "error": null
+    },
+    {
+      "id": "ext-029",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 12.993,
+      "error": null
+    },
+    {
+      "id": "ext-030",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001415,
+      "latency_ms": 12.47,
+      "error": null
+    },
+    {
+      "id": "ext-031",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 14.618,
+      "error": null
+    },
+    {
+      "id": "ext-034",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001565,
+      "latency_ms": 17.865,
+      "error": null
+    },
+    {
+      "id": "ext-039",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000159,
+      "latency_ms": 62.275,
+      "error": null
+    },
+    {
+      "id": "ext-053",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000146,
+      "latency_ms": 32.906,
+      "error": null
+    },
+    {
+      "id": "ext-055",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001525,
+      "latency_ms": 16.702,
+      "error": null
+    },
+    {
+      "id": "ext-060",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000151,
+      "latency_ms": 35.561,
+      "error": null
+    },
+    {
+      "id": "ext-062",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000159,
+      "latency_ms": 17.502,
+      "error": null
+    },
+    {
+      "id": "ext-065",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 36.605,
+      "error": null
+    },
+    {
+      "id": "ext-068",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 12.085,
+      "error": null
+    },
+    {
+      "id": "ext-069",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 19.204,
+      "error": null
+    },
+    {
+      "id": "ext-070",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 17.519,
+      "error": null
+    },
+    {
+      "id": "ext-071",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000151,
+      "latency_ms": 19.189,
+      "error": null
+    },
+    {
+      "id": "ext-073",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 24.412,
+      "error": null
+    },
+    {
+      "id": "ext-076",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 30.547,
+      "error": null
+    },
+    {
+      "id": "ext-079",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 45.564,
+      "error": null
+    },
+    {
+      "id": "ext-082",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 20.342,
+      "error": null
+    },
+    {
+      "id": "ext-084",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 22.448,
+      "error": null
+    },
+    {
+      "id": "ext-087",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 41.966,
+      "error": null
+    },
+    {
+      "id": "ext-090",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 17.712,
+      "error": null
+    },
+    {
+      "id": "ext-091",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 23.877,
+      "error": null
+    },
+    {
+      "id": "ext-093",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 22.554,
+      "error": null
+    },
+    {
+      "id": "ext-096",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 12.07,
+      "error": null
+    },
+    {
+      "id": "ext-097",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 78.848,
+      "error": null
+    },
+    {
+      "id": "ext-098",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000149,
+      "latency_ms": 25.502,
+      "error": null
+    },
+    {
+      "id": "ext-099",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 22.549,
+      "error": null
+    },
+    {
+      "id": "ext-100",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 27.281,
+      "error": null
+    },
+    {
+      "id": "ext-101",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 16.395,
+      "error": null
+    },
+    {
+      "id": "ext-102",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 27.044,
+      "error": null
+    },
+    {
+      "id": "ext-103",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000143,
+      "latency_ms": 20.061,
+      "error": null
+    },
+    {
+      "id": "ext-104",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 21.447,
+      "error": null
+    },
+    {
+      "id": "ext-110",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 23.427,
+      "error": null
+    },
+    {
+      "id": "ext-111",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 40.319,
+      "error": null
+    },
+    {
+      "id": "ext-112",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001575,
+      "latency_ms": 22.833,
+      "error": null
+    },
+    {
+      "id": "ext-113",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 20.791,
+      "error": null
+    },
+    {
+      "id": "ext-116",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 16.249,
+      "error": null
+    },
+    {
+      "id": "ext-117",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 55.318,
+      "error": null
+    },
+    {
+      "id": "ext-118",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 16.475,
+      "error": null
+    },
+    {
+      "id": "ext-121",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001475,
+      "latency_ms": 31.47,
+      "error": null
+    },
+    {
+      "id": "ext-129",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000144,
+      "latency_ms": 15.173,
+      "error": null
+    },
+    {
+      "id": "ext-133",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000147,
+      "latency_ms": 21.589,
+      "error": null
+    },
+    {
+      "id": "ext-136",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 27.918,
+      "error": null
+    },
+    {
+      "id": "ext-138",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000146,
+      "latency_ms": 35.21,
+      "error": null
+    },
+    {
+      "id": "ext-140",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000153,
+      "latency_ms": 23.618,
+      "error": null
+    },
+    {
+      "id": "ext-148",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000147,
+      "latency_ms": 19.133,
+      "error": null
+    },
+    {
+      "id": "ext-149",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 16.957,
+      "error": null
+    }
+  ],
+  "extensions": {
+    "run_health": "ok",
+    "error_rate": 0.0,
+    "attempts": {},
+    "gates": {
+      "schema_valid": true,
+      "total_tolerance": true,
+      "invoice_number_exact": true,
+      "date_exact": true,
+      "currency_exact": true,
+      "vendor_exact": true
+    },
+    "metric_errors": {},
+    "budget": {
+      "max_cost_usd": 0.02,
+      "max_p95_ms": 800.0
+    },
+    "split": "test",
+    "seed": 1337,
+    "resamples": 10000,
+    "unpriced_models": [],
+    "case_tags": {
+      "ext-002": [
+        "date2",
+        "symbol"
+      ],
+      "ext-003": [
+        "date1",
+        "code"
+      ],
+      "ext-006": [
+        "date1",
+        "code"
+      ],
+      "ext-007": [
+        "date0",
+        "symbol"
+      ],
+      "ext-008": [
+        "date1",
+        "code"
+      ],
+      "ext-009": [
+        "date0",
+        "code"
+      ],
+      "ext-013": [
+        "date2",
+        "code"
+      ],
+      "ext-015": [
+        "date1",
+        "code"
+      ],
+      "ext-017": [
+        "date0",
+        "code"
+      ],
+      "ext-019": [
+        "date1",
+        "code"
+      ],
+      "ext-020": [
+        "date2",
+        "code"
+      ],
+      "ext-024": [
+        "date2",
+        "symbol"
+      ],
+      "ext-026": [
+        "date0",
+        "symbol"
+      ],
+      "ext-029": [
+        "date0",
+        "code"
+      ],
+      "ext-030": [
+        "date1",
+        "symbol"
+      ],
+      "ext-031": [
+        "date0",
+        "code"
+      ],
+      "ext-034": [
+        "date1",
+        "symbol"
+      ],
+      "ext-039": [
+        "date0",
+        "code"
+      ],
+      "ext-053": [
+        "date2",
+        "symbol"
+      ],
+      "ext-055": [
+        "date2",
+        "code"
+      ],
+      "ext-060": [
+        "date2",
+        "symbol"
+      ],
+      "ext-062": [
+        "date0",
+        "symbol"
+      ],
+      "ext-065": [
+        "date2",
+        "code"
+      ],
+      "ext-068": [
+        "date1",
+        "code"
+      ],
+      "ext-069": [
+        "date2",
+        "code"
+      ],
+      "ext-070": [
+        "date1",
+        "symbol"
+      ],
+      "ext-071": [
+        "date0",
+        "code"
+      ],
+      "ext-073": [
+        "date2",
+        "code"
+      ],
+      "ext-076": [
+        "date0",
+        "code"
+      ],
+      "ext-079": [
+        "date0",
+        "code"
+      ],
+      "ext-082": [
+        "date0",
+        "symbol"
+      ],
+      "ext-084": [
+        "date0",
+        "code"
+      ],
+      "ext-087": [
+        "date0",
+        "symbol"
+      ],
+      "ext-090": [
+        "date2",
+        "code"
+      ],
+      "ext-091": [
+        "date2",
+        "code"
+      ],
+      "ext-093": [
+        "date2",
+        "code"
+      ],
+      "ext-096": [
+        "date2",
+        "symbol"
+      ],
+      "ext-097": [
+        "date0",
+        "code"
+      ],
+      "ext-098": [
+        "date1",
+        "symbol"
+      ],
+      "ext-099": [
+        "date2",
+        "code"
+      ],
+      "ext-100": [
+        "date2",
+        "code"
+      ],
+      "ext-101": [
+        "date2",
+        "symbol"
+      ],
+      "ext-102": [
+        "date2",
+        "symbol"
+      ],
+      "ext-103": [
+        "date1",
+        "code"
+      ],
+      "ext-104": [
+        "date1",
+        "code"
+      ],
+      "ext-110": [
+        "date1",
+        "code"
+      ],
+      "ext-111": [
+        "date2",
+        "code"
+      ],
+      "ext-112": [
+        "date1",
+        "code"
+      ],
+      "ext-113": [
+        "date1",
+        "code"
+      ],
+      "ext-116": [
+        "date0",
+        "code"
+      ],
+      "ext-117": [
+        "date2",
+        "code"
+      ],
+      "ext-118": [
+        "date2",
+        "symbol"
+      ],
+      "ext-121": [
+        "date2",
+        "code"
+      ],
+      "ext-129": [
+        "date0",
+        "code"
+      ],
+      "ext-133": [
+        "date2",
+        "code"
+      ],
+      "ext-136": [
+        "date1",
+        "code"
+      ],
+      "ext-138": [
+        "date1",
+        "symbol"
+      ],
+      "ext-140": [
+        "date0",
+        "code"
+      ],
+      "ext-148": [
+        "date1",
+        "code"
+      ],
+      "ext-149": [
+        "date0",
+        "code"
+      ]
+    }
+  }
+}

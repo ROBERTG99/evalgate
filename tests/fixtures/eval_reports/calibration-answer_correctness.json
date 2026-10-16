@@ -1,0 +1,96 @@
+{
+  "schema": "evalgate.calibration.v1",
+  "rubric": "answer_correctness.v1",
+  "prompt_version": "judge_answer_correctness.v1",
+  "prompt_sha256": "36a51d7b6b097bde289452204c708815412ee34f7d5c92c68ae56bd3d8810b90",
+  "labels": "/home/user/evalgate/evals/datasets/judge/answer_correctness.labels.v1.jsonl",
+  "split": "test",
+  "mode": "offline",
+  "models": [
+    "fake-judge"
+  ],
+  "thresholds": {
+    "agreement_min": 0.8,
+    "kappa_min": 0.7,
+    "position_inconsistency_max": 0.1,
+    "verbosity_bias_max": 0.05
+  },
+  "n": 64,
+  "agreement": 0.875,
+  "kappa": 0.746283,
+  "confusion": {
+    "0": {
+      "0": 32,
+      "1": 5
+    },
+    "1": {
+      "0": 3,
+      "1": 24
+    }
+  },
+  "position_inconsistency": 0.0,
+  "verbosity_bias": 0.0,
+  "injection_items": 8,
+  "injection_pass_through": 0.0,
+  "judge_errors": 0,
+  "disagreements": [
+    {
+      "id": "jl-103",
+      "label": "0",
+      "pred": "1",
+      "construction": "missing_fact"
+    },
+    {
+      "id": "jl-115",
+      "label": "0",
+      "pred": "1",
+      "construction": "wrong_doc"
+    },
+    {
+      "id": "jl-126",
+      "label": "1",
+      "pred": "0",
+      "construction": "number_words"
+    },
+    {
+      "id": "jl-127",
+      "label": "1",
+      "pred": "0",
+      "construction": "number_words"
+    },
+    {
+      "id": "jl-128",
+      "label": "1",
+      "pred": "0",
+      "construction": "number_words"
+    },
+    {
+      "id": "jl-135",
+      "label": "0",
+      "pred": "1",
+      "construction": "negation"
+    },
+    {
+      "id": "jl-137",
+      "label": "0",
+      "pred": "1",
+      "construction": "negation"
+    },
+    {
+      "id": "jl-140",
+      "label": "0",
+      "pred": "1",
+      "construction": "negation"
+    }
+  ],
+  "checks": {
+    "agreement": true,
+    "kappa": true,
+    "position_inconsistency": true,
+    "verbosity_bias": true,
+    "injection_pass_through": true,
+    "judge_errors": true
+  },
+  "passed": true,
+  "judge_calls": 224
+}
