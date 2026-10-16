@@ -28,7 +28,7 @@ A metric implements `class Metric(Protocol): name: str; def score(self, case: Ca
    def word_budget(case: Case, result: TargetResult) -> MetricScore: ...
    ```
 
-   A new built-in `kind` also needs its literal in `src/evalgate/contracts/suite.py`; then run `make schemas` and commit `schemas/evalgate.suite.v1.json`.
+   A new built-in `kind` also needs its literal in `src/evalgate/contracts/suite.py`; then regenerate `schemas/` with `uv run python scripts/export_schemas.py` (`make schemas` then checks for drift) and commit `schemas/evalgate.suite.v1.json`.
 5. Keep it pure and deterministic: no I/O, no network, no randomness without a seed. Anything that calls a model belongs to `src/evalgate/judge/`, not here.
 6. Run `make check-fast` and `uv run mypy --strict src/evalgate`.
 7. Document it in `docs/contracts/suite.md` (params, range, example YAML) and, for a custom-metric example, in `examples/metrics/`.

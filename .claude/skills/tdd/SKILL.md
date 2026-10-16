@@ -20,7 +20,7 @@ Every task in §8 of `docs/specs/000-build-spec.md` (or `BUILD.md`) names its "T
    An `ImportError` or fixture error is not a valid failure; fix the test until it fails on the missing behaviour.
 4. Implement the smallest change under `src/evalgate/` that makes it pass. Keep provider SDK imports in `src/evalgate/llm/gateway.py` only and model IDs in configuration.
 5. Re-run the test, then the module's suite: `uv run pytest tests/unit/<module> -q`.
-6. If you touched `src/evalgate/contracts/`, run `make schemas` and include the updated `schemas/` files.
+6. If you touched `src/evalgate/contracts/`, regenerate `schemas/` with `uv run python scripts/export_schemas.py` (`make schemas` then checks for drift) and include the updated files.
 7. Run `make check-fast` (ruff and unit tests, under 60 s) and `uv run mypy --strict src/evalgate`; both must be green.
 8. Refactor with the tests green; re-run `make check-fast`.
 9. Record evidence in `PROGRESS.md` under the task: the command and a one-line result, for example `make check-fast -> 212 passed in 18.4s`.

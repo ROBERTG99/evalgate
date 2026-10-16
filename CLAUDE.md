@@ -45,7 +45,7 @@ Outside the wheel: `examples/toy-targets/` (FastAPI toy systems), `data/generato
 ## Conventions
 
 - Python 3.12+, `ruff` (lint and format), `mypy --strict` on `src/`.
-- Contracts live in `src/evalgate/contracts/`; after changing one run `make schemas` and commit `schemas/`.
+- Contracts live in `src/evalgate/contracts/`; after changing one, regenerate `schemas/` with `uv run python scripts/export_schemas.py` (`make schemas` then checks for drift) and commit `schemas/`.
 - Use `uv run` for every Python command; dependencies are pinned in `uv.lock`.
 - Model IDs come from configuration (`EVALGATE_JUDGE_MODEL`, `EVALGATE_JUDGE_HARD_MODEL`), never from logic.
 - Only `src/evalgate/llm/gateway.py` imports `anthropic` or `openai`.

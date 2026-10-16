@@ -15,7 +15,8 @@ A target is `async def target(case_input: dict) -> TargetResult` with `TargetRes
 4. Add the contract in `src/evalgate/contracts/suite.py`: a Pydantic v2 model with `extra="forbid"`, added to the "exactly one of" target union. Export the schemas:
 
    ```bash
-   make schemas
+   uv run python scripts/export_schemas.py   # regenerate schemas/
+   make schemas                              # then confirm there is no drift
    ```
 
    and commit `schemas/evalgate.suite.v1.json` (the drift test in `tests/contract/test_schemas.py` must pass).
