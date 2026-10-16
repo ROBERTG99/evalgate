@@ -84,10 +84,6 @@ def serve_token() -> str:
     return os.environ.get("EVALGATE_SERVE_TOKEN", "").strip()
 
 
-def is_live() -> bool:
-    return llm_provider() != "fake"
-
-
 def serve_allowed_hosts() -> set[str]:
     """Extra Host header names the viewer accepts (for example a compose service name)."""
     raw = os.environ.get("EVALGATE_SERVE_ALLOWED_HOSTS", "")

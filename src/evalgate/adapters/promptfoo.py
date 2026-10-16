@@ -104,12 +104,12 @@ def import_promptfoo(
         unsupported_all += unsupported
         rows.append(
             {
-                "id": str(test.get("description") or f"pf-{i + 1:03d}"),
+                "id": f"pf-{i + 1:03d}",  # descriptions may repeat or exceed the id limit
                 "split": "test",
                 "input": _render(body, vars_) if isinstance(body, dict) else dict(vars_),
                 "expected": expected,
                 "tags": ["promptfoo"],
-                "meta": {"vars": vars_, "unsupported_asserts": unsupported},
+                "meta": {"vars": vars_, "unsupported_asserts": unsupported, "description": test.get("description")},
             }
         )
     metrics: list[dict[str, Any]] = []

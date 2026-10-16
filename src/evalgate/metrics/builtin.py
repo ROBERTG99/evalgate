@@ -187,7 +187,3 @@ BUILTIN: dict[str, type[BaseMetric]] = {
     "regex": RegexMetric,
     "tool_calls": ToolCallsMetric,
 }
-
-
-def build_builtin(spec: MetricSpec) -> BaseMetric:
-    return BUILTIN[spec.kind](spec)

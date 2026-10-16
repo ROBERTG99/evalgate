@@ -128,10 +128,7 @@ def create_app() -> FastAPI:
             if entry is None or entry["system"] != system:
                 raise HTTPException(400, f"unknown variant {variant!r} for /{system}")
             return variant, entry
-        version = version or "v1"
-        if version not in VERSIONS:
-            raise HTTPException(400, f"unknown version {version!r}; use v1 or v2")
-        return version, None
+        return version or "v1", None
 
     async def handle(system: str, payload: str, version: str | None, variant: str | None) -> dict[str, Any]:
         label, entry = resolve(system, version, variant)

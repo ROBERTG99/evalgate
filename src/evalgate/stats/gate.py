@@ -24,15 +24,15 @@ def gated_metrics(report: Report) -> list[str]:
 
 
 def compare_metric(metric: str, baseline: Report, candidate: Report, seed: int, resamples: int) -> Comparison | None:
-    base_scores = {c.id: c.scores.get(metric) for c in baseline.cases}
+    base_scores = {c.id: c.scores[metric] for c in baseline.cases if metric in c.scores}
     pairs = [
         (base_scores[c.id], c.scores[metric])
         for c in sorted(candidate.cases, key=lambda c: c.id)
-        if metric in c.scores and base_scores.get(c.id) is not None
+        if metric in c.scores and c.id in base_scores
     ]
     if not pairs:
         return None
-    base_vals = [float(b) for b, _ in pairs if b is not None]
+    base_vals = [float(b) for b, _ in pairs]
     cand_vals = [float(c) for _, c in pairs]
     ci = paired_delta_ci(base_vals, cand_vals, seed=seed, resamples=resamples)
     return Comparison(
