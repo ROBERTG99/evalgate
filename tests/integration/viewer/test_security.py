@@ -50,3 +50,13 @@ def test_foreign_host_rejected(tmp_path: Path, monkeypatch) -> None:  # type: ig
     monkeypatch.setenv("EVALGATE_SERVE_ALLOWED_HOSTS", "report-viewer")
     with viewer(tmp_path) as url:
         assert httpx.get(url + "/", headers={"Host": "report-viewer:8100"}).status_code == 200
+
+
+def test_ipv6_hosts_get_an_ipv6_server() -> None:
+    """`evalgate serve --host ::1` must not fail with an IPv4-only socket (the container here has no IPv6)."""
+    import socket
+
+    from evalgate.viewer.server import server_class_for
+
+    assert server_class_for("::1").address_family == socket.AF_INET6
+    assert server_class_for("127.0.0.1").address_family == socket.AF_INET

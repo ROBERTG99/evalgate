@@ -13,6 +13,7 @@ from __future__ import annotations
 import hmac
 import json
 import re
+import socket
 import threading
 import time
 from collections import defaultdict, deque
@@ -391,7 +392,12 @@ class Handler(BaseHTTPRequestHandler):
             before = base_scores.get(c.id)
             if before is None:
                 continue
-            delta = sum(c.scores.get(k, 0.0) - v for k, v in before.items())
+            # Positive is better: lower-is-better metrics count with the sign flipped.
+            delta = sum(
+                (c.scores.get(k, 0.0) - v)
+                * (-1.0 if k in cand.metrics and cand.metrics[k].direction == "lower" else 1.0)
+                for k, v in before.items()
+            )
             if delta != 0:
                 moved.append({"case": c, "before": before, "delta": delta})
         moved.sort(key=lambda x: (float(x["delta"]), str(x["case"].id)))
@@ -450,12 +456,20 @@ class Handler(BaseHTTPRequestHandler):
         self.send(200, body, f"{STATIC_FILES[name]}; charset=utf-8")
 
 
+class _ThreadingHTTPServerV6(ThreadingHTTPServer):
+    address_family = socket.AF_INET6
+
+
+def server_class_for(host: str) -> type[ThreadingHTTPServer]:
+    return _ThreadingHTTPServerV6 if ":" in host else ThreadingHTTPServer
+
+
 def make_server(
     reports_dir: Path, host: str = "127.0.0.1", port: int = 8100, token: str | None = None
 ) -> ThreadingHTTPServer:
     viewer = Viewer(Path(reports_dir), token=token)
     handler = type("BoundHandler", (Handler,), {"viewer": viewer})
-    server = ThreadingHTTPServer((host, port), handler)
+    server = server_class_for(host)((host, port), handler)
     server.daemon_threads = True
     return server
 
