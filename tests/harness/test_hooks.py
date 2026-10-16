@@ -167,11 +167,21 @@ def test_stop_hook_blocks_once_on_failure() -> None:
 
 
 def test_post_edit_format_formats_python(tmp_path: Path) -> None:
-    target = tmp_path / "ugly.py"
+    inside = ROOT / ".evalgate" / f"hooktest-{tmp_path.name}"
+    inside.mkdir(parents=True, exist_ok=True)
+    target = inside / "ugly.py"
     target.write_text("x=1\nimport os\n")
-    res = run_hook("post_edit_format.py", {"tool_name": "Write", "tool_input": {"file_path": str(target)}})
-    assert res.returncode == 0
-    assert "x = 1" in target.read_text()
+    outside = tmp_path / "ugly.py"
+    outside.write_text("x=1\n")
+    try:
+        res = run_hook("post_edit_format.py", {"tool_name": "Write", "tool_input": {"file_path": str(target)}})
+        assert res.returncode == 0
+        assert "x = 1" in target.read_text()
+        run_hook("post_edit_format.py", {"tool_name": "Write", "tool_input": {"file_path": str(outside)}})
+        assert outside.read_text() == "x=1\n"  # files outside the repository are left alone
+    finally:
+        target.unlink()
+        inside.rmdir()
     other = run_hook("post_edit_format.py", {"tool_name": "Write", "tool_input": {"file_path": "README.md"}})
     assert other.returncode == 0
 
