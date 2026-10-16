@@ -29,7 +29,7 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-08 | Contract models and JSON Schemas | M1 | done | `uv run pytest tests/contract/test_schemas.py` → 13 passed; `make schemas` → no drift |
 | T-09 | Suite and dataset loader | M1 | done | `uv run pytest tests/unit/suite tests/unit/test_limits.py` → 13 passed (unknown key exits 2 naming `$.metircs`; duplicate id on line 37; size limits) |
 | T-10 | DuckDB run store and migrations | M1 | done | `uv run pytest tests/integration/store` → 5 passed (migrate idempotent; tamper detected at seq 1; gc keeps chain verifiable) |
-| T-11 | Generator: toy datasets and FAQ corpus | M1 | todo | |
+| T-11 | Generator: toy datasets and FAQ corpus | M1 | done | `uv run python -m data.generator` → 3 × 150 rows (90 dev / 60 test) + 40 FAQ docs; `uv run pytest tests/unit/generator/test_toys.py` → 5 passed |
 | T-12 | Generator: variants, judge labels, Promptfoo sample | M1 | todo | |
 | T-13 | Pricing, cost meter and budgets | M1 | todo | |
 | T-14 | Runner and python target | M2 | todo | |
