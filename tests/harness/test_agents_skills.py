@@ -4,10 +4,29 @@ from pathlib import Path
 
 import yaml
 
-AGENTS = ["reviewer", "security-auditor", "test-designer", "eval-analyst", "ux-reviewer", "docs-editor",
-          "stats-reviewer"]
-SKILLS = ["tdd", "quality-gate", "eval-report", "new-adr", "add-migration", "add-endpoint", "add-eval-case",
-          "demo-capture", "release", "add-metric", "calibrate-judge", "add-target-adapter"]
+AGENTS = [
+    "reviewer",
+    "security-auditor",
+    "test-designer",
+    "eval-analyst",
+    "ux-reviewer",
+    "docs-editor",
+    "stats-reviewer",
+]
+SKILLS = [
+    "tdd",
+    "quality-gate",
+    "eval-report",
+    "new-adr",
+    "add-migration",
+    "add-endpoint",
+    "add-eval-case",
+    "demo-capture",
+    "release",
+    "add-metric",
+    "calibrate-judge",
+    "add-target-adapter",
+]
 
 
 def frontmatter(path: Path) -> tuple[dict, str]:
@@ -43,6 +62,10 @@ def test_mcp_and_integrations(root: Path) -> None:
     dependabot = yaml.safe_load((root / ".github/dependabot.yml").read_text())
     ecosystems = {u["package-ecosystem"] for u in dependabot["updates"]}
     assert ecosystems == {"pip", "github-actions", "docker"}
-    for path in [".pre-commit-config.yaml", ".devcontainer/devcontainer.json", ".github/pull_request_template.md",
-                 ".github/ISSUE_TEMPLATE/bug_report.md"]:
+    for path in [
+        ".pre-commit-config.yaml",
+        ".devcontainer/devcontainer.json",
+        ".github/pull_request_template.md",
+        ".github/ISSUE_TEMPLATE/bug_report.md",
+    ]:
         assert (root / path).exists(), path

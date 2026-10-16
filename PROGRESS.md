@@ -23,8 +23,8 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-02 | Commit attribution and identity check | M0 | done | `uv run pytest tests/harness/test_settings.py` → 1 passed; authorship evidence above |
 | T-03 | Workspace, Makefile and progress files | M0 | done | `make bootstrap && make check-fast` → exit 0, 4 passed |
 | T-04 | CLAUDE.md, AGENTS.md and rules | M0 | done | `uv run pytest tests/harness/test_instructions.py` → 2 passed |
-| T-05 | Hooks and permissions | M0 | todo | |
-| T-06 | Subagents, skills, MCP and repository integrations | M0 | todo | |
+| T-05 | Hooks and permissions | M0 | done | `uv run pytest tests/harness` → 33 passed (force push, identity changes, trailers and dataset edits blocked; stop_hook_active honoured) |
+| T-06 | Subagents, skills, MCP and repository integrations | M0 | done | `uv run pytest tests/harness/test_agents_skills.py` → 2 passed (7 agents, 12 skills); actionlint has no workflows yet (checked in T-41) |
 | T-07 | Walking skeleton | M0 | todo | |
 | T-08 | Contract models and JSON Schemas | M1 | todo | |
 | T-09 | Suite and dataset loader | M1 | todo | |

@@ -72,9 +72,7 @@ def test_dataset_edits_blocked_new_versions_allowed(tmp_path: Path) -> None:
     if created:
         existing.write_text("")
     try:
-        edit = run_hook(
-            "pre_tool_guard.py", {"tool_name": "Edit", "tool_input": {"file_path": str(existing)}}
-        )
+        edit = run_hook("pre_tool_guard.py", {"tool_name": "Edit", "tool_input": {"file_path": str(existing)}})
         assert edit.returncode == 2
         new = existing.with_name("classify.v99.jsonl")
         write = run_hook("pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(new)}})
@@ -89,13 +87,9 @@ def test_dataset_edits_blocked_new_versions_allowed(tmp_path: Path) -> None:
 
 
 def test_env_file_write_blocked() -> None:
-    res = run_hook(
-        "pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(ROOT / ".env")}}
-    )
+    res = run_hook("pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(ROOT / ".env")}})
     assert res.returncode == 2
-    ok = run_hook(
-        "pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(ROOT / ".env.example")}}
-    )
+    ok = run_hook("pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(ROOT / ".env.example")}})
     assert ok.returncode == 0
 
 
@@ -106,9 +100,7 @@ def test_stop_hook_active_honoured() -> None:
 
 
 def test_stop_hook_blocks_once_on_failure() -> None:
-    res = run_hook(
-        "stop_check.py", {"stop_hook_active": False}, env={"EVALGATE_STOP_CHECK_CMD": "echo boom; exit 1"}
-    )
+    res = run_hook("stop_check.py", {"stop_hook_active": False}, env={"EVALGATE_STOP_CHECK_CMD": "echo boom; exit 1"})
     assert res.returncode == 0
     out = json.loads(res.stdout)
     assert out["decision"] == "block"

@@ -1,0 +1,9 @@
+schema: evalgate.suite.v1
+name: trivial
+dataset: tests/fixtures/datasets/trivial.v1.jsonl
+target:
+  python: "tests.fixtures.targets:echo"
+concurrency: 2
+metrics:
+  - {name: label_accuracy, kind: exact, params: {actual: output.label, expected: expected.label}, threshold: 0.9, direction: higher, gate: true}
+splits: [dev, test]
