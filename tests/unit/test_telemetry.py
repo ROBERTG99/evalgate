@@ -136,3 +136,12 @@ def test_logs_carry_the_current_run_id() -> None:
     with telemetry.run_context("0190-run"):
         payload = json.loads(telemetry.JsonFormatter().format(record))
     assert payload["run_id"] == "0190-run"
+
+
+def test_metrics_identity_is_stable_across_processes(otel: Any) -> None:
+    """GateFlapping uses changes() on one gauge series, so metrics must not carry a per-process instance id."""
+    _, metrics = otel
+    telemetry.count("evalgate_gate_last_decision", 1.0, suite="s")
+    resource = metrics.get_metrics_data().resource_metrics[0].resource
+    assert resource.attributes["service.name"] == "evalgate"
+    assert "service.instance.id" not in resource.attributes

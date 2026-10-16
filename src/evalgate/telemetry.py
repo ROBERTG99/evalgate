@@ -83,9 +83,12 @@ def setup(enabled: bool = False, exporter: Any = None, metric_reader: Any = None
         return False
     import uuid
 
-    # One instance id per process, so cumulative counters from separate CLI runs stay separate series.
-    resource = Resource.create({"service.name": "evalgate", "service.instance.id": str(uuid.uuid4())})
-    _tracer_provider = TracerProvider(resource=resource)
+    # Traces get one instance id per process. Metrics keep a stable identity so successive CLI runs write the
+    # same Prometheus series: GateFlapping needs `changes()` over one gauge, and `increase()` handles counter restarts.
+    detected = Resource.create({"service.name": "evalgate"})  # newer SDKs add a random service.instance.id
+    metric_resource = Resource({k: v for k, v in detected.attributes.items() if k != "service.instance.id"})
+    trace_resource = metric_resource.merge(Resource({"service.instance.id": str(uuid.uuid4())}))
+    _tracer_provider = TracerProvider(resource=trace_resource)
     if exporter is not None:
         _tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
     else:
@@ -97,7 +100,7 @@ def setup(enabled: bool = False, exporter: Any = None, metric_reader: Any = None
 
         metric_reader = PeriodicExportingMetricReader(OTLPMetricExporter(), export_interval_millis=5000)
     readers = [metric_reader] if metric_reader is not None else []
-    _meter_provider = MeterProvider(resource=resource, metric_readers=readers)
+    _meter_provider = MeterProvider(resource=metric_resource, metric_readers=readers)
     _meter = _meter_provider.get_meter("evalgate")
     _instruments.clear()
     _tracer = _tracer_provider.get_tracer("evalgate")
