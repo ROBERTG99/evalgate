@@ -109,7 +109,7 @@ def test_connection_error_retried() -> None:
 def test_allowlist_blocks_ssrf(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("EVALGATE_HTTP_ALLOWED_HOSTS", "localhost,toy-targets")
     check_allowed("http://toy-targets:8110/classify")
-    with pytest.raises(InvalidInputError, match="169.254.169.254"):
+    with pytest.raises(InvalidInputError, match=r"169\.254\.169\.254"):
         check_allowed("http://169.254.169.254/latest/meta-data")
     with pytest.raises(InvalidInputError, match="scheme"):
         check_allowed("file:///etc/passwd")
