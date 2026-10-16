@@ -99,3 +99,60 @@ def test_mean_ci_bounds() -> None:
     ci = mean_ci([0.0, 1.0] * 50, seed=1)
     assert ci.low < 0.5 < ci.high
     assert mean_ci([], seed=1).n == 0
+
+
+def test_minimum_paired_cases_fail_closed() -> None:
+    base = make_report({"acc": [1.0] * 9}, threshold=0.5)
+    cand = make_report({"acc": [0.0] + [1.0] * 8}, threshold=0.5)
+    result = check(cand, report_sha256="x", baseline=base)
+    assert [f.reason for f in result.failures] == ["error"]
+    assert result.failures[0].value == 9.0 and result.failures[0].threshold == 10.0
+    one = check(make_report({"acc": [0.0]}), report_sha256="x", baseline=make_report({"acc": [1.0]}))
+    assert [f.reason for f in one.failures] == ["error"]  # one case is never a supported regression
+    none = check(
+        make_report({"acc": [1.0] * 12}, ids=[f"a{i}" for i in range(12)]),
+        report_sha256="x",
+        baseline=make_report({"acc": [1.0] * 12}, ids=[f"b{i}" for i in range(12)]),
+    )
+    assert [f.reason for f in none.failures] == ["error"]
+
+
+def test_gated_metric_missing_from_baseline_fails_closed() -> None:
+    base = make_report({"acc": [1.0] * 20})
+    cand = make_report({"acc": [1.0] * 20, "new": [1.0] * 20})
+    result = check(cand, report_sha256="x", baseline=base)
+    assert [(f.metric, f.reason) for f in result.failures] == [("new", "error")]
+
+
+def test_boundaries_exactly_minus_one_pp_and_ci_touching_zero() -> None:
+    from evalgate.contracts import Comparison
+
+    at_limit = Comparison(
+        metric="m", baseline=1, candidate=0.99, delta_pp=-1.0, ci_low_pp=-3.0, ci_high_pp=-0.1, n_paired=100
+    )
+    assert not is_regression(at_limit, "higher", 1.0)  # must be worse than -1.0 pp
+    touching = at_limit.model_copy(update={"delta_pp": -5.0, "ci_high_pp": 0.0})
+    assert not is_regression(touching, "higher", 1.0)  # the CI must exclude 0
+    assert is_regression(touching.model_copy(update={"ci_high_pp": -0.01}), "higher", 1.0)
+
+
+@settings(max_examples=20, deadline=None)
+@given(
+    st.lists(st.tuples(st.sampled_from([0.0, 1.0]), st.sampled_from([0.0, 1.0])), min_size=5, max_size=40),
+    st.randoms(use_true_random=False),
+)
+def test_swap_negates_and_order_does_not_matter(pairs: list[tuple[float, float]], rnd) -> None:  # type: ignore[no-untyped-def]
+    base = [p[0] for p in pairs]
+    cand = [p[1] for p in pairs]
+    forward = paired_delta_ci(base, cand, seed=3, resamples=400)
+    backward = paired_delta_ci(cand, base, seed=3, resamples=400)
+    assert forward.estimate == pytest.approx(-backward.estimate)
+    assert forward.low == pytest.approx(-backward.high) and forward.high == pytest.approx(-backward.low)
+    ids = [f"c{i:03d}" for i in range(len(pairs))]
+    shuffled = list(range(len(pairs)))
+    rnd.shuffle(shuffled)
+    rb = make_report({"m": base}, ids=ids)
+    rc = make_report({"m": [cand[i] for i in shuffled]}, ids=[ids[i] for i in shuffled])
+    comp = compare_metric("m", rb, rc, seed=3, resamples=400)
+    comp_sorted = compare_metric("m", rb, make_report({"m": cand}, ids=ids), seed=3, resamples=400)
+    assert comp == comp_sorted  # pairs are matched by case id, so file order changes nothing

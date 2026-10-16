@@ -1,12 +1,13 @@
 {
   "schema": "evalgate.meta_eval.v1",
-  "created_at": "2026-10-16T19:31:00Z",
-  "git_sha": "45b8f1c1da22e6617ada4ee66c82f236c4475968",
+  "created_at": "2026-10-16T19:47:02Z",
+  "git_sha": "a3c9c742ca203c909f599ac12261f4e9d657cb4b",
   "mode": "offline",
   "command": "make meta-eval",
   "seed": 1337,
   "resamples": 10000,
   "max_regression_pp": 1.0,
+  "min_paired": 10,
   "baselines": {
     "classify": "evals/baselines/classify.json",
     "extract": "evals/baselines/extract.json",
@@ -19,26 +20,67 @@
   "regressions": 30,
   "detected": 30,
   "detection_rate": 1.0,
+  "detection_ci95": [
+    0.8843,
+    1.0
+  ],
   "neutral": 20,
   "false_positives": 0,
   "false_positive_rate": 0.0,
+  "false_positive_ci95": [
+    0.0,
+    0.1684
+  ],
+  "regressions_by_failure_reason": {
+    "regression": 24,
+    "threshold": 24,
+    "budget_cost": 3,
+    "budget_p95": 3
+  },
   "by": {
     "split": {
       "dev": {
         "regressions": 18,
         "detected": 18,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.8147,
+          1.0
+        ],
         "neutral": 12,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.2646
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 14,
+          "threshold": 14,
+          "budget_p95": 3,
+          "budget_cost": 1
+        }
       },
       "test": {
         "regressions": 12,
         "detected": 12,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.7354,
+          1.0
+        ],
         "neutral": 8,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.3694
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 10,
+          "threshold": 10,
+          "budget_cost": 2
+        }
       }
     },
     "system": {
@@ -46,25 +88,67 @@
         "regressions": 10,
         "detected": 10,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.6915,
+          1.0
+        ],
         "neutral": 6,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.4593
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 8,
+          "threshold": 8,
+          "budget_cost": 1,
+          "budget_p95": 1
+        }
       },
       "classify": {
         "regressions": 10,
         "detected": 10,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.6915,
+          1.0
+        ],
         "neutral": 7,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.4096
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 8,
+          "threshold": 8,
+          "budget_cost": 1,
+          "budget_p95": 1
+        }
       },
       "extract": {
         "regressions": 10,
         "detected": 10,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.6915,
+          1.0
+        ],
         "neutral": 7,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.4096
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 8,
+          "threshold": 8,
+          "budget_cost": 1,
+          "budget_p95": 1
+        }
       }
     },
     "kind": {
@@ -72,38 +156,81 @@
         "regressions": 3,
         "detected": 3,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.2924,
+          1.0
+        ],
         "neutral": 0,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          1.0
+        ],
+        "regressions_by_failure_reason": {
+          "budget_cost": 3
+        }
       },
       "latency": {
         "regressions": 3,
         "detected": 3,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.2924,
+          1.0
+        ],
         "neutral": 0,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          1.0
+        ],
+        "regressions_by_failure_reason": {
+          "budget_p95": 3
+        }
       },
       "none": {
         "regressions": 0,
         "detected": 0,
         "detection_rate": 0.0,
+        "detection_ci95": [
+          0.0,
+          1.0
+        ],
         "neutral": 20,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          0.1684
+        ],
+        "regressions_by_failure_reason": {}
       },
       "quality": {
         "regressions": 24,
         "detected": 24,
         "detection_rate": 1.0,
+        "detection_ci95": [
+          0.8575,
+          1.0
+        ],
         "neutral": 0,
         "false_positives": 0,
-        "false_positive_rate": 0.0
+        "false_positive_rate": 0.0,
+        "false_positive_ci95": [
+          0.0,
+          1.0
+        ],
+        "regressions_by_failure_reason": {
+          "regression": 24,
+          "threshold": 24
+        }
       }
     }
   },
   "passed": true,
-  "seconds": 40.9,
+  "seconds": 39.5,
   "variants": [
     {
       "id": "var-01",
@@ -133,7 +260,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043625,
-      "latency_p95_ms": 59.677
+      "latency_p95_ms": 35.263
     },
     {
       "id": "var-02",
@@ -163,7 +290,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 46.326
+      "latency_p95_ms": 36.709
     },
     {
       "id": "var-03",
@@ -193,7 +320,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.004394,
-      "latency_p95_ms": 45.671
+      "latency_p95_ms": 38.241
     },
     {
       "id": "var-04",
@@ -224,7 +351,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 49.138
+      "latency_p95_ms": 41.902
     },
     {
       "id": "var-05",
@@ -255,7 +382,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 38.413
+      "latency_p95_ms": 37.77
     },
     {
       "id": "var-06",
@@ -285,7 +412,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 47.301
+      "latency_p95_ms": 40.249
     },
     {
       "id": "var-07",
@@ -313,7 +440,7 @@
         "label_format": 0.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 52.16
+      "latency_p95_ms": 43.182
     },
     {
       "id": "var-08",
@@ -343,7 +470,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043625,
-      "latency_p95_ms": 45.267
+      "latency_p95_ms": 46.167
     },
     {
       "id": "var-09",
@@ -368,7 +495,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.026265,
-      "latency_p95_ms": 47.842
+      "latency_p95_ms": 34.395
     },
     {
       "id": "var-10",
@@ -393,7 +520,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 927.19
+      "latency_p95_ms": 922.676
     },
     {
       "id": "var-11",
@@ -412,7 +539,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 56.711
+      "latency_p95_ms": 48.056
     },
     {
       "id": "var-12",
@@ -431,7 +558,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 37.718
+      "latency_p95_ms": 37.161
     },
     {
       "id": "var-13",
@@ -450,7 +577,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0045875,
-      "latency_p95_ms": 48.416
+      "latency_p95_ms": 51.617
     },
     {
       "id": "var-14",
@@ -469,7 +596,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 47.736
+      "latency_p95_ms": 47.876
     },
     {
       "id": "var-15",
@@ -488,7 +615,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 51.002
+      "latency_p95_ms": 49.574
     },
     {
       "id": "var-16",
@@ -507,7 +634,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 43.993
+      "latency_p95_ms": 34.439
     },
     {
       "id": "var-17",
@@ -526,7 +653,7 @@
         "label_format": 1.0
       },
       "cost_usd_total": 0.0043775,
-      "latency_p95_ms": 42.402
+      "latency_p95_ms": 34.694
     },
     {
       "id": "var-18",
@@ -570,7 +697,7 @@
         "vendor_exact": 0.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 44.282
+      "latency_p95_ms": 51.689
     },
     {
       "id": "var-19",
@@ -614,7 +741,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 50.202
+      "latency_p95_ms": 44.199
     },
     {
       "id": "var-20",
@@ -646,7 +773,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 50.273
+      "latency_p95_ms": 51.425
     },
     {
       "id": "var-21",
@@ -688,7 +815,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 42.16
+      "latency_p95_ms": 45.801
     },
     {
       "id": "var-22",
@@ -720,7 +847,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 43.301
+      "latency_p95_ms": 47.843
     },
     {
       "id": "var-23",
@@ -762,7 +889,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 47.61
+      "latency_p95_ms": 48.737
     },
     {
       "id": "var-24",
@@ -794,7 +921,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 40.208
+      "latency_p95_ms": 47.827
     },
     {
       "id": "var-25",
@@ -826,7 +953,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 46.584
+      "latency_p95_ms": 34.343
     },
     {
       "id": "var-26",
@@ -855,7 +982,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.054513,
-      "latency_p95_ms": 53.685
+      "latency_p95_ms": 62.649
     },
     {
       "id": "var-27",
@@ -884,7 +1011,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 928.326
+      "latency_p95_ms": 927.625
     },
     {
       "id": "var-28",
@@ -907,7 +1034,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 56.064
+      "latency_p95_ms": 43.988
     },
     {
       "id": "var-29",
@@ -930,7 +1057,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0094315,
-      "latency_p95_ms": 45.968
+      "latency_p95_ms": 39.577
     },
     {
       "id": "var-30",
@@ -953,7 +1080,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 53.062
+      "latency_p95_ms": 33.958
     },
     {
       "id": "var-31",
@@ -976,7 +1103,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 51.763
+      "latency_p95_ms": 52.751
     },
     {
       "id": "var-32",
@@ -999,7 +1126,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 134.804
+      "latency_p95_ms": 33.9
     },
     {
       "id": "var-33",
@@ -1022,7 +1149,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 48.209
+      "latency_p95_ms": 112.288
     },
     {
       "id": "var-34",
@@ -1043,7 +1170,7 @@
         "vendor_exact": 1.0
       },
       "cost_usd_total": 0.0090855,
-      "latency_p95_ms": 42.845
+      "latency_p95_ms": 43.631
     },
     {
       "id": "var-35",
@@ -1092,7 +1219,7 @@
         "answer_correctness": 0.2833333333
       },
       "cost_usd_total": 0.012761,
-      "latency_p95_ms": 80.84
+      "latency_p95_ms": 69.549
     },
     {
       "id": "var-36",
@@ -1141,7 +1268,7 @@
         "answer_correctness": 0.3666666667
       },
       "cost_usd_total": 0.011349,
-      "latency_p95_ms": 74.066
+      "latency_p95_ms": 76.385
     },
     {
       "id": "var-37",
@@ -1170,7 +1297,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 90.324
+      "latency_p95_ms": 89.575
     },
     {
       "id": "var-38",
@@ -1209,7 +1336,7 @@
         "answer_correctness": 0.0
       },
       "cost_usd_total": 0.0122025,
-      "latency_p95_ms": 79.52
+      "latency_p95_ms": 68.134
     },
     {
       "id": "var-39",
@@ -1248,7 +1375,7 @@
         "answer_correctness": 0.05
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 77.496
+      "latency_p95_ms": 72.189
     },
     {
       "id": "var-40",
@@ -1287,7 +1414,7 @@
         "answer_correctness": 0.05
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 97.271
+      "latency_p95_ms": 66.589
     },
     {
       "id": "var-41",
@@ -1318,7 +1445,7 @@
         "answer_correctness": 0.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 61.297
+      "latency_p95_ms": 69.246
     },
     {
       "id": "var-42",
@@ -1359,7 +1486,7 @@
         "answer_correctness": 0.2
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 75.142
+      "latency_p95_ms": 72.93
     },
     {
       "id": "var-43",
@@ -1385,7 +1512,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.076158,
-      "latency_p95_ms": 89.834
+      "latency_p95_ms": 62.181
     },
     {
       "id": "var-44",
@@ -1411,7 +1538,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 948.496
+      "latency_p95_ms": 935.801
     },
     {
       "id": "var-45",
@@ -1431,7 +1558,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 68.992
+      "latency_p95_ms": 66.32
     },
     {
       "id": "var-46",
@@ -1451,7 +1578,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 54.698
+      "latency_p95_ms": 50.731
     },
     {
       "id": "var-47",
@@ -1471,7 +1598,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.013101,
-      "latency_p95_ms": 66.82
+      "latency_p95_ms": 85.928
     },
     {
       "id": "var-48",
@@ -1491,7 +1618,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 63.347
+      "latency_p95_ms": 59.239
     },
     {
       "id": "var-49",
@@ -1509,7 +1636,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 81.905
+      "latency_p95_ms": 79.908
     },
     {
       "id": "var-50",
@@ -1529,7 +1656,7 @@
         "answer_correctness": 1.0
       },
       "cost_usd_total": 0.012693,
-      "latency_p95_ms": 86.675
+      "latency_p95_ms": 87.084
     }
   ]
 }

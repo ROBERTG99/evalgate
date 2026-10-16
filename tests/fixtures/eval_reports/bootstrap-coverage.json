@@ -6,8 +6,70 @@
   "correlation": 0.6,
   "resamples": 10000,
   "seed": 1337,
-  "true_delta": -0.049945,
+  "true_delta": -0.05,
   "coverage": 0.96,
-  "mean_ci_width_pp": 14.227,
-  "command": "make eval (scripts/run_evals.py)"
+  "mean_ci_width_pp": 14.1286,
+  "command": "make eval (scripts/run_evals.py)",
+  "scenarios": {
+    "primary_n150_binary": {
+      "n_datasets": 400,
+      "n_cases": 150,
+      "p_base": 0.85,
+      "p_cand": 0.8,
+      "correlation": 0.6,
+      "resamples": 10000,
+      "seed": 1337,
+      "true_delta": -0.05,
+      "coverage": 0.96,
+      "mean_ci_width_pp": 14.1286
+    },
+    "n60_binary": {
+      "n_datasets": 400,
+      "n_cases": 60,
+      "p_base": 0.85,
+      "p_cand": 0.8,
+      "correlation": 0.6,
+      "resamples": 10000,
+      "seed": 1337,
+      "true_delta": -0.05,
+      "coverage": 0.9375,
+      "mean_ci_width_pp": 22.1462
+    },
+    "n60_near_perfect": {
+      "n_datasets": 400,
+      "n_cases": 60,
+      "p_base": 0.97,
+      "p_cand": 0.95,
+      "correlation": 0.6,
+      "resamples": 10000,
+      "seed": 1337,
+      "true_delta": -0.02,
+      "coverage": 0.8875,
+      "mean_ci_width_pp": 11.1127
+    },
+    "n20_binary": {
+      "n_datasets": 400,
+      "n_cases": 20,
+      "p_base": 0.85,
+      "p_cand": 0.8,
+      "correlation": 0.6,
+      "resamples": 10000,
+      "seed": 1337,
+      "true_delta": -0.05,
+      "coverage": 0.8425,
+      "mean_ci_width_pp": 36.0381
+    },
+    "n60_continuous": {
+      "n_datasets": 400,
+      "n_cases": 60,
+      "p_base": 0.7,
+      "p_cand": 0.65,
+      "correlation": 0.6,
+      "resamples": 10000,
+      "seed": 1337,
+      "true_delta": -0.041243,
+      "coverage": 0.935,
+      "mean_ci_width_pp": 14.9728
+    }
+  }
 }

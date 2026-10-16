@@ -21,6 +21,7 @@ from evalgate.budget import enforce_estimate, estimate_judge_cost
 from evalgate.errors import BudgetAbortError
 from evalgate.judge.calibrate import calibrate, load_labels
 from evalgate.judge.context import JudgeContext, load_rubric
+from evalgate.report.build import git_sha
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "evals" / "reports" / "live-eval.json"
@@ -58,12 +59,12 @@ def run(
     stamp = datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z")
     missing = [] if provider is not None else missing_credentials(name)
     if missing:
-        reason = f"live evals were not run: {', '.join(missing)} not set"
+        reason = f"{', '.join(missing)} not set"
         write(
             {"schema": "evalgate.live_eval.v1", "ran": False, "reason": reason, "provider": name, "created_at": stamp},
             out,
         )
-        print(f"eval-live: {reason}", file=sys.stderr)
+        print(f"eval-live: live evals were not run: {reason}", file=sys.stderr)
         return 2
     budget = config.live_budget_usd() if budget_usd is None else budget_usd
     route = load_rubric(RUBRIC).rubric.route

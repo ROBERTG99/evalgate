@@ -15,7 +15,7 @@ from evalgate.report.build import load_report, write_report
 from evalgate.report.markdown import render_markdown
 from evalgate.runner import RunOptions, run_suite
 from evalgate.stats.gate import check, sha256_file
-from evalgate.stats.simulation import coverage
+from evalgate.stats.simulation import coverage, scenarios
 from evalgate.suite import load_suite
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,6 +57,7 @@ def main() -> int:
             ok = ok and result.passed
     sim = coverage(n_datasets=400)
     sim["command"] = "make eval (scripts/run_evals.py)"
+    sim["scenarios"] = scenarios(n_datasets=400)
     (REPORTS / "bootstrap-coverage.json").write_text(json.dumps(sim, indent=2) + "\n", encoding="utf-8")
     print(f"eval: bootstrap 95% CI coverage {sim['coverage']:.4f} over {sim['n_datasets']} simulated datasets")
     ok = ok and 0.92 <= sim["coverage"] <= 0.98

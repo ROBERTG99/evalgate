@@ -8,6 +8,9 @@ from pathlib import Path
 from evalgate.contracts import CheckFailure, CheckResult, Comparison, Report
 from evalgate.stats.bootstrap import DEFAULT_RESAMPLES, paired_delta_ci
 
+#: Fewer paired cases than this cannot support a regression claim; the gate fails closed with ``error``.
+MIN_PAIRED = 10
+
 
 def sha256_file(path: str | Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -105,10 +108,17 @@ def check(
         )
     if baseline is not None:
         for name in report.metrics:
-            comp = compare_metric(name, baseline, report, seed, resamples)
+            comp = compare_metric(name, baseline, report, seed, resamples) if name in baseline.metrics else None
             if comp is None:
+                if name in gated:  # a gated metric the baseline cannot speak to: fail closed
+                    failures.append(CheckFailure(metric=name, reason="error", value=0.0, threshold=float(MIN_PAIRED)))
                 continue
             comparisons.append(comp)
+            if name in gated and comp.n_paired < MIN_PAIRED:
+                failures.append(
+                    CheckFailure(metric=name, reason="error", value=float(comp.n_paired), threshold=float(MIN_PAIRED))
+                )
+                continue
             if name in gated and is_regression(comp, report.metrics[name].direction, max_regression_pp):
                 failures.append(
                     CheckFailure(

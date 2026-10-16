@@ -24,10 +24,11 @@ import httpx
 from evalgate import config
 from evalgate.report.build import git_sha, load_report
 from evalgate.runner import RunOptions, run_suite
-from evalgate.stats.gate import check
+from evalgate.stats.gate import MIN_PAIRED, check
 from evalgate.suite import load_suite
 
 ROOT = Path(__file__).resolve().parents[1]
+MAX_REGRESSION_PP = 1.0
 DETECTION_MIN = 0.90
 FALSE_POSITIVE_MAX = 0.10
 
@@ -43,6 +44,35 @@ def toys_url(stack: ExitStack) -> str:
     from toy_targets.server import running
 
     return stack.enter_context(running())
+
+
+def binom_cdf(k: int, n: int, p: float) -> float:
+    total, term = 0.0, (1 - p) ** n
+    for i in range(k + 1):
+        total += term
+        term = term * (n - i) / (i + 1) * p / (1 - p) if p < 1 else 0.0
+    return min(1.0, total)
+
+
+def clopper_pearson(k: int, n: int, level: float = 0.95) -> tuple[float, float]:
+    """Exact two-sided binomial interval by bisection on the binomial CDF (no SciPy needed)."""
+    if n == 0:
+        return 0.0, 1.0
+    alpha = 1 - level
+
+    def solve(target: float, kk: int) -> float:
+        lo, hi = 0.0, 1.0
+        for _ in range(100):
+            mid = (lo + hi) / 2
+            if binom_cdf(kk, n, mid) > target:
+                lo = mid
+            else:
+                hi = mid
+        return (lo + hi) / 2
+
+    lower = 0.0 if k == 0 else solve(1 - alpha / 2, k - 1)
+    upper = 1.0 if k == n else solve(alpha / 2, k)
+    return round(lower, 4), round(upper, 4)
 
 
 def rate(hits: int, n: int) -> float:
@@ -73,7 +103,7 @@ def main() -> int:
                 report,
                 report_sha256=v["id"],
                 baseline=baselines[system],
-                max_regression_pp=1.0,
+                max_regression_pp=MAX_REGRESSION_PP,
                 seed=config.bootstrap_seed(),
                 resamples=args.resamples,
             )
@@ -105,13 +135,20 @@ def main() -> int:
         neu = [r for r in subset if not r["regression"]]
         det = sum(r["detected"] for r in reg)
         fp = sum(r["detected"] for r in neu)
+        reasons: dict[str, int] = {}
+        for r in reg:
+            for reason in sorted({f["reason"] for f in r["failures"]}):
+                reasons[reason] = reasons.get(reason, 0) + 1
         return {
             "regressions": len(reg),
             "detected": det,
             "detection_rate": rate(det, len(reg)),
+            "detection_ci95": clopper_pearson(det, len(reg)),
             "neutral": len(neu),
             "false_positives": fp,
             "false_positive_rate": rate(fp, len(neu)),
+            "false_positive_ci95": clopper_pearson(fp, len(neu)),
+            "regressions_by_failure_reason": reasons,
         }
 
     overall = summary(rows)
@@ -133,7 +170,8 @@ def main() -> int:
         "command": "make meta-eval",
         "seed": config.bootstrap_seed(),
         "resamples": args.resamples,
-        "max_regression_pp": 1.0,
+        "max_regression_pp": MAX_REGRESSION_PP,
+        "min_paired": MIN_PAIRED,
         "baselines": {s: f"evals/baselines/{s}.json" for s in baselines},
         "thresholds": {"detection_min": DETECTION_MIN, "false_positive_max": FALSE_POSITIVE_MAX},
         **overall,
