@@ -107,3 +107,32 @@ def test_env_endpoint_alone_enables_export(tmp_path: Path, monkeypatch: pytest.M
     monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://127.0.0.1:9")
     assert telemetry.setup() is True
     telemetry.shutdown()
+
+
+def test_judge_span_carries_usage_cost_and_run_id(otel: Any) -> None:
+    import asyncio
+
+    from evalgate.llm.gateway import Gateway
+    from tests.unit.llm.test_gateway import VERDICT, Scripted, no_sleep, request
+
+    spans, _ = otel
+    gw = Gateway(Scripted([VERDICT]), provider_name="anthropic", budget_usd=1.0, sleep=no_sleep)
+
+    async def call() -> None:
+        with telemetry.run_context("0190-run"):
+            await gw.complete(request())
+
+    asyncio.run(call())
+    judge = next(s for s in spans.get_finished_spans() if s.name == "evalgate.judge")
+    assert judge.attributes["app.run_id"] == "0190-run"
+    assert judge.attributes["gen_ai.usage.input_tokens"] > 0
+    assert judge.attributes["gen_ai.usage.output_tokens"] > 0
+    assert judge.attributes["app.cost_usd"] > 0
+    assert judge.attributes["gen_ai.response.model"] == "claude-haiku-5-5"
+
+
+def test_logs_carry_the_current_run_id() -> None:
+    record = logging.LogRecord("evalgate", logging.WARNING, __file__, 1, "store down", None, None)
+    with telemetry.run_context("0190-run"):
+        payload = json.loads(telemetry.JsonFormatter().format(record))
+    assert payload["run_id"] == "0190-run"

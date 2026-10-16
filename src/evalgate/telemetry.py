@@ -12,6 +12,7 @@ import os
 import sys
 from collections.abc import Iterator
 from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Any
 
 _tracer: Any = None
@@ -23,6 +24,17 @@ _meter_counts: dict[str, float] = {}
 HISTOGRAMS = {"evalgate_case_latency_ms"}
 GAUGES = {"evalgate_gate_last_decision"}
 log = logging.getLogger("evalgate")
+_run_id: ContextVar[str | None] = ContextVar("evalgate_run_id", default=None)
+
+
+@contextmanager
+def run_context(run_id: str) -> Iterator[None]:
+    """Tag spans and log lines started inside (including tasks created inside) with ``app.run_id``."""
+    token = _run_id.set(run_id)
+    try:
+        yield
+    finally:
+        _run_id.reset(token)
 
 
 class JsonFormatter(logging.Formatter):
@@ -36,6 +48,8 @@ class JsonFormatter(logging.Formatter):
         for key in ("run_id", "case_id", "metric", "event"):
             if hasattr(record, key):
                 payload[key] = getattr(record, key)
+        if "run_id" not in payload and _run_id.get() is not None:
+            payload["run_id"] = _run_id.get()
         return json.dumps(payload, ensure_ascii=False)
 
 
@@ -112,6 +126,8 @@ def span(name: str, **attributes: Any) -> Iterator[Any]:
         yield None
         return
     clean = {k.replace("__", "."): v for k, v in attributes.items() if v is not None}
+    if "app.run_id" not in clean and _run_id.get() is not None:
+        clean["app.run_id"] = _run_id.get()
     with _tracer.start_as_current_span(name, attributes=clean) as current:
         yield current
 

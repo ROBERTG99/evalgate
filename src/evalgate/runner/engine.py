@@ -288,7 +288,10 @@ class Runner:
             queue: asyncio.Queue[CaseOutcome | None] = asyncio.Queue(maxsize=1000)
             writer = asyncio.create_task(self._writer(queue))
             outcomes: list[CaseOutcome] = list(done.values())
-            with telemetry.span("evalgate.run", app__run_id=self.run_id, suite=self.suite.name):
+            with (
+                telemetry.run_context(self.run_id),
+                telemetry.span("evalgate.run", app__run_id=self.run_id, suite=self.suite.name),
+            ):
                 tasks = [asyncio.create_task(self.run_case(target, metrics, c, sem)) for c in pending]
                 try:
                     finished, unfinished = (

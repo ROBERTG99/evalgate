@@ -224,6 +224,9 @@ class Gateway:
     def model_for(self, route: str) -> str:
         return config.judge_hard_model() if route == "judge_hard" else config.judge_model()
 
+    def _cost(self, model: str, raw: RawResponse) -> float:
+        return step_cost(model, raw.input_tokens, raw.output_tokens) if self.live else 0.0
+
     async def complete(self, req: LLMRequest, validate: Callable[[dict[str, Any]], Any] | None = None) -> LLMResponse:
         """Send one request. Raises JudgeUnavailable when retriable failures persist after 3 attempts,
         OutputError when the output is unusable, BudgetAbortError when the live budget is spent."""
@@ -254,9 +257,14 @@ class Gateway:
                     app__prompt_version=req.prompt_version,
                     gen_ai__operation__name="chat",
                     app__route=req.route,
-                ):
+                ) as current:
                     self.calls += 1
                     raw = await asyncio.wait_for(self.provider.complete(req), timeout=self.timeout_s)
+                    if current is not None:
+                        current.set_attribute("gen_ai.response.model", raw.model or req.model)
+                        current.set_attribute("gen_ai.usage.input_tokens", raw.input_tokens)
+                        current.set_attribute("gen_ai.usage.output_tokens", raw.output_tokens)
+                        current.set_attribute("app.cost_usd", self._cost(raw.model or req.model, raw))
             except TimeoutError as exc:
                 last = ProviderError("provider timeout", True)
                 last.__cause__ = exc
@@ -273,7 +281,7 @@ class Gateway:
                     except ValueError as exc:  # pydantic ValidationError is a ValueError
                         raise OutputError(f"output does not match the contract: {exc}".splitlines()[0]) from exc
                 model = raw.model or req.model
-                cost = step_cost(model, raw.input_tokens, raw.output_tokens) if self.live else 0.0
+                cost = self._cost(model, raw)
                 self.guard.add(cost)
                 if self.live and self.record:
                     cassettes.save(self.cassette_dir, req, raw.data, raw.input_tokens, raw.output_tokens)
