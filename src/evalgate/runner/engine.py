@@ -92,6 +92,7 @@ class Runner:
         self.store_error: str | None = None
         self.judge_ctx: Any = None
         self.run_id = options.resume or uuid7()
+        self._owned_client: Any = None
 
     # setup -----------------------------------------------------------------------------------
     def _needs_judge(self) -> bool:
@@ -255,7 +256,8 @@ class Runner:
                 return
             if self.store is not None:
                 try:
-                    self.store.insert_case(self.run_id, item)
+                    # DuckDB writes are blocking: keep them off the event loop so latencies stay honest.
+                    await asyncio.to_thread(self.store.insert_case, self.run_id, item)
                 except Exception as exc:
                     self.store_error = f"{exc.__class__.__name__}: {exc}"
                     log.warning("run store write failed: %s", self.store_error)
@@ -267,7 +269,14 @@ class Runner:
         self._open_store()
         try:
             metrics = self._build_metrics()
-            target = self.options.target or build_target(self.suite.target, http_client=self.options.http_client)
+            http_client = self.options.http_client
+            if http_client is None and self.suite.target.http is not None and self.options.target is None:
+                import httpx
+
+                # One pooled client per run: building a client (and its TLS context) per call costs ~100 ms.
+                limits = httpx.Limits(max_connections=self.suite.concurrency * 2)
+                http_client = self._owned_client = httpx.AsyncClient(limits=limits)
+            target = self.options.target or build_target(self.suite.target, http_client=http_client)
             cases = self.loaded.cases
             if self.judge_ctx is not None:
                 self.judge_ctx.preflight(n_cases=len(cases), metrics=metrics)
@@ -315,6 +324,8 @@ class Runner:
                     log.warning("run store finish failed: %s", self.store_error)
             return RunResult(report=report, outcomes=outcomes, store_error=self.store_error)
         finally:
+            if self._owned_client is not None:
+                await self._owned_client.aclose()
             if self.store is not None:
                 self.store.close()
             if self.cache is not None:

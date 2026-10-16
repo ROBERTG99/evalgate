@@ -164,7 +164,7 @@ class JudgeContext:
         key = request_key(req)
         self.judge_calls += 1
         if self.cache is not None:
-            hit = self.cache.get(key)
+            hit = await asyncio.to_thread(self.cache.get, key)  # DuckDB I/O off the event loop
             if hit is not None and self._usable(hit, req):
                 self.cache_hits += 1
                 telemetry.count("evalgate_cache_hits_total")
@@ -179,7 +179,8 @@ class JudgeContext:
         self._models.add(resp.model)
         if self.cache is not None:
             stored_model = f"cassette:{resp.model}" if resp.source == "cassette" else resp.model
-            self.cache.put(
+            await asyncio.to_thread(
+                self.cache.put,
                 key,
                 route=req.route,
                 model=stored_model,

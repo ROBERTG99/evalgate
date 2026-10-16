@@ -39,6 +39,7 @@ class JudgeMetric(BaseMetric):
         if "pass_at" not in self.params:
             self.pass_at = 0.75 if self.rubric.scale == "likert5" else 1.0
         self.diag = ctx.diagnostics_for(spec.name, self.loaded)
+        injection_match("")  # load and compile the patterns before the run starts
 
     def calls_per_case(self) -> int:
         return 2 if self.rubric.position_swap else 1

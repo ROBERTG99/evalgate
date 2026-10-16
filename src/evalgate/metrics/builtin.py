@@ -36,6 +36,10 @@ class ExactMetric(BaseMetric):
 class JsonSchemaMetric(BaseMetric):
     """1.0 when the selected value validates against a JSON Schema (inline ``schema`` or ``schema_path``)."""
 
+    def __init__(self, spec: MetricSpec) -> None:
+        super().__init__(spec)
+        _ = self.validator  # compile before the run: lazy compilation would stall the event loop mid-run
+
     @cached_property
     def validator(self) -> Any:
         from jsonschema import Draft202012Validator
