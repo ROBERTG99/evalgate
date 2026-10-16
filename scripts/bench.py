@@ -175,17 +175,16 @@ def nfr6() -> None:
     record("NFR-6", "import evalgate, median of 5 fresh interpreters", statistics.median(times), 300, "ms")
 
 
-def nfr7() -> None:
-    wheels = sorted((ROOT / "dist").glob("evalgate-*.whl"))
-    if not wheels:
-        subprocess.run(
-            ["uv", "build", "--package", "evalgate", "--wheel", "--out-dir", str(ROOT / "dist")],
-            cwd=ROOT,
-            capture_output=True,
-            check=True,
-        )
-        wheels = sorted((ROOT / "dist").glob("evalgate-*.whl"))
-    record("NFR-7", f"wheel size ({wheels[-1].name})", wheels[-1].stat().st_size / 1_000_000, 1.0, "MB")
+def nfr7(tmp: Path) -> None:
+    out = tmp / "dist"  # always a fresh build: a stale wheel in dist/ would measure old code
+    subprocess.run(
+        ["uv", "build", "--package", "evalgate", "--wheel", "--out-dir", str(out)],
+        cwd=ROOT,
+        capture_output=True,
+        check=True,
+    )
+    wheel = next(out.glob("evalgate-*.whl"))
+    record("NFR-7", f"wheel size ({wheel.name})", wheel.stat().st_size / 1_000_000, 1.0, "MB")
 
 
 def nfr8(tmp: Path) -> None:
@@ -239,7 +238,7 @@ def main() -> int:
         nfr4()
         nfr5(tmp)
         nfr6()
-        nfr7()
+        nfr7(tmp)
         nfr8(tmp)
         nfr9(tmp)
     out = ROOT / "evals" / "reports" / "bench.json"
