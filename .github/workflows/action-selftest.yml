@@ -1,0 +1,60 @@
+name: action-selftest
+
+on:
+  pull_request:
+    paths: ["action/**", "src/**", "scripts/pr_comment.py", "evals/**", ".github/workflows/action-selftest.yml"]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    name: v1 passes, v2 fails
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Start toy targets
+        run: |
+          uv sync --frozen
+          nohup uv run --frozen toy-targets --port 8110 > toys.log 2>&1 &
+          for _ in $(seq 1 30); do curl -sf http://localhost:8110/healthz && exit 0; sleep 1; done
+          cat toys.log
+          exit 1
+      - name: v1 must pass
+        id: v1
+        uses: ./action
+        with:
+          suite: evals/suites/classify.yaml
+          baseline: evals/baselines/classify.json
+          comment: "false"
+      - name: v2 must fail
+        id: v2
+        continue-on-error: true
+        uses: ./action
+        env:
+          EVALGATE_TOY_VERSION: v2
+        with:
+          suite: evals/suites/classify.yaml
+          baseline: evals/baselines/classify.json
+          report-md: evalgate-report-v2.md
+          comment: "false"
+      - name: Assert outcomes
+        env:
+          V1_PASSED: ${{ steps.v1.outputs.passed }}
+          V2_OUTCOME: ${{ steps.v2.outcome }}
+          V2_PASSED: ${{ steps.v2.outputs.passed }}
+        run: |
+          echo "v1 passed=${V1_PASSED}; v2 outcome=${V2_OUTCOME}, passed=${V2_PASSED}"
+          test "${V1_PASSED}" = "true"
+          test "${V2_OUTCOME}" = "failure"
+          test "${V2_PASSED}" = "false"
+          grep -q "regression" evalgate-report-v2.md
+      - name: PR comment contract (WireMock double)
+        run: uv run --frozen pytest tests/integration/test_pr_comment.py -q
