@@ -36,7 +36,7 @@ The gate rule ([src/evalgate/stats/gate.py](../../src/evalgate/stats/gate.py)): 
 
 - Deterministic: the same reports, seed and resample count give the same `evalgate.check.v1` result.
 - Measured coverage in simulation: 400 simulated paired datasets of 150 correlated binary cases (true delta -5 pp) gave 95% interval coverage 0.96, inside the 0.92 to 0.98 target, with a mean interval width of 14.1286 pp ([evals/reports/bootstrap-coverage.json](../../evals/reports/bootstrap-coverage.json), `make eval`).
-- Cheap enough for CI: comparing 200 cases with 10,000 resamples on 2 metrics took 0.0374 s against a 2 s budget (NFR-8, `evals/reports/bench.json`, `make bench`).
+- Cheap enough for CI: comparing 200 cases with 10,000 resamples on 2 metrics took 0.039 s against a 2 s budget (NFR-8, `evals/reports/bench.json`, `make bench`).
 - A real regression is clear: the `make demo` classify drop is -16.67 pp with interval [-26.67, -8.33] ([docs/DECISIONS.md](../DECISIONS.md)).
 
 ### Negative

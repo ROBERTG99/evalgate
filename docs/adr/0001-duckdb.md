@@ -31,7 +31,7 @@ Use DuckDB files under `EVALGATE_HOME` (default `.evalgate/`): `runs.duckdb` for
 - One file per store, no server, works the same in CI and locally; the `evals` workflow uploads `.evalgate/*.duckdb` as 14-day artifacts ([.github/workflows/evals.yml](../../.github/workflows/evals.yml)).
 - The audit chain makes deletion or edits of gate decisions detectable (`evalgate gc --verify-audit`), including head pruning outside `evalgate gc` (see the `audit_anchor` entry in [docs/DECISIONS.md](../DECISIONS.md)).
 - Migrations are plain SQL and reviewable; the `add-migration` skill documents the procedure.
-- An unchanged cached re-run of 200 judged cases took 1.3421 s against a 10 s budget (NFR-3, `evals/reports/bench.json`, `make bench`).
+- An unchanged cached re-run of 200 judged cases took 1.317 s against a 10 s budget (NFR-3, `evals/reports/bench.json`, `make bench`).
 
 ### Negative
 

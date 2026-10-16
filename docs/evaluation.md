@@ -27,7 +27,7 @@ Offline results of the v1 targets on the `test` split (60 cases each), from `mak
 | answer | `tool_calls` | 1.0000 | ≥ 0.95 | `evals/reports/answer.json` |
 | answer | `answer_correctness` | 1.0000 | ≥ 0.85 | `evals/reports/answer.json` |
 
-Run cost and p95 latency, offline (`evals/REPORT.md`, "Runs"): classify USD 0.0044 and 40 ms, extract USD 0.0091 and 37 ms, answer USD 0.0127 and 41 ms.
+Run cost and p95 latency, offline (`evals/REPORT.md`, "Runs"): classify USD 0.0044 and 59 ms, extract USD 0.0091 and 71 ms, answer USD 0.0127 and 43 ms.
 
 The `v2` targets must fail. The scripted demo records the classify case: `label_accuracy` drops from 0.9500 to 0.7833, a delta of -16.67 pp with a 95% CI of [-26.67, -8.33] pp on 60 paired cases, and `evalgate check` exits 1 ([`docs/demo-transcript.txt`](demo-transcript.txt), `make demo`). `tests/integration/evals/test_v1_suites.py` checks that v1 passes and v2 fails with a regression for all three suites.
 
@@ -86,15 +86,15 @@ Source: `evals/reports/bootstrap-coverage.json`. The primary scenario meets the 
 
 | NFR | What | Value | Budget |
 |---|---|---:|---:|
-| NFR-1 | 200 cases, concurrency 16, 200 ms target | 2.8052 s | 300 s |
-| NFR-2 | Engine overhead per case p95 (1,000 no-op cases) | 0.0429 ms | 5 ms |
-| NFR-3 | Cached re-run of 200 judged cases | 1.3421 s | 10 s |
+| NFR-1 | 200 cases, concurrency 16, 200 ms target | 2.8355 s | 300 s |
+| NFR-2 | Engine overhead per case p95 (1,000 no-op cases) | 0.0646 ms | 5 ms |
+| NFR-3 | Cached re-run of 200 judged cases | 1.317 s | 10 s |
 | NFR-4 | Live CI estimate (120 `claude-haiku-5-5` judge calls) | USD 0.0324 | USD 1.00 |
 | NFR-5 | Non-loopback connections during an offline judged run | 0 | 0 (budget < 1) |
-| NFR-6 | `import evalgate`, median of 5 fresh interpreters | 3.7428 ms | 300 ms |
-| NFR-7 | Wheel size (`evalgate-0.1.0-py3-none-any.whl`) | 0.1099 MB | 1.0 MB |
-| NFR-8 | Viewer run detail p95, 200 cases | 8.1092 ms | 200 ms |
-| NFR-8 | Comparison, 200 cases × 10,000 resamples (2 metrics) | 0.0374 s | 2 s |
+| NFR-6 | `import evalgate`, median of 5 fresh interpreters | 2.9737 ms | 300 ms |
+| NFR-7 | Wheel size (`evalgate-0.1.0-py3-none-any.whl`) | 0.1176 MB | 1.0 MB |
+| NFR-8 | Viewer run detail p95, 200 cases | 9.1464 ms | 200 ms |
+| NFR-8 | Comparison, 200 cases × 10,000 resamples (2 metrics) | 0.039 s | 2 s |
 | NFR-9 | Identical reports except `run_id`, `created_at`, latencies | 0.0 differences | 0 (budget < 1) |
 
 NFR-4 is an estimate from token assumptions in `src/evalgate/budget.py`, not a measured live spend. NFR-10 to NFR-12 (clone-to-viewer time and image sizes, security limits, Python and OS support) are not part of `make bench`; their evidence is in `PROGRESS.md` (tasks T-07, T-37, T-39) and `docs/security.md`.

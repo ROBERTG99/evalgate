@@ -25,7 +25,7 @@ FastAPI stays where it fits: the toy targets in `examples/toy-targets/`, which n
 ### Positive
 
 - No web framework in the dependency set: runtime dependencies stay at pydantic, typer, pyyaml, httpx, numpy, duckdb, jinja2 and jsonschema ([pyproject.toml](../../pyproject.toml)).
-- Budgets are met: wheel 0.1099 MB (NFR-7), `import evalgate` 3.7428 ms (NFR-6), run detail p95 8.1092 ms for 200 cases against a 200 ms budget (NFR-8) (`evals/reports/bench.json`, `make bench`).
+- Budgets are met: wheel 0.1176 MB (NFR-7), `import evalgate` 2.9737 ms (NFR-6), run detail p95 9.1464 ms for 200 cases against a 200 ms budget (NFR-8) (`evals/reports/bench.json`, `make bench`).
 - Every security control is in one file and covered by the viewer tests.
 
 ### Negative
