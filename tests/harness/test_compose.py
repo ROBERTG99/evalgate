@@ -86,3 +86,25 @@ def test_env_example_documents_variables() -> None:
         used |= set(re.findall(r"\bEVALGATE_[A-Z0-9_]+\b", path.read_text()))
     used -= {"EVALGATE_GUARD_ROOT", "EVALGATE_STOP_CHECK_CMD", "EVALGATE_LANGFUSE_URL", "EVALGATE_GITHUB_URL"}
     assert sorted(used - names) == []
+
+
+def test_test_compose_services() -> None:
+    compose = load("compose.test.yaml")
+    services = compose["services"]
+    assert {"tests", "e2e", "wiremock-langfuse", "wiremock-github", "promtool"} <= set(services)
+    assert compose["networks"]["default"] == {"name": "evalgate_default", "external": True}
+    ports = {name: [p for _, p in host_ports(s)] for name, s in services.items()}
+    assert ports["wiremock-langfuse"] == [8142] and ports["wiremock-github"] == [8143]
+    for name in ("wiremock-langfuse", "wiremock-github"):
+        assert services[name]["image"].startswith("wiremock/wiremock:")
+        assert services["tests"]["depends_on"][name]["condition"] == "service_healthy"
+    command = " ".join(services["tests"]["command"])
+    for suite in ("tests/unit", "tests/integration", "tests/contract", "tests/harness"):
+        assert suite in command
+    assert "promtool" in services["promtool"]["entrypoint"]
+    assert services["e2e"]["environment"]["EVALGATE_VIEWER_URL"] == "http://report-viewer:8100"
+    for name in ("test", "e2e"):
+        text = (ROOT / f"docker/{name}.Dockerfile").read_text()
+        assert "ARG HTTPS_PROXY" in text
+        assert "USER " in text and "USER root" not in text
+    assert "playwright==1.56.0" in (ROOT / "docker/e2e.Dockerfile").read_text()
