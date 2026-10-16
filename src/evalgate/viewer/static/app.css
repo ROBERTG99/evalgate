@@ -38,6 +38,7 @@ caption { text-align: left; padding: var(--space-2) var(--space-3); color: var(-
 th, td { padding: var(--space-1) var(--space-3); border-bottom: var(--rule-width) solid var(--color-rule); text-align: left; vertical-align: top; }
 th { font-weight: 600; white-space: nowrap; }
 td.num, th.num { text-align: right; }
+th.num { font-family: inherit; } /* headers keep the text font; only the numbers are monospace */
 tbody tr:nth-child(even) { background: var(--color-row-alt); }
 .cards { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
 .card { background: var(--color-surface); border: var(--rule-width) solid var(--color-rule); border-radius: var(--radius); padding: var(--space-3); }
@@ -57,7 +58,7 @@ select, input[type="text"], button {
 }
 button { cursor: pointer; font-weight: 600; }
 .theme-toggle { min-width: 6rem; }
-.judge-tag { font-size: var(--text-sm); border: var(--rule-width) dashed var(--color-muted); border-radius: var(--radius); padding: 0 var(--space-1); color: var(--color-muted); }
+.judge-tag { white-space: nowrap; display: inline-block; font-size: var(--text-sm); border: var(--rule-width) dashed var(--color-muted); border-radius: var(--radius); padding: 0 var(--space-1); color: var(--color-muted); }
 footer { max-width: 1200px; margin: 0 auto; padding: var(--space-4); color: var(--color-muted); font-size: var(--text-sm); }
 @media (min-width: 768px) {
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }

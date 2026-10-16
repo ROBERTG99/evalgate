@@ -1,3 +1,4 @@
+import re
 import time
 from pathlib import Path
 
@@ -38,3 +39,17 @@ def test_compare_pick_and_errors(tmp_path: Path) -> None:
         assert "Baseline" in httpx.get(f"{url}/compare").text
         assert httpx.get(f"{url}/compare?base={RUN_A}&cand=x").status_code == 400
         assert httpx.get(f"{url}/compare?base={RUN_A}&cand={RUN_B}").status_code == 404
+
+
+def test_pick_form_explains_a_missing_run_and_keeps_the_choice(tmp_path: Path) -> None:
+    write(tmp_path / "base.json", RUN_A, [1.0] * 10)
+    write(tmp_path / "cand.json", RUN_B, [1.0] * 10)
+    with viewer(tmp_path) as url:
+        page = httpx.get(f"{url}/compare?base={RUN_A}").text
+        assert 'role="alert">Pick a baseline and a candidate.' in page
+        assert f'<option value="{RUN_A}" selected>' in page
+        fresh = httpx.get(f"{url}/compare").text
+        assert "Pick a baseline" not in fresh
+        # the two selects do not default to the same run
+        selected = re.findall(r'<option value="([0-9a-f-]+)" selected>', fresh)
+        assert len(selected) == 1

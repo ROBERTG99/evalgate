@@ -21,7 +21,7 @@
 <h2>Metrics</h2>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Metrics table (scrolls horizontally)"><table>
 <caption>Metric values with 95% bootstrap intervals{% if baseline %} and paired deltas against run {{ baseline.run_id }}{% endif %}</caption>
-<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
+<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col" class="num">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col" class="num">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
 <tbody>
 {% for name, m in report.metrics.items() %}{% set c = comps.get(name) %}
 <tr><th scope="row" class="mono">{{ name }}</th><td class="num">{{ "%.4f"|format(m.value) }}</td>
@@ -35,7 +35,7 @@
 </tbody></table></div>
 <p class="num">Cost USD {{ "%.4f"|format(report.cost_usd_total) }} ({{ report.mode }}) · latency p50 {{ "%.0f"|format(report.latency_p50_ms) }} ms, p95 {{ "%.0f"|format(report.latency_p95_ms) }} ms ({{ report.mode }})</p>
 {% if result and result.failures %}<div class="panel error" role="alert"><h2>Gate failures</h2><ul>
-{% for f in result.failures %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {% if f.reason == "regression" %}{{ "%+.2f"|format(f.delta_pp) }} pp (95% CI {{ "%+.2f"|format(f.ci_low_pp) }} to {{ "%+.2f"|format(f.ci_high_pp) }}){% else %}{{ f.value }} vs {{ f.threshold }}{% endif %}</li>{% endfor %}
+{% for f in result.failures %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {% if f.reason == "regression" %}{{ "%+.2f"|format(f.delta_pp) }} pp (95% CI {{ "%+.2f"|format(f.ci_low_pp) }} to {{ "%+.2f"|format(f.ci_high_pp) }}){% else %}{{ "%.4f"|format(f.value) if f.value is not none else "n/a" }} vs {{ f.threshold if f.threshold is not none else "n/a" }}{% endif %}</li>{% endfor %}
 </ul></div>{% endif %}
 <h2>Cases</h2>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Cases table (scrolls horizontally)"><table>

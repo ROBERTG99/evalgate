@@ -98,6 +98,7 @@ caption { text-align: left; padding: var(--space-2) var(--space-3); color: var(-
 th, td { padding: var(--space-1) var(--space-3); border-bottom: var(--rule-width) solid var(--color-rule); text-align: left; vertical-align: top; }
 th { font-weight: 600; white-space: nowrap; }
 td.num, th.num { text-align: right; }
+th.num { font-family: inherit; } /* headers keep the text font; only the numbers are monospace */
 tbody tr:nth-child(even) { background: var(--color-row-alt); }
 .cards { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
 .card { background: var(--color-surface); border: var(--rule-width) solid var(--color-rule); border-radius: var(--radius); padding: var(--space-3); }
@@ -117,7 +118,7 @@ select, input[type="text"], button {
 }
 button { cursor: pointer; font-weight: 600; }
 .theme-toggle { min-width: 6rem; }
-.judge-tag { font-size: var(--text-sm); border: var(--rule-width) dashed var(--color-muted); border-radius: var(--radius); padding: 0 var(--space-1); color: var(--color-muted); }
+.judge-tag { white-space: nowrap; display: inline-block; font-size: var(--text-sm); border: var(--rule-width) dashed var(--color-muted); border-radius: var(--radius); padding: 0 var(--space-1); color: var(--color-muted); }
 footer { max-width: 1200px; margin: 0 auto; padding: var(--space-4); color: var(--color-muted); font-size: var(--text-sm); }
 @media (min-width: 768px) {
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -143,7 +144,7 @@ footer { max-width: 1200px; margin: 0 auto; padding: var(--space-4); color: var(
 <h2>Metrics</h2>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Metrics table (scrolls horizontally)"><table>
 <caption>Metric values with 95% bootstrap intervals and paired deltas against run 00000000-0000-7000-8000-000000000000</caption>
-<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
+<thead><tr><th scope="col">Metric</th><th scope="col" class="num">Value</th><th scope="col" class="num">95% CI</th><th scope="col" class="num">Threshold</th><th scope="col" class="num">Δ (pp)</th><th scope="col" class="num">95% CI of Δ</th><th scope="col">Gate</th><th scope="col">Mode</th></tr></thead>
 <tbody>
 
 <tr><th scope="row" class="mono">label_accuracy</th><td class="num">0.7667</td>
@@ -165,7 +166,7 @@ footer { max-width: 1200px; margin: 0 auto; padding: var(--space-4); color: var(
 </tbody></table></div>
 <p class="num">Cost USD 0.0042 (offline) · latency p50 50 ms, p95 100 ms (offline)</p>
 <div class="panel error" role="alert"><h2>Gate failures</h2><ul>
-<li><strong>threshold</strong> <span class="mono">label_accuracy</span>: 0.7666666666666667 vs 0.9</li><li><strong>regression</strong> <span class="mono">label_accuracy</span>: -13.33 pp (95% CI -21.67 to -5.00)</li>
+<li><strong>threshold</strong> <span class="mono">label_accuracy</span>: 0.7667 vs 0.9</li><li><strong>regression</strong> <span class="mono">label_accuracy</span>: -13.33 pp (95% CI -21.67 to -5.00)</li>
 </ul></div>
 <h2>Cases</h2>
 <div class="table-wrap" tabindex="0" role="region" aria-label="Cases table (scrolls horizontally)"><table>

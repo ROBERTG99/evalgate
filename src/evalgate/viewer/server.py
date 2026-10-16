@@ -367,7 +367,18 @@ class Handler(BaseHTTPRequestHandler):
         base_id, cand_id = self.query.get("base", [""])[0], self.query.get("cand", [""])[0]
         reports, _ = self.viewer.index.reports()
         if not base_id or not cand_id:
-            return self.html("compare.html", state="pick", reports=reports, base=None, cand=None)
+            # WCAG 3.3.1: say what is missing and keep what was picked.
+            message = "Pick a baseline and a candidate." if (base_id or cand_id) else None
+            return self.html(
+                "compare.html",
+                state="pick",
+                reports=reports,
+                base=None,
+                cand=None,
+                picked_base=base_id,
+                picked_cand=cand_id,
+                message=message,
+            )
         if not (RUN_ID.fullmatch(base_id) and RUN_ID.fullmatch(cand_id)):
             return self.error_page(400, "Bad request", "base and cand must be run ids.")
         base_e, cand_e = self.viewer.index.find(base_id), self.viewer.index.find(cand_id)
