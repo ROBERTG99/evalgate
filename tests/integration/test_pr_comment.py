@@ -62,3 +62,12 @@ def test_other_suites_do_not_collide() -> None:
         client.upsert("acme/widgets", 7, "classify", "x")
         other = client.upsert("acme/widgets", 7, "answer", "y")
     assert other.action == "created"
+
+
+def test_personal_token_author_matches_its_own_comments() -> None:
+    body = f"{MARKER}\nreport\n<!-- evalgate:suite=classify -->"
+    client = CommentClient("http://unused", "t", httpx.Client(), author="octo-maintainer")
+    assert client.ours({"user": {"login": "octo-maintainer", "type": "User"}, "body": body}, "classify")
+    assert not client.ours({"user": {"login": "someone-else", "type": "User"}, "body": body}, "classify")
+    bot = CommentClient("http://unused", "t", httpx.Client())
+    assert not bot.ours({"user": {"login": "github-actions[bot]", "type": "User"}, "body": body}, "classify")

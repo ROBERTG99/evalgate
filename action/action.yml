@@ -36,6 +36,10 @@ inputs:
     description: Upsert one PR comment with the report (true or false).
     required: false
     default: "true"
+  comment-author:
+    description: Login whose comments may be updated (the account behind github-token).
+    required: false
+    default: github-actions[bot]
   github-token:
     description: Token used to comment; needs pull-requests write.
     required: false
@@ -109,6 +113,13 @@ runs:
         fi
         evalgate check "${args[@]}"
         code=$?
+        if [ "${code}" -gt 1 ]; then
+          # Not a gate verdict (2 invalid input, 4 internal, ...): keep the original exit code.
+          echo "::error title=evalgate::evalgate check exited ${code}"
+          echo "passed=false" >> "${GITHUB_OUTPUT}"
+          echo "exit-code=${code}" >> "${GITHUB_OUTPUT}"
+          exit "${code}"
+        fi
         if ! evalgate report "${md_args[@]}"; then
           echo "::error title=evalgate::could not render the Markdown report"
           exit 4
@@ -125,11 +136,13 @@ runs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         REPO: ${{ github.repository }}
         REPORT_MD: ${{ inputs.report-md }}
-        SUITE: ${{ inputs.suite }}
+        REPORT_JSON: ${{ steps.run.outputs.report-json }}
+        EVALGATE_COMMENT_AUTHOR: ${{ inputs.comment-author }}
         ACTION_PATH: ${{ github.action_path }}
       run: |
         set -euo pipefail
-        name="$(basename "${SUITE}" .yaml)"
+        # The suite name inside the report keys the comment (file names can repeat across folders).
+        name="$(python -c 'import json, sys; print(json.load(open(sys.argv[1]))["suite"])' "${REPORT_JSON}")"
         python "${ACTION_PATH}/../scripts/pr_comment.py" --repo "${REPO}" --pr "${PR_NUMBER}" --suite "${name}" --body-file "${REPORT_MD}"
     - name: Fail when the gate failed
       if: ${{ steps.check.outputs.exit-code != '0' }}

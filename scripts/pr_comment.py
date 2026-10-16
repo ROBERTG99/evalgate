@@ -68,9 +68,11 @@ class CommentClient:
         """Only a comment written by the bot counts: anyone can paste the markers into their own comment."""
         user = comment.get("user") or {}
         body = comment.get("body") or ""
+        # A bot login must also be a Bot account; a personal token's own login is enough for its comments.
+        is_bot_author = self.author.endswith("[bot]")
         return (
             user.get("login") == self.author
-            and user.get("type") == "Bot"
+            and (user.get("type") == "Bot" or not is_bot_author)
             and MARKER in body
             and suite_marker(suite) in body
         )
