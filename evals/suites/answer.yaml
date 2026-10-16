@@ -1,0 +1,13 @@
+schema: evalgate.suite.v1
+name: answer
+description: FAQ question answering (RAG agent with tools) against the toy answer target, with an AI judge.
+dataset: evals/datasets/toys/answer.v1.jsonl
+target:
+  http: {url: "${EVALGATE_TOYS_URL:-http://localhost:8110}/answer", method: POST, headers: {X-Toy-Version: "${EVALGATE_TOY_VERSION:-v1}"}, timeout_s: 10}
+concurrency: 8
+metrics:
+  - {name: answer_contains, kind: contains_all, params: {actual: output.answer, expected: expected.key_facts}, threshold: 0.85, direction: higher, gate: true}
+  - {name: tool_calls, kind: tool_calls, params: {actual: output.steps, expected: expected.tools}, threshold: 0.95, direction: higher, gate: true}
+  - {name: answer_correctness, kind: judge, params: {rubric: evals/rubrics/answer_correctness.v1.yaml, candidate: output.answer, reference: expected.answer, input: input.question}, threshold: 0.85, direction: higher, gate: true}
+budget: {max_cost_usd: 0.05, max_p95_ms: 800}
+splits: [dev, test]

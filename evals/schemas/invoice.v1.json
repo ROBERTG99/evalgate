@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Extracted invoice fields (toy extract target)",
+  "type": "object",
+  "required": ["invoice_number", "date", "total", "currency", "vendor"],
+  "properties": {
+    "invoice_number": {"type": "string", "pattern": "^INV-\\d{5}$"},
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "total": {"type": "number", "minimum": 0},
+    "currency": {"type": "string", "enum": ["EUR", "USD", "GBP"]},
+    "vendor": {"type": "string", "minLength": 1}
+  }
+}

@@ -17,6 +17,8 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from typing import Any, Protocol
 
+from jsonschema import Draft202012Validator  # imported up front: a lazy import would stall the event loop
+
 from evalgate import config, telemetry
 from evalgate.accounting import has_price, step_cost
 from evalgate.budget import SpendGuard
@@ -40,8 +42,6 @@ def is_retriable_status(status: int | None) -> bool:
 
 
 def _validate(data: dict[str, Any], schema: dict[str, Any]) -> None:
-    from jsonschema import Draft202012Validator
-
     errors = list(Draft202012Validator(schema).iter_errors(data))
     if errors:
         raise OutputError(f"output does not match schema: {errors[0].message}")

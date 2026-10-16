@@ -1,0 +1,775 @@
+{
+  "schema": "evalgate.report.v1",
+  "suite": "classify",
+  "run_id": "01a14626-55f8-7b34-b98f-c84afdca4850",
+  "created_at": "2026-10-16T19:18:01Z",
+  "git_sha": "2204384f04102aefcdb2979a59cef112c1303be0",
+  "mode": "offline",
+  "models": [
+    "toy-model"
+  ],
+  "prompt_hashes": {},
+  "n_cases": 60,
+  "metrics": {
+    "label_accuracy": {
+      "value": 0.95,
+      "threshold": 0.9,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 0.8833333333,
+      "ci_high": 1.0
+    },
+    "label_format": {
+      "value": 1.0,
+      "threshold": 1.0,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    }
+  },
+  "cost_usd_total": 0.0043775,
+  "cost_usd_per_case": 7.29583e-05,
+  "latency_p50_ms": 7.473,
+  "latency_p95_ms": 35.778,
+  "cases": [
+    {
+      "id": "cls-001",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 37.452,
+      "error": null
+    },
+    {
+      "id": "cls-003",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 14.955,
+      "error": null
+    },
+    {
+      "id": "cls-006",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 0.0,
+        "label_format": 1.0
+      },
+      "passed": false,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 17.322,
+      "error": null
+    },
+    {
+      "id": "cls-014",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.2e-05,
+      "latency_ms": 16.473,
+      "error": null
+    },
+    {
+      "id": "cls-015",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 10.413,
+      "error": null
+    },
+    {
+      "id": "cls-017",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 16.496,
+      "error": null
+    },
+    {
+      "id": "cls-019",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.45e-05,
+      "latency_ms": 16.127,
+      "error": null
+    },
+    {
+      "id": "cls-021",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.35e-05,
+      "latency_ms": 16.475,
+      "error": null
+    },
+    {
+      "id": "cls-023",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 7.421,
+      "error": null
+    },
+    {
+      "id": "cls-026",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 5.871,
+      "error": null
+    },
+    {
+      "id": "cls-028",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 7.088,
+      "error": null
+    },
+    {
+      "id": "cls-029",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.45e-05,
+      "latency_ms": 35.756,
+      "error": null
+    },
+    {
+      "id": "cls-030",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 49.835,
+      "error": null
+    },
+    {
+      "id": "cls-034",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.55e-05,
+      "latency_ms": 6.805,
+      "error": null
+    },
+    {
+      "id": "cls-036",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.4e-05,
+      "latency_ms": 9.476,
+      "error": null
+    },
+    {
+      "id": "cls-039",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.6e-05,
+      "latency_ms": 36.196,
+      "error": null
+    },
+    {
+      "id": "cls-040",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.2e-05,
+      "latency_ms": 5.698,
+      "error": null
+    },
+    {
+      "id": "cls-041",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.55e-05,
+      "latency_ms": 11.24,
+      "error": null
+    },
+    {
+      "id": "cls-044",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.4e-05,
+      "latency_ms": 5.416,
+      "error": null
+    },
+    {
+      "id": "cls-048",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.8e-05,
+      "latency_ms": 5.396,
+      "error": null
+    },
+    {
+      "id": "cls-051",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7e-05,
+      "latency_ms": 5.414,
+      "error": null
+    },
+    {
+      "id": "cls-053",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.2e-05,
+      "latency_ms": 10.542,
+      "error": null
+    },
+    {
+      "id": "cls-054",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 6.9e-05,
+      "latency_ms": 5.046,
+      "error": null
+    },
+    {
+      "id": "cls-058",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 4.849,
+      "error": null
+    },
+    {
+      "id": "cls-060",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 4.72,
+      "error": null
+    },
+    {
+      "id": "cls-065",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 10.197,
+      "error": null
+    },
+    {
+      "id": "cls-072",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7e-05,
+      "latency_ms": 4.704,
+      "error": null
+    },
+    {
+      "id": "cls-075",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 4.757,
+      "error": null
+    },
+    {
+      "id": "cls-076",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 4.702,
+      "error": null
+    },
+    {
+      "id": "cls-077",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 0.0,
+        "label_format": 1.0
+      },
+      "passed": false,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 10.358,
+      "error": null
+    },
+    {
+      "id": "cls-079",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.5e-05,
+      "latency_ms": 5.192,
+      "error": null
+    },
+    {
+      "id": "cls-080",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.05e-05,
+      "latency_ms": 5.116,
+      "error": null
+    },
+    {
+      "id": "cls-084",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.6e-05,
+      "latency_ms": 5.159,
+      "error": null
+    },
+    {
+      "id": "cls-086",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.6e-05,
+      "latency_ms": 11.49,
+      "error": null
+    },
+    {
+      "id": "cls-087",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 4.664,
+      "error": null
+    },
+    {
+      "id": "cls-090",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 6.95e-05,
+      "latency_ms": 4.668,
+      "error": null
+    },
+    {
+      "id": "cls-093",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.5e-05,
+      "latency_ms": 13.477,
+      "error": null
+    },
+    {
+      "id": "cls-094",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.7e-05,
+      "latency_ms": 24.28,
+      "error": null
+    },
+    {
+      "id": "cls-096",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.35e-05,
+      "latency_ms": 9.608,
+      "error": null
+    },
+    {
+      "id": "cls-098",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 5.411,
+      "error": null
+    },
+    {
+      "id": "cls-099",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.25e-05,
+      "latency_ms": 5.511,
+      "error": null
+    },
+    {
+      "id": "cls-103",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 24.124,
+      "error": null
+    },
+    {
+      "id": "cls-105",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 6.95e-05,
+      "latency_ms": 9.574,
+      "error": null
+    },
+    {
+      "id": "cls-112",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.45e-05,
+      "latency_ms": 5.012,
+      "error": null
+    },
+    {
+      "id": "cls-119",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 4.836,
+      "error": null
+    },
+    {
+      "id": "cls-120",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.35e-05,
+      "latency_ms": 23.929,
+      "error": null
+    },
+    {
+      "id": "cls-121",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 9.517,
+      "error": null
+    },
+    {
+      "id": "cls-124",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 5.475,
+      "error": null
+    },
+    {
+      "id": "cls-125",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 5.564,
+      "error": null
+    },
+    {
+      "id": "cls-126",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.45e-05,
+      "latency_ms": 17.649,
+      "error": null
+    },
+    {
+      "id": "cls-128",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 9.57,
+      "error": null
+    },
+    {
+      "id": "cls-133",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.1e-05,
+      "latency_ms": 5.409,
+      "error": null
+    },
+    {
+      "id": "cls-135",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.6e-05,
+      "latency_ms": 5.438,
+      "error": null
+    },
+    {
+      "id": "cls-140",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 0.0,
+        "label_format": 1.0
+      },
+      "passed": false,
+      "cost_usd": 7.5e-05,
+      "latency_ms": 8.221,
+      "error": null
+    },
+    {
+      "id": "cls-143",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.4e-05,
+      "latency_ms": 7.386,
+      "error": null
+    },
+    {
+      "id": "cls-146",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.3e-05,
+      "latency_ms": 7.524,
+      "error": null
+    },
+    {
+      "id": "cls-147",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.35e-05,
+      "latency_ms": 9.645,
+      "error": null
+    },
+    {
+      "id": "cls-148",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.15e-05,
+      "latency_ms": 9.174,
+      "error": null
+    },
+    {
+      "id": "cls-149",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.6e-05,
+      "latency_ms": 5.96,
+      "error": null
+    },
+    {
+      "id": "cls-150",
+      "split": "test",
+      "scores": {
+        "label_accuracy": 1.0,
+        "label_format": 1.0
+      },
+      "passed": true,
+      "cost_usd": 7.2e-05,
+      "latency_ms": 6.72,
+      "error": null
+    }
+  ],
+  "extensions": {
+    "run_health": "ok",
+    "error_rate": 0.0,
+    "attempts": {},
+    "gates": {
+      "label_accuracy": true,
+      "label_format": false
+    },
+    "metric_errors": {},
+    "budget": {
+      "max_cost_usd": 0.01,
+      "max_p95_ms": 800.0
+    },
+    "split": "test",
+    "seed": 1337,
+    "resamples": 10000,
+    "unpriced_models": []
+  }
+}
