@@ -1,8 +1,18 @@
 import re
 from pathlib import Path
 
-RULES = ["git-commits", "python", "frontend", "llm-code", "testing", "evals", "statistics",
-         "docker", "security", "docs"]
+RULES = [
+    "git-commits",
+    "python",
+    "frontend",
+    "llm-code",
+    "testing",
+    "evals",
+    "statistics",
+    "docker",
+    "security",
+    "docs",
+]
 
 
 def test_claude_md_short_and_targets_exist(root: Path) -> None:
