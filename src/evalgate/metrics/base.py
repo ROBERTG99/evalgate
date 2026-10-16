@@ -30,6 +30,12 @@ def worst_score(direction: str) -> float:
     return 1.0 if direction == "lower" else 0.0
 
 
+def best_score(direction: str) -> float:
+    """The score of a case a metric skips on purpose (``skip_missing``): it neither helps nor hurts the gate's
+    threshold more than a perfect case would, whatever the direction."""
+    return 1.0 - worst_score(direction)
+
+
 def clamp(value: float) -> float:
     """Clip a score to [0, 1]. A non-finite value is a broken metric, never a score: the runner records the
     error as a metric error and the gate fails closed (clipping NaN to 0 would be the best value of a
@@ -53,6 +59,8 @@ class BaseMetric:
         self.pass_at = float(self.params.get("pass_at", mirrored))
 
     def make(self, value: float, **details: Any) -> MetricScore:
+        if "problem" in details:  # the case could not be measured: the worst value for the metric's direction
+            value = worst_score(self.spec.direction)
         v = clamp(value)
         passed = v >= self.pass_at if self.spec.direction == "higher" else v <= self.pass_at
         return MetricScore(name=self.name, value=v, passed=passed, details=details)

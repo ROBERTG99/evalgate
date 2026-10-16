@@ -92,13 +92,21 @@ class JudgeMetric(BaseMetric):
         except OutputError as exc:
             self.diag.errors += 1
             spent = sum(c.cost_usd for c in calls) + exc.cost_usd  # failed calls still cost money
-            return self.make(0.0, **base, error=f"invalid judge output: {exc}"[:300], metric_error=True, cost_usd=spent)
+            return self.make(
+                worst_score(self.spec.direction),
+                **base,
+                error=f"invalid judge output: {exc}"[:300],
+                metric_error=True,
+                cost_usd=spent,
+            )
         except EvalgateError as exc:
             if exc.exit_code == 3:
                 raise
             self.diag.errors += 1
             spent = sum(c.cost_usd for c in calls)
-            return self.make(0.0, **base, error=str(exc)[:300], metric_error=True, cost_usd=spent)
+            return self.make(
+                worst_score(self.spec.direction), **base, error=str(exc)[:300], metric_error=True, cost_usd=spent
+            )
         verdicts: list[str] = [c.verdict.verdict for c in calls]
         if self.rubric.mode == "pairwise" and len(verdicts) == 2:
             verdicts[1] = MIRROR[verdicts[1]]

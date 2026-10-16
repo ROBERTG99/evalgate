@@ -45,7 +45,9 @@ def make_metric(name: str) -> Callable[[Case, TargetResult, dict[str, Any]], tup
         )
         metric = cls(**{k: v for k, v in params.items() if k not in _FIELDS})
         metric.measure(test_case)
-        return float(metric.score or 0.0), {
+        if metric.score is None:  # never default to 0.0: that is the best value of Hallucination, Toxicity, Bias
+            raise ValueError(f"deepeval {name} returned no score")
+        return float(metric.score), {
             "adapter": "deepeval",
             "deepeval_metric": name,
             "reason": str(getattr(metric, "reason", "") or "")[:200],

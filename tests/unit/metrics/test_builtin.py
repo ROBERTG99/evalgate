@@ -92,3 +92,26 @@ def test_missing_regex_pattern_is_the_worst_value_for_lower_metrics() -> None:
     )
     score = m.score(case(expected={}), result({"label": "x"}))
     assert score.value == 1.0 and not score.passed
+
+
+def test_regex_searches_structured_output_and_flags_a_missing_value() -> None:
+    m = build("regex", actual="output", pattern="refund")
+    assert m.score(case(), result({"answer": "refund within 30 days"})).value == 1.0
+    forbidden = BUILTIN["regex"](
+        MetricSpec(name="m", kind="regex", direction="lower", params={"actual": "output.missing", "pattern": "x"})
+    )
+    missing = forbidden.score(case(), result({"answer": "x"}))
+    assert missing.value == 1.0 and not missing.passed and missing.details["problem"]
+
+
+def test_skip_missing_is_neutral_in_both_directions() -> None:
+    for direction, best in (("higher", 1.0), ("lower", 0.0)):
+        m = BUILTIN["exact"](
+            MetricSpec(
+                name="m",
+                kind="exact",
+                direction=direction,
+                params={"actual": "output.v", "expected": "expected.v", "skip_missing": True},
+            )
+        )
+        assert m.score(case(expected={}), result({"v": 1})).value == best

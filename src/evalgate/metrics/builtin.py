@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from evalgate.contracts import Case, MetricScore, MetricSpec, TargetResult
-from evalgate.metrics.base import BaseMetric, context, worst_score
+from evalgate.metrics.base import BaseMetric, best_score, context, worst_score
 from evalgate.suite.selectors import resolve
 
 
@@ -27,7 +27,7 @@ class ExactMetric(BaseMetric):
         actual = resolve(self.params.get("actual", "output"), ctx)
         expected = resolve(self.params.get("expected", "expected"), ctx)
         if expected is None and self.params.get("skip_missing", False):
-            return self.make(1.0, skipped="no expected value for this case")
+            return self.make(best_score(self.spec.direction), skipped="no expected value for this case")
         if self.params.get("normalize", False):
             actual, expected = _norm(actual), _norm(expected)
         return self.make(1.0 if actual == expected else 0.0, actual=_excerpt(actual), expected=_excerpt(expected))
@@ -126,10 +126,13 @@ class RegexMetric(BaseMetric):
         pattern = resolve(self.params["pattern"], ctx)
         if pattern is None:
             if self.params.get("skip_missing", False):
-                return self.make(1.0, skipped="no pattern for this case")
+                return self.make(best_score(self.spec.direction), skipped="no pattern for this case")
             return self.make(worst_score(self.spec.direction), problem="no pattern for this case")
         actual = resolve(self.params.get("actual", "output"), ctx)
-        ok = isinstance(actual, str) and self.compiled(str(pattern)).search(actual) is not None
+        if actual is None:  # nothing to search is not a clean "no match" (a forbidden-pattern metric would pass)
+            return self.make(0.0, problem="no value selected")
+        text = actual if isinstance(actual, str) else json.dumps(actual, ensure_ascii=False, sort_keys=True)
+        ok = self.compiled(str(pattern)).search(text) is not None
         return self.make(1.0 if ok else 0.0, actual=_excerpt(actual))
 
 

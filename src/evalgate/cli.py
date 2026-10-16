@@ -113,8 +113,9 @@ def run(
         f"evalgate: {r.suite} [{split}] run {r.run_id}: {r.n_cases} cases, mode {r.mode}, "
         f"cost USD {r.cost_usd_total:.4f}, p95 {r.latency_p95_ms:.0f} ms, health {ext.get('run_health')}"
     )
+    metric_errors = ext.get("metric_errors") or {}
     for name, m in r.metrics.items():
-        mark = "pass" if m.passed else "FAIL"
+        mark = "ERROR" if metric_errors.get(name) else ("pass" if m.passed else "FAIL")
         threshold = "" if m.threshold is None else f" (threshold {m.threshold})"
         err(f"  {mark}  {name} = {m.value:.4f} [{m.ci_low:.4f}, {m.ci_high:.4f}]{threshold}")
     if "judge_calls" in ext:
