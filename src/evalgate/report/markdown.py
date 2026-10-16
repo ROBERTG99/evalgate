@@ -123,12 +123,12 @@ def render_markdown(
         for name, d in judge.items():
             lines.append(
                 f"- {code(name)}: AI judge, rubric {code(d.get('rubric'))}, prompt {code(d.get('prompt_version'))}, "
-                f"{int(d.get('position_inconsistent', 0))} position-inconsistent, {int(d.get('injections_blocked', 0))} "
-                f"injections blocked, {int(d.get('errors', 0))} errors ({mode})"
+                f"{int(d.get('position_inconsistent', 0))} position-inconsistent, "
+                f"{int(d.get('injections_blocked', 0))} injections blocked, {int(d.get('errors', 0))} errors ({mode})"
             )
         lines.append(
-            f"- judge calls {int(ext.get('judge_calls', 0))}, cache hits {int(ext.get('cache_hits', 0))}, provider calls "
-            f"{int(ext.get('provider_calls', 0))}; models {esc(', '.join(report.models) or 'none')}"
+            f"- judge calls {int(ext.get('judge_calls', 0))}, cache hits {int(ext.get('cache_hits', 0))}, "
+            f"provider calls {int(ext.get('provider_calls', 0))}; models {esc(', '.join(report.models) or 'none')}"
         )
     lines += ["", f"<sub>evalgate report.v1 · {esc(report.suite)} · mode {mode}</sub>", ""]
     return "\n".join(lines)
