@@ -115,3 +115,30 @@ def test_skip_missing_is_neutral_in_both_directions() -> None:
             )
         )
         assert m.score(case(expected={}), result({"v": 1})).value == best
+
+
+@pytest.mark.parametrize(
+    ("kind", "params"),
+    [
+        ("exact", {"actual": "output.label", "expected": "expected.lable"}),
+        ("contains_all", {"actual": "output.answer", "expected": "expected.keyfacts"}),
+        ("tool_calls", {"actual": "output.steps", "expected": "expected.tool"}),
+    ],
+)
+@pytest.mark.parametrize("direction", ["higher", "lower"])
+def test_absent_expected_field_is_a_problem_not_a_pass(kind: str, params: dict[str, Any], direction: str) -> None:
+    """A misspelled selector or a row without the field must never pass every case (T-45 review)."""
+    m = BUILTIN[kind](MetricSpec(name="m", kind=kind, direction=direction, params=params))  # type: ignore[arg-type]
+    score = m.score(case(expected={"label": "a", "key_facts": ["x"], "tools": []}), result({"answer": "x"}))
+    assert not score.passed and "problem" in score.details
+    assert score.value == (0.0 if direction == "higher" else 1.0)
+    skipping = BUILTIN[kind](
+        MetricSpec(name="m", kind=kind, direction=direction, params={**params, "skip_missing": True})  # type: ignore[arg-type]
+    )
+    assert "skipped" in skipping.score(case(expected={}), result({"answer": "x"})).details
+
+
+def test_explicit_null_expected_still_compares() -> None:
+    m = build("exact", actual="output.v", expected="expected.v")
+    assert m.score(case(expected={"v": None}), result({"v": None})).value == 1.0
+    assert m.score(case(expected={"v": None}), result({})).value == 0.0  # an absent output is not a null one

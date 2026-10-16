@@ -10,7 +10,7 @@ from typing import Any
 
 from evalgate.contracts import Case, MetricScore, MetricSpec, TargetResult
 from evalgate.metrics.base import BaseMetric, best_score, context, worst_score
-from evalgate.suite.selectors import resolve
+from evalgate.suite.selectors import MISSING, resolve
 
 
 def _norm(value: Any) -> Any:
@@ -19,15 +19,25 @@ def _norm(value: Any) -> Any:
     return value
 
 
+def _missing_expected_score(metric: BaseMetric) -> MetricScore:
+    """An absent expected field (a typo in the selector, or a row without it) is a problem, never a pass;
+    with ``skip_missing`` the case is neutral instead."""
+    if metric.params.get("skip_missing", False):
+        return metric.make(best_score(metric.spec.direction), skipped="no expected value for this case")
+    return metric.make(0.0, problem="no expected value for this case")
+
+
 class ExactMetric(BaseMetric):
     """1.0 when ``actual == expected`` (optionally whitespace and case normalised)."""
 
     def score(self, case: Case, result: TargetResult) -> MetricScore:
         ctx = context(case, result)
-        actual = resolve(self.params.get("actual", "output"), ctx)
-        expected = resolve(self.params.get("expected", "expected"), ctx)
-        if expected is None and self.params.get("skip_missing", False):
-            return self.make(best_score(self.spec.direction), skipped="no expected value for this case")
+        actual = resolve(self.params.get("actual", "output"), ctx, default=MISSING)
+        expected = resolve(self.params.get("expected", "expected"), ctx, default=MISSING)
+        if expected is MISSING or (expected is None and self.params.get("skip_missing", False)):
+            return _missing_expected_score(self)
+        if actual is MISSING:  # an absent output never equals anything, not even an explicit null
+            return self.make(0.0, actual=None, expected=_excerpt(expected))
         if self.params.get("normalize", False):
             actual, expected = _norm(actual), _norm(expected)
         return self.make(1.0 if actual == expected else 0.0, actual=_excerpt(actual), expected=_excerpt(expected))
@@ -98,7 +108,9 @@ class ContainsAllMetric(BaseMetric):
     def score(self, case: Case, result: TargetResult) -> MetricScore:
         ctx = context(case, result)
         actual = resolve(self.params.get("actual", "output"), ctx)
-        values = resolve(self.params.get("expected", self.params.get("values", [])), ctx)
+        values = resolve(self.params.get("expected", self.params.get("values", [])), ctx, default=MISSING)
+        if values is MISSING:
+            return _missing_expected_score(self)
         if isinstance(values, str):
             values = [values]
         text = actual if isinstance(actual, str) else json.dumps(actual, sort_keys=True) if actual else ""
@@ -160,7 +172,10 @@ class ToolCallsMetric(BaseMetric):
     def score(self, case: Case, result: TargetResult) -> MetricScore:
         ctx = context(case, result)
         actual_raw = resolve(self.params.get("actual", "output.steps"), ctx) or []
-        expected = resolve(self.params.get("expected", "expected.tools"), ctx) or []
+        expected = resolve(self.params.get("expected", "expected.tools"), ctx, default=MISSING)
+        if expected is MISSING:
+            return _missing_expected_score(self)
+        expected = expected or []
         calls = [c for c in actual_raw if isinstance(c, dict) and c.get("kind", "tool") == "tool" and _call_name(c)]
         names = [_call_name(c) for c in calls]
         if self.params.get("exact_sequence", False) and names != [e.get("name") for e in expected]:

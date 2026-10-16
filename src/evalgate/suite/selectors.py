@@ -6,6 +6,8 @@ from typing import Any
 
 ROOTS = ("input", "output", "expected", "meta")
 _MISSING = object()
+#: Returned by ``resolve(..., default=MISSING)`` when a selector finds no field (an explicit ``null`` is ``None``).
+MISSING: Any = _MISSING
 
 
 class SelectorError(ValueError):
@@ -39,6 +41,6 @@ def is_selector(value: Any) -> bool:
     return isinstance(value, str) and value.split(".", 1)[0] in ROOTS
 
 
-def resolve(value: Any, context: dict[str, Any]) -> Any:
-    """Selectors are resolved; any other value is a literal."""
-    return select(value, context) if is_selector(value) else value
+def resolve(value: Any, context: dict[str, Any], default: Any = None) -> Any:
+    """Selectors are resolved (``default`` when the field is absent); any other value is a literal."""
+    return select(value, context, default) if is_selector(value) else value
