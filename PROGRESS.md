@@ -20,41 +20,15 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 
 ## Handoff for the next session
 
-State on 2026-10-16: M0–M6 done and reviewed; M7 T-39, T-41 done, T-40 waiting on a green `make test-docker`
-(see its row); M8 T-42 done. Global DoD boxes are ticked only where a task row above holds the evidence; the
-unticked ones are re-verified in T-46 (§19).
+State on 2026-10-16: M0 to M8 are done (T-01 to T-43; T-44 needs only the local tag, created on the final commit). T-45: the six final reviews ran (reviewer, security audit, stats, UX, code review with simplify). Every blocker was fixed with a regression test, the non-blocking findings were fixed or recorded in `docs/KNOWN_LIMITATIONS.md` and `docs/DECISIONS.md`, and the reviewer is re-run for its "ship" verdict. Global DoD boxes are ticked only where a task row holds the evidence; the rest are re-verified in T-46 (§19).
 
 Remaining work, in order:
 
-1. **T-40** if its row is not `done`: run `./scripts/test_docker.sh` (needs `docker compose up -d --build --wait`
-   first; it rebuilds and seeds). Earlier failure was Playwright drift in the e2e image, now pinned (DECISIONS).
-2. **T-43 docs**: `README.md` (portfolio template; every number links the command or `evals/reports/*` file),
-   `docs/architecture.md`, `docs/contracts/` (suite, report, check, rubric, cassette, action), `docs/ai-development.md`,
-   `docs/evaluation.md`, `docs/runbook.md` (release, tag rollback, baseline rotation, alert anchors that
-   `deploy/prometheus/alerts.yml` runbook URLs point at), `docs/design-faq.md` (15 questions with file:line;
-   question 2 = multiple comparisons, referenced from KNOWN_LIMITATIONS), `docs/adr/0001..0007` (ADR-0006 = judge
-   labels by construction, referenced from KNOWN_LIMITATIONS), `CONTRIBUTING.md`, `SECURITY.md`; test
-   `tests/harness/test_docs.py` (`test_required_docs_exist`, `test_readme_numbers_cite_reports`, and in T-46
-   `test_verification_has_authorship_output`); `markdownlint-cli2` clean on every Markdown file (`make lint`); there is no
-   `.markdownlint-cli2.yaml` yet, so MD013 (80 columns) currently fails on existing files: add a config (e.g. line
-   length 120, tables exempt) and fix the rest.
-   Also still missing Makefile helpers: `scripts/verify_clean.sh` (`make verify-clean`) and
-   `scripts/export_openapi.py` (`make docs`). Small M6 leftovers: judge spans with `app.run_id`,
-   `gen_ai.usage.*`, `app.cost_usd`; log `extra` run_id/case_id; document the GateFlapping 6 h window in the
-   runbook; `docs/security.md` should mention `make sbom` and `docs/verification.md`; `scripts/bench.py` NFR-7
-   should build a fresh wheel instead of reusing `dist/`.
-3. **T-44**: `CHANGELOG.md` (`## [0.1.0]` – release.yml greps it), `tests/harness/test_release.py::test_version_matches_changelog`,
-   local tag `git tag v0.1.0` (never pushed; listed under "Needs the maintainer"). `release.yml` already exists.
-4. **T-45**: run subagents `reviewer` (needs "ship"), `security-review`, `code-review`, `simplify`, `stats-reviewer`,
-   `ux-reviewer`; fix blockers with a regression test each; document the rest in KNOWN_LIMITATIONS.
-5. **T-46** (§19): clone to `/tmp/verify-evalgate`, `make bootstrap && make verify`; compose up, `make seed`,
-   `make demo`, `make e2e`, `make test-docker`, `docker compose down -v`; authorship check; write
-   `docs/verification.md`; refresh README results; `git mv -f BUILD.md docs/specs/000-build-spec.md`; commit, push
-   `claude/build-md-execution-a0v4kj`; open a PR without any Claude attribution and check CI on it.
+1. **T-45**: re-run the `reviewer` subagent over the whole history until it says "Verdict: ship"; fix any new blocker with a regression test.
+2. **T-46** (§19): commit; clone into a temporary folder and run `make bootstrap && make verify` (`make verify-clean`); in the clone run `docker compose up -d --wait`, `make seed`, `make demo`, `make e2e`, `make test-docker`, `docker compose down -v`; run the authorship check; rewrite `docs/verification.md` with every command, result and duration; refresh README results only from `evals/reports/`; `git mv -f BUILD.md docs/specs/000-build-spec.md`; `git tag v0.1.0` on the final commit (never pushed); push `claude/build-md-execution-a0v4kj`; open a pull request without any Claude attribution and check CI on it.
+3. Before quoting numbers again: `make eval` and `make bench` on the final commit, then update README, `docs/evaluation.md` and the ADRs that quote `evals/reports/bench.json`. The design FAQ's file:line links must be re-resolved whenever cited code moves.
 
-Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` holds Chromium 1194 for Playwright
-1.56.0; port 8110 may be held by a leftover local toy server (`pkill -f toy-targets`); no provider keys, so
-`make eval-live` writes `ran: false` (exit 2) and live numbers stay "not run".
+Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` holds Chromium 1194 for Playwright 1.56.0; the compose stack holds port 8110, so a local toy server cannot bind it; this container has no IPv6; there are no provider keys, so `make eval-live` writes `ran: false` (exit 2) and live numbers stay "not run".
 
 ## Tasks
 
@@ -104,7 +78,7 @@ Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` hold
 | T-42 | Scripted demo | M8 | done | `uv run pytest tests/integration/test_demo.py` → 2 passed; `make demo` against the compose stack → v2 `evalgate check exited 1` (label_accuracy -16.67 pp, 95% CI [-26.67, -8.33]), v1 `exited 0` (docs/demo-transcript.txt) |
 | T-43 | README, ADRs and documents | M8 | done | `uv run pytest tests/harness/test_docs.py` → test_required_docs_exist, test_readme_numbers_cite_reports, test_runbook_has_alert_anchors pass (test_relative_links_resolve waits for docs/verification.md, T-46); `make lint` → lint: clean (markdownlint 0 issues in 73 files, shellcheck, hadolint, actionlint) |
 | T-44 | Release preparation | M8 | in progress | `uv run pytest tests/harness/test_release.py` → 3 passed (CHANGELOG `## [0.1.0] - 2026-10-16`, pyproject and `evalgate.__version__` agree, README pins `action@v0.1.0`); `release.yml` in place; local tag `v0.1.0` is created on the final commit in T-46 |
-| T-45 | Reviews and fixes | M9 | todo | |
+| T-45 | Reviews and fixes | M9 | in progress | Final reviews: stats (fix first: NaN scores failed the gate open), UX (fix first: meta refresh, HTML report scroll regions), code review (4 blockers: lower-is-better crash scoring, unbilled invalid output, empty runs, resume), security (0 critical/high; 2 medium, 7 low), reviewer (fix first: empty split). All fixed with regression tests (e.g. `tests/unit/stats/test_gate_inputs.py`, `tests/unit/runner/test_engine.py::test_failed_cases_score_the_worst_value_for_lower_metrics`, `tests/e2e/test_viewer.py::test_html_report_has_no_serious_axe_violations`); `make check-fast` → 254 passed; `./scripts/security.sh --no-images` → security: clean; `make eval` → all thresholds met; `make bench` → all budgets met |
 | T-46 | Final verification | M9 | todo | |
 
 ## Global Definition of Done
