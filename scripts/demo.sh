@@ -16,7 +16,11 @@ export EVALGATE_HTTP_ALLOWED_HOSTS="${EVALGATE_HTTP_ALLOWED_HOSTS:-localhost,127
 export EVALGATE_LLM_PROVIDER="${EVALGATE_LLM_PROVIDER:-fake}"
 mkdir -p "$OUT"
 
-if ! curl -sf "$EVALGATE_TOYS_URL/healthz" >/dev/null; then
+healthy() { # no curl in slim images; any Python 3 will do
+  python3 -c 'import sys, urllib.request; urllib.request.urlopen(sys.argv[1] + "/healthz", timeout=3)' \
+    "$EVALGATE_TOYS_URL" >/dev/null 2>&1
+}
+if ! healthy; then
   echo "demo: toy targets are not reachable at $EVALGATE_TOYS_URL; run 'docker compose up -d --wait' first" >&2
   exit 2
 fi
