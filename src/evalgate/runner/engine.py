@@ -175,6 +175,7 @@ class Runner:
 
     async def _score(self, metrics: list[Any], case: Case, result: TargetResult) -> list[MetricScore]:
         scores: list[MetricScore] = []
+        direction = {m.name: m.direction for m in self.suite.metrics}
         for metric in metrics:
             with telemetry.span("evalgate.metric", app__run_id=self.run_id, app__case_id=case.id, metric=metric.name):
                 try:
@@ -187,14 +188,14 @@ class Runner:
                         raise
                     score = MetricScore(
                         name=metric.name,
-                        value=0.0,
+                        value=worst_score(direction.get(metric.name, "higher")),
                         passed=False,
                         details={"error": str(exc)[:300], "metric_error": True},
                     )
                 except Exception as exc:
                     score = MetricScore(
                         name=metric.name,
-                        value=0.0,
+                        value=worst_score(direction.get(metric.name, "higher")),
                         passed=False,
                         details={"error": f"{exc.__class__.__name__}: {exc}"[:300], "metric_error": True},
                     )

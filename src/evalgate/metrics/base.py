@@ -31,8 +31,11 @@ def worst_score(direction: str) -> float:
 
 
 def clamp(value: float) -> float:
-    if math.isnan(value):
-        return 0.0
+    """Clip a score to [0, 1]. A non-finite value is a broken metric, never a score: the runner records the
+    error as a metric error and the gate fails closed (clipping NaN to 0 would be the best value of a
+    lower-is-better metric)."""
+    if not math.isfinite(value):
+        raise ValueError(f"metric value {value!r} is not a finite number")
     return max(0.0, min(1.0, float(value)))
 
 
@@ -45,7 +48,9 @@ class BaseMetric:
         self.spec = spec
         self.name = spec.name
         self.params: dict[str, Any] = dict(spec.params)
-        self.pass_at = float(self.params.get("pass_at", self.default_pass_at))
+        # The per-case pass level mirrors for lower-is-better metrics (a default of 1.0 becomes 0.0).
+        mirrored = 1.0 - self.default_pass_at if spec.direction == "lower" else self.default_pass_at
+        self.pass_at = float(self.params.get("pass_at", mirrored))
 
     def make(self, value: float, **details: Any) -> MetricScore:
         v = clamp(value)

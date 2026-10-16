@@ -82,3 +82,13 @@ def test_regex_without_pattern_scores_zero() -> None:
     """A missing pattern must not compile the literal string "None" and match it."""
     m = build("regex", actual="output.label", pattern="expected.pattern")
     assert m.score(case(expected={}), result({"label": "None"})).value == 0.0
+
+
+def test_missing_regex_pattern_is_the_worst_value_for_lower_metrics() -> None:
+    m = BUILTIN["regex"](
+        MetricSpec(
+            name="m", kind="regex", direction="lower", params={"actual": "output.label", "pattern": "expected.p"}
+        )
+    )
+    score = m.score(case(expected={}), result({"label": "x"}))
+    assert score.value == 1.0 and not score.passed

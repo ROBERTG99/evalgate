@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from evalgate.contracts import Case, MetricScore, MetricSpec, TargetResult
-from evalgate.metrics.base import BaseMetric, context
+from evalgate.metrics.base import BaseMetric, context, worst_score
 from evalgate.suite.selectors import resolve
 
 
@@ -127,7 +127,7 @@ class RegexMetric(BaseMetric):
         if pattern is None:
             if self.params.get("skip_missing", False):
                 return self.make(1.0, skipped="no pattern for this case")
-            return self.make(0.0, problem="no pattern for this case")
+            return self.make(worst_score(self.spec.direction), problem="no pattern for this case")
         actual = resolve(self.params.get("actual", "output"), ctx)
         ok = isinstance(actual, str) and self.compiled(str(pattern)).search(actual) is not None
         return self.make(1.0 if ok else 0.0, actual=_excerpt(actual))

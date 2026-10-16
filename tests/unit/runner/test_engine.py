@@ -282,3 +282,49 @@ def test_broken_target_cache_is_a_miss(tmp_path: Path, monkeypatch: pytest.Monke
 
     report = run_suite(suite_for(tmp_path, 3), opts(tmp_path, target=target, cache_targets=True)).report
     assert report.n_cases == 3 and not any(c.error for c in report.cases)
+
+
+def test_nan_custom_metric_is_a_metric_error(tmp_path: Path) -> None:
+    """A NaN from a metric must fail the gate closed, never become the best score of a lower-is-better metric."""
+    from evalgate.stats.gate import check
+
+    metric = {
+        "name": "bad",
+        "kind": "custom",
+        "threshold": 0.1,
+        "direction": "lower",
+        "gate": True,
+        "params": {"metric": "nan_metric"},
+    }
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        return TargetResult(output={"label": "a"})
+
+    report = run_suite(
+        suite_for(tmp_path, 12, metrics=[metric], plugins=["tests.fixtures.broken_metrics"]),
+        opts(tmp_path, target=target),
+    ).report
+    assert all(c.scores["bad"] == 1.0 for c in report.cases)  # the worst value for a lower metric
+    assert (report.extensions or {})["metric_errors"]["bad"] == 12
+    result = check(report, report_sha256="x", resamples=100)
+    assert not result.passed
+    assert ("bad", "error") in {(f.metric, f.reason) for f in result.failures}
+
+
+def test_metric_exception_scores_the_worst_value(tmp_path: Path) -> None:
+    metric = {
+        "name": "boom",
+        "kind": "custom",
+        "direction": "lower",
+        "gate": True,
+        "params": {"metric": "raising_metric"},
+    }
+
+    async def target(case_input: dict[str, Any]) -> TargetResult:
+        return TargetResult(output={"label": "a"})
+
+    report = run_suite(
+        suite_for(tmp_path, 3, metrics=[metric], plugins=["tests.fixtures.broken_metrics"]),
+        opts(tmp_path, target=target),
+    ).report
+    assert all(c.scores["boom"] == 1.0 for c in report.cases)

@@ -10,7 +10,7 @@ from evalgate.judge.context import JudgeCall, JudgeContext
 from evalgate.judge.guard import injection_match
 from evalgate.judge.render import render_user, verdict_schema
 from evalgate.llm.types import OutputError
-from evalgate.metrics.base import BaseMetric, context
+from evalgate.metrics.base import BaseMetric, context, worst_score
 from evalgate.suite.selectors import resolve
 
 MIRROR = {"A": "B", "B": "A", "tie": "tie"}
@@ -37,7 +37,8 @@ class JudgeMetric(BaseMetric):
         self.rubric = self.loaded.rubric
         self.schema = verdict_schema(self.rubric)
         if "pass_at" not in self.params:
-            self.pass_at = 0.75 if self.rubric.scale == "likert5" else 1.0
+            level = 0.75 if self.rubric.scale == "likert5" else 1.0
+            self.pass_at = 1.0 - level if spec.direction == "lower" else level
         self.diag = ctx.diagnostics_for(spec.name, self.loaded)
         injection_match("")  # load and compile the patterns before the run starts
 
@@ -71,7 +72,8 @@ class JudgeMetric(BaseMetric):
         if hit:
             self.diag.injections_blocked += 1
             self.diag.verdicts["injection"] = self.diag.verdicts.get("injection", 0) + 1
-            return self.make(0.0, **base, verdict="fail", injection=hit, reasons=["instruction aimed at the grader"])
+            worst = worst_score(self.spec.direction)
+            return self.make(worst, **base, verdict="fail", injection=hit, reasons=["instruction aimed at the grader"])
         orders = ["AB", "BA"] if self.rubric.mode == "pairwise" else ["reference_first", "candidate_first"]
         if not self.rubric.position_swap:
             orders = orders[:1]
