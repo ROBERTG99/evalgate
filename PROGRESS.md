@@ -44,12 +44,12 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-23 | Markdown and HTML reporters | M3 | done | `uv run pytest tests/unit/report` → 4 passed (golden report.md and report.html match; every number row labelled offline/live) |
 | T-24 | Toy targets service | M3 | done | `uv run pytest tests/integration/toys tests/contract/test_toys_openapi.py` → 12 passed (v2 classify accuracy drops; unknown version/variant → 400; Schemathesis conformance) |
 | T-25 | Langfuse exporter | M3 | done | `uv run pytest tests/contract/langfuse` → 3 passed (double receives 10 traces + 30 scores = expected_requests.json; same mappings serve real WireMock on 8142 in compose.test) |
-| T-26 | Ragas, DeepEval and Promptfoo adapters | M3 | todo | |
-| T-27 | Composite action and PR comment | M3 | todo | |
+| T-26 | Ragas, DeepEval and Promptfoo adapters | M3 | done | `uv run pytest tests/unit/adapters tests/integration/test_promptfoo_import.py` → 8 passed; `make test-extras` → 3 passed (real ragas ExactMatch, deepeval ExactMatchMetric, LangGraph); imported sample suite runs against toy targets |
+| T-27 | Composite action and PR comment | M3 | done | `uv run pytest tests/integration/test_pr_comment.py tests/harness/test_action.py` → 4 passed (two runs → 1 POST + 1 PATCH; 403 skipped); `.tools/bin/actionlint` clean |
 | T-28 | Viewer tokens, runs list and run detail | M4 | todo | |
 | T-29 | Comparison page | M4 | todo | |
 | T-30 | Playwright, axe and screenshots | M4 | todo | |
-| T-31 | Toy suites, rubrics and baselines | M5 | todo | |
+| T-31 | Toy suites, rubrics and baselines | M5 | done | `uv run pytest tests/integration/evals/test_v1_suites.py` → 4 passed (v1 passes, v2 fails with a regression for classify, extract, answer); baselines recorded in docs/DECISIONS.md |
 | T-32 | Meta-evaluation | M5 | todo | |
 | T-33 | Calibration eval and live scripts | M5 | todo | |
 | T-34 | Eval report and CI gate | M5 | todo | |
