@@ -22,9 +22,9 @@ controls and the scan results. Report vulnerabilities as described in [`SECURITY
 | Tampering | Editing `gate_audit` rows or deleting the head of the chain | SHA-256 hash chain, anchors written by `evalgate gc`, `evalgate gc --verify-audit` | `tests/integration/store/test_store.py` |
 | Tampering | Editing committed datasets or baselines | Append-only by version, enforced by `.claude/hooks/pre_tool_guard.py` and `MANIFEST.json` hashes | `tests/harness/test_hooks.py`, `tests/unit/generator/test_reproducible.py` |
 | Repudiation | Who passed a gate with which baseline | `gate_audit` stores report and baseline SHA-256, git SHA, actor and decision | `src/evalgate/store/runstore.py` |
-| Information disclosure | Provider keys or PII reaching reports, logs or providers | Secrets only from the environment, never written; the gateway redacts emails, phone numbers and Luhn-valid card numbers before a call | `tests/integration/test_secrets.py`, `tests/unit/llm/test_gateway.py` |
+| Information disclosure | Provider keys or PII reaching reports, logs or providers | Secrets only from the environment, never written; the gateway redacts emails, phone numbers and Luhn-valid card numbers before a call (regex-based, best effort: see below) | `tests/integration/test_secrets.py`, `tests/unit/llm/test_gateway.py` |
 | Information disclosure | Viewer reads files outside the reports directory | Run ids matched against `^[0-9a-f-]{36}$`, static files allow-listed, symlinks out of the directory ignored | `tests/integration/viewer/test_security.py`, `tests/integration/viewer/test_pages.py` |
-| Denial of service | Huge or deeply nested report, request floods | 1 MB per suite and dataset row, 50 MB per report, 100,000 cases, 50 requests/s per client, 30 s socket timeout, bounded comparison cache | `tests/unit/test_limits.py`, `tests/integration/viewer/test_security.py` |
+| Denial of service | Huge or deeply nested report, request floods | 1 MB per suite and dataset row (nesting too deep is invalid input), 10 MB per HTTP target response, 40,000 characters per judge prompt field, 50 MB per report, 100,000 cases, 50 requests/s per client, 30 s socket timeout, bounded comparison cache | `tests/unit/test_limits.py`, `tests/unit/targets/test_http.py`, `tests/unit/judge/test_judge.py`, `tests/integration/viewer/test_security.py` |
 | Elevation of privilege | SSRF through an `http:` target URL | `EVALGATE_HTTP_ALLOWED_HOSTS` allowlist, http/https only | `tests/unit/targets/test_http.py` |
 | Elevation of privilege | XSS in the viewer or the HTML report | Jinja2 autoescape, CSP `default-src 'none'`, no inline script; the HTML report has no script at all | `tests/integration/viewer/test_pages.py::test_judge_output_labelled`, `tests/unit/report/test_markdown.py` |
 
@@ -33,8 +33,8 @@ controls and the scan results. Report vulnerabilities as described in [`SECURITY
 | Risk | Where it applies | Control |
 |---|---|---|
 | LLM01 Prompt injection | A target answer that tells the judge to pass it | Candidate isolation in escaped `<candidate_output>` tags after the instructions (`src/evalgate/judge/render.py`), injection patterns (`src/evalgate/judge/injection_patterns.yaml`) force a score of 0, 20 injected labels must never pass (`tests/unit/judge/test_judge.py::test_twenty_injected_candidates_never_pass`) |
-| LLM02 Sensitive information disclosure | Case inputs sent to a provider | PII redaction in `src/evalgate/llm/redact.py`; data is synthetic |
-| LLM03 Supply chain | Dependencies and images | `uv.lock`, pip-audit, license check, trivy, Dependabot, pinned tool versions |
+| LLM02 Sensitive information disclosure | Case inputs sent to a provider | PII redaction in `src/evalgate/llm/redact.py` (emails; grouped, parenthesised, `+`-prefixed and 10-15 digit contiguous phone numbers; Luhn-valid cards with space, dash or dot separators). It is best effort: names, addresses and unusual formats pass through, so use synthetic or consented data with live judges; the repository's data is synthetic |
+| LLM03 Supply chain | Dependencies, actions and images | `uv.lock` (the composite action installs its hashed export), pip-audit, license check, trivy, Dependabot, pinned tool versions, every GitHub Action pinned to a commit SHA (`tests/harness/test_workflows.py::test_actions_are_pinned_to_commit_shas`), no cache in release builds, PyPI trusted publishing |
 | LLM04 Data and model poisoning | Tampered datasets or labels | Generated with seed 1337, hashes in `MANIFEST.json`, append-only versions |
 | LLM05 Improper output handling | Judge output acted on | Schema validation (`judge_verdict.v1`); invalid output counts as a metric error and fails the gate closed |
 | LLM06 Excessive agency | Not applicable | evalgate runs no agent and executes no model-proposed action |
@@ -47,7 +47,7 @@ controls and the scan results. Report vulnerabilities as described in [`SECURITY
 
 Target output reaches the PR comment through case ids, errors and judge reasons. `src/evalgate/report/markdown.py`
 escapes Markdown and HTML-significant characters, cuts excerpts at 200 characters, breaks `@mentions` and
-autolinks, and code spans cannot contain backticks or pipes. GitHub workflow commands (`::error`) escape
+autolinks (including `www.` links), and code spans cannot contain backticks or pipes. GitHub workflow commands (`::error`) escape
 `%`, CR and LF.
 
 ## Viewer
@@ -55,7 +55,7 @@ autolinks, and code spans cannot contain backticks or pipes. GitHub workflow com
 Read-only (POST, PUT, PATCH and DELETE return 405), binds `127.0.0.1` unless `--host` says otherwise (the
 container binds `0.0.0.0` inside its network namespace and compose publishes it on `127.0.0.1:8100` only),
 and requires `Authorization: Bearer <token>` when `EVALGATE_SERVE_TOKEN` is set (`/healthz` stays open for
-health checks). A report over 50 MB is never read; it appears in the error panel with status 413.
+health checks). Requests whose `Host` header is not a loopback name or listed in `EVALGATE_SERVE_ALLOWED_HOSTS` get 421, which stops DNS rebinding from a browser; compose sets `report-viewer` for the e2e container. A report over 50 MB is never read; it appears in the error panel with status 413. Serving on a non-loopback address without `EVALGATE_SERVE_TOKEN` logs a warning.
 
 ## Scan results
 
