@@ -17,7 +17,9 @@ def esc(text: Any, limit: int = EXCERPT) -> str:
     s = " ".join(str(text).split())
     if len(s) > limit:
         s = s[:limit] + "…"
-    return _MD_SPECIAL.sub(r"\\\1", s)
+    s = _MD_SPECIAL.sub(r"\\\1", s)
+    # Neutralise @mentions and autolinks so target output cannot ping people or link out.
+    return s.replace("@", "@\u200b").replace("://", ":\u200b//")
 
 
 def code(text: Any, limit: int = 80) -> str:
@@ -86,7 +88,7 @@ def render_markdown(
         + (f", budget p95 {budget['max_p95_ms']} ms" if budget.get("max_p95_ms") is not None else ""),
     ]
     if ext.get("run_health") and ext["run_health"] != "ok":
-        lines.append(f"**Run health** {ext['run_health']} (error rate {ext.get('error_rate', 0):.0%})")
+        lines.append(f"**Run health** {esc(ext['run_health'])} (error rate {ext.get('error_rate', 0):.0%})")
     if result is not None and result.failures:
         lines += ["", "### Gate failures", ""]
         for f in result.failures:
@@ -121,12 +123,12 @@ def render_markdown(
         for name, d in judge.items():
             lines.append(
                 f"- {code(name)}: AI judge, rubric {code(d.get('rubric'))}, prompt {code(d.get('prompt_version'))}, "
-                f"{d.get('position_inconsistent', 0)} position-inconsistent, {d.get('injections_blocked', 0)} "
-                f"injections blocked, {d.get('errors', 0)} errors ({mode})"
+                f"{int(d.get('position_inconsistent', 0))} position-inconsistent, {int(d.get('injections_blocked', 0))} "
+                f"injections blocked, {int(d.get('errors', 0))} errors ({mode})"
             )
         lines.append(
-            f"- judge calls {ext.get('judge_calls', 0)}, cache hits {ext.get('cache_hits', 0)}, provider calls "
-            f"{ext.get('provider_calls', 0)}; models {esc(', '.join(report.models) or 'none')}"
+            f"- judge calls {int(ext.get('judge_calls', 0))}, cache hits {int(ext.get('cache_hits', 0))}, provider calls "
+            f"{int(ext.get('provider_calls', 0))}; models {esc(', '.join(report.models) or 'none')}"
         )
     lines += ["", f"<sub>evalgate report.v1 · {esc(report.suite)} · mode {mode}</sub>", ""]
     return "\n".join(lines)

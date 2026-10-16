@@ -179,7 +179,8 @@ def check(
         typer.echo(json.dumps(payload, indent=2))
     elif fmt == "github":
         for f in result.failures:
-            typer.echo(f"::error title=evalgate {f.reason}::{f.metric}: {_failure_text(f)}")
+            message = f"{f.metric}: {_failure_text(f)}".replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+            typer.echo(f"::error title=evalgate {f.reason}::{message}")
         typer.echo(render_check_text(result, cand))
     else:
         typer.echo(render_check_text(result, cand))

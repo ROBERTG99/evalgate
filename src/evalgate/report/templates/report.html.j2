@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>evalgate · {{ report.suite }} · {{ "pass" if passed else "fail" }}</title>
-<style>{{ css }}</style>
+<style>{{ css | safe }}</style>
 </head>
 <body>
 <header class="top"><span class="brand">evalgate</span><span class="muted">self-contained report · mode {{ report.mode }}</span></header>

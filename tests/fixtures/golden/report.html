@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>evalgate · classify · fail</title>
-<style>/* evalgate design tokens: &#34;lab notebook&#34;. Every colour in the viewer and HTML report comes from here. */
+<style>/* evalgate design tokens: "lab notebook". Every colour in the viewer and HTML report comes from here. */
 :root {
   --color-paper: #F7F7F2;
   --color-surface: #FFFFFF;
@@ -15,9 +15,9 @@
   --color-fail: #C62828;
   --color-regression: #9A5B00;
   --color-focus: #0B5FFF;
-  --color-row-alt: #EFEFE8;
-  --font-sans: system-ui, -apple-system, &#34;Segoe UI&#34;, Roboto, &#34;Helvetica Neue&#34;, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, &#34;Liberation Mono&#34;, monospace;
+  --color-row-alt: #F3F3ED;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -31,7 +31,7 @@
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme=&#34;light&#34;]) {
+  :root:not([data-theme="light"]) {
     --color-paper: #0F1216;
     --color-surface: #171B21;
     --color-ink: #E7EAEE;
@@ -45,7 +45,7 @@
     color-scheme: dark;
   }
 }
-:root[data-theme=&#34;dark&#34;] {
+:root[data-theme="dark"] {
   --color-paper: #0F1216;
   --color-surface: #171B21;
   --color-ink: #E7EAEE;
@@ -110,7 +110,7 @@ tbody tr:nth-child(even) { background: var(--color-row-alt); }
 .panel pre, pre.cmd { white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: var(--text-sm); }
 form.filters { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: end; margin-bottom: var(--space-3); }
 label { display: flex; flex-direction: column; gap: var(--space-1); font-size: var(--text-sm); color: var(--color-muted); }
-select, input[type=&#34;text&#34;], button {
+select, input[type="text"], button {
   font: inherit; color: var(--color-ink); background: var(--color-surface); border: var(--rule-width) solid var(--color-muted);
   border-radius: var(--radius); padding: var(--space-1) var(--space-2); min-height: 32px;
 }

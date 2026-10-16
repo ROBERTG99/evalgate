@@ -33,6 +33,7 @@ def test_upsert_single_comment() -> None:
     assert second.comment_id == 4242
     writes = [r for r in requests if r["method"] in ("POST", "PATCH")]
     assert [r["method"] for r in writes] == ["POST", "PATCH"]  # exactly one comment, edited in place
+    assert all("/comments/13" not in r["url"] for r in writes)  # a human comment with pasted markers is ignored
     for r in writes:
         sent = json.loads(r["body"])["body"]
         assert sent.startswith(MARKER)
@@ -40,11 +41,19 @@ def test_upsert_single_comment() -> None:
         assert "regression" in sent and "-16.67 pp" in sent
 
 
-def test_403_skips() -> None:
+def test_403_skips(tmp_path: Path, monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
+    import pr_comment
+
     with wiremock("github") as url:
         outcome = CommentClient(url, "test-token", httpx.Client()).upsert("acme/forked", 9, "classify", "body")
-    assert outcome.action == "skipped"
-    assert "403" in (outcome.reason or "")
+        assert outcome.action == "skipped"
+        assert "403" in (outcome.reason or "")
+        body = tmp_path / "r.md"
+        body.write_text("report")
+        monkeypatch.setenv("GITHUB_API_URL", url)
+        code = pr_comment.main(["--repo", "acme/forked", "--pr", "9", "--suite", "classify", "--body-file", str(body)])
+    assert code == 0  # the gate is unchanged
+    assert "::warning" in capsys.readouterr().out
 
 
 def test_other_suites_do_not_collide() -> None:

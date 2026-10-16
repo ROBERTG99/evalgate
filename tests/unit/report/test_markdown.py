@@ -57,6 +57,8 @@ def test_golden_report_html() -> None:
     candidate, result, baseline = fixture_pair()
     html = render_html(candidate, result, baseline=baseline)
     assert "<script" not in html  # self-contained, no JavaScript
+    assert ':root[data-theme="dark"]' in html  # trusted package CSS is inlined unescaped
+    assert "&#34;" not in html.split("</style>")[0]
     assert "http://" not in html and "https://" not in html  # no external resources
     check_golden("report.html", html)
 
@@ -79,3 +81,9 @@ def test_mode_label_per_number() -> None:
 def test_markdown_escapes_and_truncates() -> None:
     assert esc("a|b *c* <script>") == "a\\|b \\*c\\* \\<script\\>"
     assert len(esc("x" * 500)) == 201
+
+
+def test_mentions_and_links_neutralised() -> None:
+    out = esc("ping @org/team and see https://evil.example")
+    assert "@org" not in out
+    assert "https://" not in out

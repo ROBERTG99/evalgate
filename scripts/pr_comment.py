@@ -34,8 +34,14 @@ class Outcome:
     reason: str | None = None
 
 
+DEFAULT_AUTHOR = "github-actions[bot]"
+
+
 class CommentClient:
-    def __init__(self, api_url: str, token: str, client: httpx.Client | None = None) -> None:
+    def __init__(
+        self, api_url: str, token: str, client: httpx.Client | None = None, author: str = DEFAULT_AUTHOR
+    ) -> None:
+        self.author = author
         self.api = api_url.rstrip("/")
         self.client = client or httpx.Client(timeout=20)
         self.headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
@@ -58,19 +64,23 @@ class CommentClient:
                 return comments
             page += 1
 
+    def ours(self, comment: dict[str, Any], suite: str) -> bool:
+        """Only a comment written by the bot counts: anyone can paste the markers into their own comment."""
+        user = comment.get("user") or {}
+        body = comment.get("body") or ""
+        return (
+            user.get("login") == self.author
+            and user.get("type") == "Bot"
+            and MARKER in body
+            and suite_marker(suite) in body
+        )
+
     def upsert(self, repo: str, pr: int, suite: str, body: str) -> Outcome:
         if not body.startswith(MARKER):
             body = f"{MARKER}\n{body}"
         body = f"{body[:MAX_BODY]}\n{suite_marker(suite)}\n"
         try:
-            existing = next(
-                (
-                    c
-                    for c in self.list_comments(repo, pr)
-                    if MARKER in (c.get("body") or "") and suite_marker(suite) in (c.get("body") or "")
-                ),
-                None,
-            )
+            existing = next((c for c in self.list_comments(repo, pr) if self.ours(c, suite)), None)
             if existing is not None:
                 resp = self.client.patch(
                     f"{self.api}/repos/{repo}/issues/comments/{existing['id']}",
@@ -87,7 +97,9 @@ class CommentClient:
         except httpx.HTTPStatusError as exc:
             if exc.response.status_code == 403:
                 return Outcome("skipped", reason="GitHub returned 403 (no permission to comment); gate unchanged")
-            raise
+            return Outcome("skipped", reason=f"GitHub returned {exc.response.status_code}; gate unchanged")
+        except httpx.TransportError as exc:
+            return Outcome("skipped", reason=f"GitHub unreachable ({exc.__class__.__name__}); gate unchanged")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -98,7 +110,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--body-file", type=Path, required=True)
     args = parser.parse_args(argv)
     client = CommentClient(
-        os.environ.get("GITHUB_API_URL", "https://api.github.com"), os.environ.get("GITHUB_TOKEN", "")
+        os.environ.get("GITHUB_API_URL", "https://api.github.com"),
+        os.environ.get("GITHUB_TOKEN", ""),
+        author=os.environ.get("EVALGATE_COMMENT_AUTHOR", DEFAULT_AUTHOR),
     )
     outcome = client.upsert(args.repo, args.pr, args.suite, args.body_file.read_text(encoding="utf-8"))
     if outcome.action == "skipped":

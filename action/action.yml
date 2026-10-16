@@ -97,7 +97,10 @@ runs:
         fi
         evalgate check "${args[@]}"
         code=$?
-        evalgate report "${md_args[@]}"
+        if ! evalgate report "${md_args[@]}"; then
+          echo "::error title=evalgate::could not render the Markdown report"
+          exit 4
+        fi
         cat "${REPORT_MD}" >> "${GITHUB_STEP_SUMMARY}"
         if [ "${code}" -eq 0 ]; then echo "passed=true" >> "${GITHUB_OUTPUT}"; else echo "passed=false" >> "${GITHUB_OUTPUT}"; fi
         echo "check-json=${check_json}" >> "${GITHUB_OUTPUT}"
