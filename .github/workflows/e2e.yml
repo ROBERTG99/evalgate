@@ -1,0 +1,51 @@
+name: e2e
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: compose, Playwright and axe
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Start the stack and seed the viewer
+        run: |
+          cp .env.example .env
+          docker compose up -d --build --wait
+          docker compose --profile tools run --rm seed
+      - name: Install Chromium for Playwright
+        run: |
+          uv sync --frozen
+          uv run --frozen playwright install --with-deps chromium
+      - name: make e2e
+        env:
+          EVALGATE_VIEWER_URL: http://127.0.0.1:8100
+        run: make e2e
+      - name: Compose logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: viewer-screenshots
+          path: docs/images/
+          retention-days: 14
+      - name: Stop the stack
+        if: always()
+        run: docker compose down --volumes
