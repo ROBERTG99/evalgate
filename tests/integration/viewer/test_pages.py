@@ -25,7 +25,7 @@ def test_error_panel(tmp_path: Path) -> None:
         page = httpx.get(url + "/")
         api = httpx.get(url + "/api/runs").json()
     assert page.status_code == 200
-    assert RUN_A[:8] in page.text
+    assert RUN_A[-8:] in page.text
     assert 'role="alert"' in page.text
     assert "broken.json" in page.text and "notjson.json" in page.text
     assert "invalid JSON" in page.text
@@ -45,7 +45,7 @@ def test_filters_and_run_detail(tmp_path: Path) -> None:
     write(tmp_path / "b.json", RUN_B, [1.0] * 20, suite="extract")
     with viewer(tmp_path) as url:
         listing = httpx.get(url + "/?suite=extract").text
-        assert RUN_B[:8] in listing and RUN_A[:8] not in listing
+        assert RUN_B[-8:] in listing and RUN_A[-8:] not in listing
         assert httpx.get(url + "/?mode=bogus").status_code == 400
         detail = httpx.get(f"{url}/runs/{RUN_A}?status=failed").text
         assert detail.count('<th scope="row" class="mono">c-') == 5

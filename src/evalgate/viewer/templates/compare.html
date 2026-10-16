@@ -12,18 +12,18 @@
   {% else %}
   <form class="filters" method="get" action="/compare">
     <label>Baseline
-      <select name="base" required>{% for r in reports %}<option value="{{ r.run_id }}">{{ r.suite }} · {{ r.run_id[:8] }} · {{ r.created_at }}</option>{% endfor %}</select>
+      <select name="base" required>{% for r in reports %}<option value="{{ r.run_id }}">{{ r.suite }} · {{ r.run_id[-8:] }} · {{ r.created_at }}</option>{% endfor %}</select>
     </label>
     <label>Candidate
-      <select name="cand" required>{% for r in reports %}<option value="{{ r.run_id }}">{{ r.suite }} · {{ r.run_id[:8] }} · {{ r.created_at }}</option>{% endfor %}</select>
+      <select name="cand" required>{% for r in reports %}<option value="{{ r.run_id }}">{{ r.suite }} · {{ r.run_id[-8:] }} · {{ r.created_at }}</option>{% endfor %}</select>
     </label>
     <button type="submit">Compare</button>
   </form>
   {% endif %}
 {% else %}
 <div class="meta">
-  <span>baseline <a href="/runs/{{ base.run_id }}">{{ base.suite }} <span class="mono">{{ base.run_id[:8] }}</span></a> {{ mode_tag(base.mode) }}</span>
-  <span>candidate <a href="/runs/{{ cand.run_id }}">{{ cand.suite }} <span class="mono">{{ cand.run_id[:8] }}</span></a> {{ mode_tag(cand.mode) }}</span>
+  <span>baseline <a href="/runs/{{ base.run_id }}">{{ base.suite }} <span class="mono">{{ base.run_id[-8:] }}</span></a> {{ mode_tag(base.mode) }}</span>
+  <span>candidate <a href="/runs/{{ cand.run_id }}">{{ cand.suite }} <span class="mono">{{ cand.run_id[-8:] }}</span></a> {{ mode_tag(cand.mode) }}</span>
 </div>
 {% if state == "loading" %}
 <section class="panel loading" role="status" aria-live="polite">

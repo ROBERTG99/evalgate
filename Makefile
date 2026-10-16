@@ -62,7 +62,7 @@ test-docker: ## The full test suite inside containers (adds E2E and promtool)
 	./scripts/test_docker.sh
 
 e2e: ## Playwright and axe against the running viewer (EVALGATE_VIEWER_URL)
-	$(RUN) pytest tests/e2e -m e2e -p no:socket
+	$(RUN) pytest tests/e2e -m e2e --force-enable-socket
 
 eval: ## Offline evals with thresholds, writes evals/REPORT.md
 	$(RUN) python scripts/run_evals.py

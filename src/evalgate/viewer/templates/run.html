@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "macros.html" import badge, mode_tag %}
-{% block title %}{{ r.suite }} run {{ r.run_id[:8] }}{% endblock %}
+{% block title %}{{ r.suite }} run {{ r.run_id[-8:] }}{% endblock %}
 {% block content %}
 <h1>{{ r.suite }} {{ badge(gate.passed, gate.reasons|join(", ")) }}</h1>
 <div class="meta">
