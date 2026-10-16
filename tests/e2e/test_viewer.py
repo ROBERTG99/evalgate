@@ -65,6 +65,28 @@ def test_no_serious_axe_violations(viewer_url: str, browser: Any) -> None:
     assert problems == {}
 
 
+def test_html_report_has_no_serious_axe_violations(browser: Any) -> None:
+    """The self-contained HTML report (`evalgate report --html`) at 375 px and 1280 px, light and dark."""
+    from evalgate.report.build import load_report
+    from evalgate.report.html import render_html
+    from evalgate.stats.gate import check
+
+    base = load_report(ROOT / "evals/baselines/classify.json")
+    cases = [c.model_copy(update={"scores": {k: 0.0 for k in c.scores}, "passed": False}) for c in base.cases[:10]]
+    cand = base.model_copy(update={"cases": cases + base.cases[10:]})
+    html = render_html(cand, check(cand, report_sha256="e2e", baseline=base, resamples=1000), base)
+    problems = {}
+    for scheme, width in (("light", 1280), ("dark", 1280), ("light", 375), ("dark", 375)):
+        context = browser.new_context(color_scheme=scheme, viewport={"width": width, "height": 900})
+        page = context.new_page()
+        page.set_content(html)
+        found = serious(page)
+        if found:
+            problems[f"{scheme} {width}px"] = found
+        context.close()
+    assert problems == {}
+
+
 def test_mobile_375_no_page_overflow(viewer_url: str, browser: Any) -> None:
     context = browser.new_context(viewport={"width": 375, "height": 812}, device_scale_factor=2)
     page = context.new_page()
