@@ -50,10 +50,10 @@ Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL
 | T-29 | Comparison page | M4 | done | `uv run pytest tests/integration/viewer/test_compare.py` → 2 passed (aria-busy loading page, then deltas with CIs and regressed cases first) |
 | T-30 | Playwright, axe and screenshots | M4 | done | `make e2e` → 5 passed (no serious/critical axe violations on 7 pages × light/dark); wrote docs/images/{runs-list,run-detail-dark,compare-regression,mobile-375}.png and demo.webm |
 | T-31 | Toy suites, rubrics and baselines | M5 | done | `uv run pytest tests/integration/evals/test_v1_suites.py` → 4 passed (v1 passes, v2 fails with a regression for classify, extract, answer); baselines recorded in docs/DECISIONS.md |
-| T-32 | Meta-evaluation | M5 | todo | |
-| T-33 | Calibration eval and live scripts | M5 | todo | |
-| T-34 | Eval report and CI gate | M5 | todo | |
-| T-35 | Bootstrap coverage simulation | M5 | todo | |
+| T-32 | Meta-evaluation | M5 | done | `make meta-eval` → detected 30/30 regressions (1.00), 0/20 neutral failed (0.00), evals/reports/meta-eval.json; `test_meta_eval.py::test_report_fields` passed |
+| T-33 | Calibration eval and live scripts | M5 | done | `uv run pytest tests/unit/test_eval_live.py` → 4 passed (refuses without key; estimate printed then stop before any call); `make calibrate` → 3 rubrics PASS (answer_correctness agreement 0.875, kappa 0.746 on 64 test items) |
+| T-34 | Eval report and CI gate | M5 | done | `uv run pytest tests/unit/test_build_report.py` → 2 passed (every number in REPORT.md traced to a report file); `scripts/build_eval_report.py --check` → all thresholds met |
+| T-35 | Bootstrap coverage simulation | M5 | done | `uv run pytest tests/unit/stats/test_coverage_sim.py` → 2 passed; coverage 0.9600 over 400 datasets × 10,000 resamples (evals/reports/bootstrap-coverage.json); stats-reviewer pending in M5 review |
 | T-36 | Telemetry and observability profile | M6 | todo | |
 | T-37 | Security hardening | M6 | todo | |
 | T-38 | Offline guard and benchmarks | M6 | todo | |
