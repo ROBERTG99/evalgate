@@ -1,0 +1,40 @@
+# make demo, recorded 2026-10-16 against 'docker compose up -d --wait' (offline, no API keys).
+# Command: make demo (scripts/demo.sh). Run IDs and latencies differ per run; scores and exit codes do not.
+
+### classify v2: run the suite (offline, test split) and gate it against the v1 baseline
+$ EVALGATE_TOY_VERSION=v2 evalgate run evals/suites/classify.yaml --out .evalgate/demo/classify-v2.json
+evalgate: classify [test] run 01a14651-6f2e-7197-9869-903bfcdfdd75: 60 cases, mode offline, cost USD 0.0044, p95 29 ms, health ok
+  FAIL  label_accuracy = 0.7833 [0.6833, 0.8833] (threshold 0.9)
+  pass  label_format = 1.0000 [1.0000, 1.0000] (threshold 1.0)
+  report: .evalgate/demo/classify-v2.json
+$ evalgate check .evalgate/demo/classify-v2.json --baseline evals/baselines/classify.json --max-regression-pp 1.0
+evalgate check: FAIL — suite classify, run 01a14651-6f2e-7197-9869-903bfcdfdd75, mode offline
+  seed 1337, 10000 paired-bootstrap resamples, max regression 1.0 pp
+  metric label_accuracy: 0.7833 threshold 0.9 (below)
+  metric label_format: 1.0000 threshold 1.0 (ok)
+  delta label_accuracy: 0.9500 -> 0.7833 = -16.67 pp [95% CI -26.67 pp, -8.33 pp], n=60
+  delta label_format: 1.0000 -> 1.0000 = +0.00 pp [95% CI +0.00 pp, +0.00 pp], n=60
+  cost USD 0.0044, latency p50 10 ms, p95 29 ms
+  FAILED threshold: label_accuracy value 0.7833333333 vs threshold 0.9
+  FAILED regression: label_accuracy -16.67 pp [95% CI -26.67 pp, -8.33 pp]
+evalgate check exited 1
+
+### The pull request switches back to v1
+
+### classify v1: run the suite (offline, test split) and gate it against the v1 baseline
+$ EVALGATE_TOY_VERSION=v1 evalgate run evals/suites/classify.yaml --out .evalgate/demo/classify-v1.json
+evalgate: classify [test] run 01a14651-7afd-7728-b306-baa3e6f64e6f: 60 cases, mode offline, cost USD 0.0044, p95 28 ms, health ok
+  pass  label_accuracy = 0.9500 [0.8833, 1.0000] (threshold 0.9)
+  pass  label_format = 1.0000 [1.0000, 1.0000] (threshold 1.0)
+  report: .evalgate/demo/classify-v1.json
+$ evalgate check .evalgate/demo/classify-v1.json --baseline evals/baselines/classify.json --max-regression-pp 1.0
+evalgate check: PASS — suite classify, run 01a14651-7afd-7728-b306-baa3e6f64e6f, mode offline
+  seed 1337, 10000 paired-bootstrap resamples, max regression 1.0 pp
+  metric label_accuracy: 0.9500 threshold 0.9 (ok)
+  metric label_format: 1.0000 threshold 1.0 (ok)
+  delta label_accuracy: 0.9500 -> 0.9500 = +0.00 pp [95% CI +0.00 pp, +0.00 pp], n=60
+  delta label_format: 1.0000 -> 1.0000 = +0.00 pp [95% CI +0.00 pp, +0.00 pp], n=60
+  cost USD 0.0044, latency p50 10 ms, p95 28 ms
+evalgate check exited 0
+
+demo: v2 blocked (exit 1), v1 passes (exit 0). Reports in .evalgate/demo; the seeded viewer is at http://localhost:8100
