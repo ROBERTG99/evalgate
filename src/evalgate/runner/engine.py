@@ -233,7 +233,7 @@ class Runner:
                 judge_cost = sum(float(s.details.get("cost_usd", 0.0)) for s in scores)
                 gated = {m.name for m in self.suite.metrics if m.gate}
                 passed = all(s.passed for s in scores if s.name in gated)
-                telemetry.count("evalgate_case_latency_ms_sum", latency)
+                telemetry.count("evalgate_case_latency_ms", latency, suite=self.suite.name)
                 telemetry.count("evalgate_cost_usd_total", target_cost + judge_cost)
                 return CaseOutcome(
                     case_id=case.id,
@@ -408,7 +408,11 @@ async def run_suite_async(loaded: LoadedSuite, options: RunOptions | None = None
     options = options or RunOptions()
     if options.otel:
         telemetry.setup(enabled=True)
-    return await Runner(loaded, options).run()
+    try:
+        return await Runner(loaded, options).run()
+    finally:
+        if options.otel:
+            telemetry.shutdown()
 
 
 def run_suite(loaded: LoadedSuite, options: RunOptions | None = None) -> RunResult:

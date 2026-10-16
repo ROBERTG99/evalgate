@@ -184,7 +184,12 @@ def check(
         typer.echo(render_check_text(result, cand))
     else:
         typer.echo(render_check_text(result, cand))
-    telemetry.count("evalgate_gate_decisions_total", decision="pass" if result.passed else "fail")
+    exporting = telemetry.setup()  # only when OTEL_EXPORTER_OTLP_ENDPOINT is set
+    decision = "pass" if result.passed else "fail"
+    telemetry.count("evalgate_gate_decisions_total", decision=decision, suite=cand.suite)
+    telemetry.count("evalgate_gate_last_decision", 1.0 if result.passed else 0.0, suite=cand.suite)
+    if exporting:
+        telemetry.shutdown()
     _audit(result, cand.git_sha)
     if not result.passed:
         raise typer.Exit(EXIT_GATE_FAILED)

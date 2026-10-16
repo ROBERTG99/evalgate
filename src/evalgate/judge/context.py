@@ -163,6 +163,7 @@ class JudgeContext:
         req = self.request(loaded, user_message, schema)
         key = request_key(req)
         self.judge_calls += 1
+        telemetry.count("evalgate_judge_calls_total", route=req.route)
         if self.cache is not None:
             hit = await asyncio.to_thread(self.cache.get, key)  # DuckDB I/O off the event loop
             if hit is not None and self._usable(hit, req):

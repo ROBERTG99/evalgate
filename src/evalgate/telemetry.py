@@ -15,7 +15,13 @@ from contextlib import contextmanager
 from typing import Any
 
 _tracer: Any = None
+_meter: Any = None
+_tracer_provider: Any = None
+_meter_provider: Any = None
+_instruments: dict[str, Any] = {}
 _meter_counts: dict[str, float] = {}
+HISTOGRAMS = {"evalgate_case_latency_ms"}
+GAUGES = {"evalgate_gate_last_decision"}
 log = logging.getLogger("evalgate")
 
 
@@ -43,14 +49,17 @@ def configure_logging() -> None:
     log.propagate = False
 
 
-def setup(enabled: bool = False, exporter: Any = None) -> bool:
-    """Enable tracing. ``exporter`` overrides the OTLP exporter (tests pass an in-memory one)."""
-    global _tracer
+def setup(enabled: bool = False, exporter: Any = None, metric_reader: Any = None) -> bool:
+    """Enable tracing and metrics. ``exporter``/``metric_reader`` override OTLP (tests pass in-memory ones)."""
+    global _tracer, _meter, _tracer_provider, _meter_provider
     endpoint = os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT", "").strip()
-    if not (enabled or endpoint or exporter is not None):
+    if not (enabled or endpoint or exporter is not None or metric_reader is not None):
         _tracer = None
+        _meter = None
         return False
     try:
+        from opentelemetry.sdk.metrics import MeterProvider
+        from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
         from opentelemetry.sdk.resources import Resource
         from opentelemetry.sdk.trace import TracerProvider
         from opentelemetry.sdk.trace.export import BatchSpanProcessor, SimpleSpanProcessor
@@ -58,20 +67,36 @@ def setup(enabled: bool = False, exporter: Any = None) -> bool:
         log.warning("opentelemetry-sdk is not installed; install evalgate[otel] to emit spans")
         _tracer = None
         return False
-    provider = TracerProvider(resource=Resource.create({"service.name": "evalgate"}))
+    resource = Resource.create({"service.name": "evalgate"})
+    _tracer_provider = TracerProvider(resource=resource)
     if exporter is not None:
-        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        _tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
     else:
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 
-        provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    _tracer = provider.get_tracer("evalgate")
+        _tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    if metric_reader is None and exporter is None:
+        from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
+
+        metric_reader = PeriodicExportingMetricReader(OTLPMetricExporter(), export_interval_millis=5000)
+    readers = [metric_reader] if metric_reader is not None else []
+    _meter_provider = MeterProvider(resource=resource, metric_readers=readers)
+    _meter = _meter_provider.get_meter("evalgate")
+    _instruments.clear()
+    _tracer = _tracer_provider.get_tracer("evalgate")
     return True
 
 
 def shutdown() -> None:
-    global _tracer
-    _tracer = None
+    """Flush and stop exporters. A collector that is down only loses spans; the run is unaffected."""
+    global _tracer, _meter, _tracer_provider, _meter_provider
+    for provider in (_tracer_provider, _meter_provider):
+        if provider is not None:
+            try:
+                provider.shutdown()
+            except Exception as exc:  # pragma: no cover - exporter failures never fail a run
+                log.warning("telemetry shutdown failed: %s", exc)
+    _tracer = _meter = _tracer_provider = _meter_provider = None
 
 
 def enabled() -> bool:
@@ -89,10 +114,27 @@ def span(name: str, **attributes: Any) -> Iterator[Any]:
 
 
 def count(name: str, value: float = 1.0, **labels: str) -> None:
-    """In-process counters (``evalgate_*``); exported in the report extensions and the Prometheus text."""
+    """Record ``evalgate_*`` metrics: kept in-process (``counters()``) and exported over OTLP when enabled."""
     inner = ",".join(f'{k}="{v}"' for k, v in sorted(labels.items()))
     key = f"{name}{{{inner}}}" if inner else name
-    _meter_counts[key] = _meter_counts.get(key, 0.0) + value
+    _meter_counts[key] = value if name in GAUGES else _meter_counts.get(key, 0.0) + value
+    if _meter is None:
+        return
+    instrument = _instruments.get(name)
+    if instrument is None:
+        if name in HISTOGRAMS:
+            instrument = _meter.create_histogram(name, unit="ms")
+        elif name in GAUGES:
+            instrument = _meter.create_gauge(name)
+        else:
+            instrument = _meter.create_counter(name)
+        _instruments[name] = instrument
+    if name in HISTOGRAMS:
+        instrument.record(value, attributes=labels)
+    elif name in GAUGES:
+        instrument.set(value, attributes=labels)
+    else:
+        instrument.add(value, attributes=labels)
 
 
 def counters() -> dict[str, float]:

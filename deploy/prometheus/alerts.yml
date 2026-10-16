@@ -1,0 +1,29 @@
+groups:
+  - name: evalgate
+    rules:
+      - alert: ToyTargetErrorRate
+        expr: |
+          sum(rate(toy_requests_total{status!~"2.."}[5m])) / clamp_min(sum(rate(toy_requests_total[5m])), 1e-9) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Toy targets answer more than 1% of requests with an error.
+          runbook: docs/runbook.md#toy-target-errors
+      - alert: JudgeCacheHitLow
+        expr: |
+          sum(increase(evalgate_cache_hits_total[1h])) / clamp_min(sum(increase(evalgate_judge_calls_total[1h])), 1)
+          < 0.5 and sum(increase(evalgate_judge_calls_total[1h])) > 0
+        for: 15m
+        labels:
+          severity: info
+        annotations:
+          summary: Fewer than half of judge calls hit the cache on re-runs; check cache keys and the CI cache artifact.
+          runbook: docs/runbook.md#judge-cache
+      - alert: GateFlapping
+        expr: changes(evalgate_gate_last_decision[6h]) >= 3
+        labels:
+          severity: warning
+        annotations:
+          summary: "The gate for {{ $labels.suite }} changed its decision 3 or more times across recent runs."
+          runbook: docs/runbook.md#gate-flapping
