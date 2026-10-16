@@ -6,7 +6,7 @@
     },
     "duckdb": {
       "command": "uvx",
-      "args": ["mcp-server-motherduck", "--db-path", ".evalgate/runs.duckdb", "--read-only"]
+      "args": ["mcp-server-motherduck==1.1.0", "--db-path", ".evalgate/runs.duckdb", "--read-only"]
     }
   }
 }

@@ -55,7 +55,7 @@ if command -v go >/dev/null 2>&1; then
     GOBIN="$BIN" GOARCH="$arch_go" go install "github.com/rhysd/actionlint/cmd/actionlint@v${ACTIONLINT_VERSION}"
   fi
   if ! have gitleaks version "$GITLEAKS_VERSION"; then
-    GOBIN="$BIN" go install -ldflags "-X github.com/zricethezav/gitleaks/v8/version.Version=${GITLEAKS_VERSION}" \
+    GOBIN="$BIN" GOARCH="$arch_go" go install -ldflags "-X github.com/zricethezav/gitleaks/v8/version.Version=${GITLEAKS_VERSION}" \
       "github.com/zricethezav/gitleaks/v8@v${GITLEAKS_VERSION}"
   fi
 else

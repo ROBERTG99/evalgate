@@ -11,7 +11,7 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "evalgate"
 
     def do_GET(self) -> None:
-        if self.path == "/healthz":
+        if self.path.split("?", 1)[0] == "/healthz":
             body = json.dumps({"status": "ok"}).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")

@@ -21,7 +21,7 @@ if command -v dockerd >/dev/null 2>&1 && ! docker info >/dev/null 2>&1; then
 fi
 
 ./scripts/install_tools.sh >/dev/null
-uv sync --frozen --all-extras >/dev/null 2>&1 || uv sync --all-extras
+uv sync --frozen --all-extras >/dev/null
 [[ -f .env ]] || cp .env.example .env
 
 if [[ -n "${CLAUDE_ENV_FILE:-}" ]]; then

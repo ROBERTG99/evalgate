@@ -15,6 +15,10 @@ Direction = Literal["higher", "lower"]
 SUITE_SCHEMA = "evalgate.suite.v1"
 
 
+def _default_splits() -> list[Split]:
+    return ["dev", "test"]
+
+
 class HttpTargetSpec(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -74,7 +78,7 @@ class Suite(BaseModel):
     concurrency: int = Field(default=8, ge=1, le=256)
     metrics: list[MetricSpec] = Field(min_length=1)
     budget: BudgetSpec | None = None
-    splits: list[Split] = Field(default_factory=lambda: ["dev", "test"])
+    splits: list[Split] = Field(default_factory=_default_splits)
     plugins: list[str] = Field(
         default_factory=list, description="Modules imported before the run to register custom metrics."
     )

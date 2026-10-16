@@ -10,9 +10,7 @@ def test_trivial_suite_writes_report(tmp_path: Path) -> None:
     out = tmp_path / "r.json"
     proc = subprocess.run(
         [
-            sys.executable,
-            "-m",
-            "evalgate.cli",
+            str(Path(sys.executable).parent / "evalgate"),  # the installed entry point, not `python -m`
             "run",
             "tests/fixtures/suites/trivial.yaml",
             "--split",

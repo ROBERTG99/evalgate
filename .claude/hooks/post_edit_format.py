@@ -25,7 +25,9 @@ def main() -> int:
     except (json.JSONDecodeError, ValueError):
         return 0
     path = (payload.get("tool_input") or {}).get("file_path", "")
-    if not path.endswith(".py") or not Path(path).exists():
+    root = Path(__file__).resolve().parents[2]
+    target = Path(path).resolve()
+    if not path.endswith(".py") or not target.exists() or not target.is_relative_to(root):
         return 0
     ruff = ruff_command()
     if ruff is None:

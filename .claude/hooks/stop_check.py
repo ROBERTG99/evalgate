@@ -18,9 +18,10 @@ def main() -> int:
     if payload.get("stop_hook_active"):
         return 0
     root = Path(__file__).resolve().parents[2]
+    # The override exists for the hook tests; the hook itself always runs from the repository root.
     command = os.environ.get("EVALGATE_STOP_CHECK_CMD", "make check-fast")
     result = subprocess.run(  # noqa: S602 - fixed command or test override
-        command, shell=True, cwd=root, capture_output=True, text=True, timeout=600, check=False
+        command, shell=True, cwd=root, capture_output=True, text=True, timeout=540, check=False
     )
     if result.returncode == 0:
         return 0

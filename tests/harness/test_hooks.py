@@ -32,6 +32,19 @@ def bash(command: str) -> subprocess.CompletedProcess[str]:
         "git push -f origin feature",
         "git push origin +main",
         "git push --force-with-lease",
+        "git -C . push --force origin main",
+        "git push -uf origin main",
+        "cd repo\ngit push --force origin main",
+        "git -c user.name=X -c user.email=Y commit -m msg",
+        "git -C /tmp config user.name X",
+        "git commit -m 'feat: x' -m '🤖 Generated with [Claude Code](https://claude.com/claude-code)'",
+        "git -C . commit -m 'feat: x\n\nCo-Authored-By: Claude <noreply@anthropic.com>'",
+        "gh repo fork ROBERTG99/evalgate",
+        "gh api -X PATCH repos/ROBERTG99/evalgate -f visibility=public",
+        "git push origin v0.1.0",
+        "git push --tags",
+        "rm -fr /",
+        "rm -r -f ~/",
         "git config user.name 'Someone'",
         "git config --global user.email a@b.c",
         "GIT_AUTHOR_NAME=x git commit -m msg",
@@ -57,6 +70,10 @@ def test_forbidden_bash_blocked(command: str) -> None:
         "git push -u origin claude/feature",
         "git commit -m 'feat: add metric'",
         "git log --format=%B | grep -E 'Co-Authored-By|Claude-Session' || true",
+        "git config --get user.name",
+        "git commit -m 'docs: explain why we never add a Co-Authored-By trailer'",
+        "git push -u origin claude/fix-v1-baseline",
+        "rm -rf build/",
         "make check-fast",
         "uv run pytest tests/unit",
     ],
@@ -65,25 +82,65 @@ def test_allowed_bash_passes(command: str) -> None:
     assert bash(command).returncode == 0, command
 
 
+def test_commit_message_file_checked(tmp_path: Path) -> None:
+    msg = tmp_path / "msg.txt"
+    msg.write_text("feat: x\n\nCo-Authored-By: Claude <noreply@anthropic.com>\n")
+    res = run_hook(
+        "pre_tool_guard.py",
+        {"tool_name": "Bash", "tool_input": {"command": f"git commit -F {msg}"}, "cwd": str(tmp_path)},
+    )
+    assert res.returncode == 2
+    msg.write_text("feat: x\n")
+    ok = run_hook(
+        "pre_tool_guard.py",
+        {"tool_name": "Bash", "tool_input": {"command": f"git commit -F {msg}"}, "cwd": str(tmp_path)},
+    )
+    assert ok.returncode == 0
+
+
 def test_dataset_edits_blocked_new_versions_allowed(tmp_path: Path) -> None:
-    existing = ROOT / "evals" / "datasets" / "toys" / "classify.v1.jsonl"
-    existing.parent.mkdir(parents=True, exist_ok=True)
-    created = not existing.exists()
-    if created:
-        existing.write_text("")
-    try:
-        edit = run_hook("pre_tool_guard.py", {"tool_name": "Edit", "tool_input": {"file_path": str(existing)}})
-        assert edit.returncode == 2
-        new = existing.with_name("classify.v99.jsonl")
-        write = run_hook("pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(new)}})
-        assert write.returncode == 0
-        baseline = ROOT / "evals" / "baselines" / "brand-new.json"
-        assert not baseline.exists()
-        ok = run_hook("pre_tool_guard.py", {"tool_name": "Write", "tool_input": {"file_path": str(baseline)}})
-        assert ok.returncode == 0
-    finally:
-        if created:
-            existing.unlink()
+    env = {"EVALGATE_GUARD_ROOT": str(tmp_path)}
+    existing = tmp_path / "evals" / "datasets" / "toys" / "classify.v1.jsonl"
+    existing.parent.mkdir(parents=True)
+    existing.write_text("")
+    (tmp_path / "evals" / "baselines").mkdir(parents=True)
+    (tmp_path / "evals" / "baselines" / "classify.json").write_text("{}")
+
+    def guard(payload: dict) -> int:
+        return run_hook("pre_tool_guard.py", {**payload, "cwd": str(tmp_path)}, env=env).returncode
+
+    assert guard({"tool_name": "Edit", "tool_input": {"file_path": str(existing)}}) == 2
+    assert guard({"tool_name": "MultiEdit", "tool_input": {"file_path": str(existing), "edits": []}}) == 2
+    new = existing.with_name("classify.v2.jsonl")
+    assert guard({"tool_name": "Write", "tool_input": {"file_path": str(new)}}) == 0
+    assert guard({"tool_name": "Write", "tool_input": {"file_path": str(tmp_path / "evals/baselines/new.json")}}) == 0
+    for command in [
+        "echo '{}' >> evals/datasets/toys/classify.v1.jsonl",
+        "echo x > evals/baselines/classify.json",
+        "sed -i 's/a/b/' evals/datasets/toys/classify.v1.jsonl",
+        "cat x | tee evals/baselines/classify.json",
+        "cp /tmp/x evals/baselines/classify.json",
+        "mv evals/datasets/toys/classify.v1.jsonl /tmp/x",
+        "rm evals/baselines/classify.json",
+    ]:
+        assert guard({"tool_name": "Bash", "tool_input": {"command": command}}) == 2, command
+    for command in [
+        "cat evals/datasets/toys/classify.v1.jsonl",
+        "cp evals/baselines/classify.json /tmp/copy.json",
+        "echo x > evals/datasets/toys/classify.v2.jsonl",
+    ]:
+        assert guard({"tool_name": "Bash", "tool_input": {"command": command}}) == 0, command
+
+
+def test_malformed_input_fails_closed() -> None:
+    res = subprocess.run(
+        [sys.executable, str(HOOKS / "pre_tool_guard.py")],
+        input="not json",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res.returncode == 2
 
 
 def test_env_file_write_blocked() -> None:

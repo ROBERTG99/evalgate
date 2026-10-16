@@ -6,6 +6,7 @@ import asyncio
 import importlib
 import logging
 import random
+import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -55,7 +56,15 @@ class RunResult:
     store_error: str | None = None
 
 
+def ensure_import_paths(suite_path: Path) -> None:
+    """``python:`` targets and plugins resolve against the working directory, then the suite's folder."""
+    for entry in (str(Path.cwd()), str(suite_path.resolve().parent)):
+        if entry not in sys.path:
+            sys.path.append(entry)
+
+
 def _import_plugins(modules: list[str], suite_path: Path) -> None:
+    ensure_import_paths(suite_path)
     for module in modules:
         try:
             importlib.import_module(module)
