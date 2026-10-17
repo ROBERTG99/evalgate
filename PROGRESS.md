@@ -2,9 +2,8 @@
 
 ## Needs the maintainer
 
-- Push the local tag `v0.1.0` once it exists (`git push origin v0.1.0`); tags are never pushed from the build session.
+- Push the local tag `v0.1.0` (`git push origin v0.1.0`) after merging; tags are never pushed from the build session. It triggers `release.yml`, which needs a `pypi` environment with trusted publishing configured on PyPI.
 - Optionally set an `ANTHROPIC_API_KEY` and run `make eval-live` (≤ USD 2) to record cassettes and live calibration.
-
 - Review 40 of the 200 judge labels in `evals/datasets/judge/answer_correctness.labels.v1.jsonl` (labels are by construction; §11 asks for a maintainer pass). Mark reviewed rows with `"source": "maintainer"` in a new `labels.v2` file.
 
 ## Bootstrap evidence
@@ -18,17 +17,9 @@ chore: configure commit attribution
 
 Identity check (`CLAUDE_CODE_REMOTE=true`): `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME`, `GIT_COMMITTER_EMAIL` all set (ROBERTG99, noreply address).
 
-## Handoff for the next session
+## State
 
-State on 2026-10-16: M0 to M8 are done (T-01 to T-43; T-44 needs only the local tag, created on the final commit). T-45: the six final reviews ran (reviewer, security audit, stats, UX, code review with simplify). Every blocker was fixed with a regression test, the non-blocking findings were fixed or recorded in `docs/KNOWN_LIMITATIONS.md` and `docs/DECISIONS.md`, and the reviewer is re-run for its "ship" verdict. Global DoD boxes are ticked only where a task row holds the evidence; the rest are re-verified in T-46 (§19).
-
-Remaining work, in order:
-
-1. **T-45**: re-run the `reviewer` subagent over the whole history until it says "Verdict: ship"; fix any new blocker with a regression test.
-2. **T-46** (§19): commit; clone into a temporary folder and run `make bootstrap && make verify` (`make verify-clean`); in the clone run `docker compose up -d --wait`, `make seed`, `make demo`, `make e2e`, `make test-docker`, `docker compose down -v`; run the authorship check; rewrite `docs/verification.md` with every command, result and duration; refresh README results only from `evals/reports/`; `git mv -f BUILD.md docs/specs/000-build-spec.md`; `git tag v0.1.0` on the final commit (never pushed); push `claude/build-md-execution-a0v4kj`; open a pull request without any Claude attribution and check CI on it.
-3. Before quoting numbers again: `make eval` and `make bench` on the final commit, then update README, `docs/evaluation.md` and the ADRs that quote `evals/reports/bench.json`. The design FAQ's file:line links must be re-resolved whenever cited code moves.
-
-Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` holds Chromium 1194 for Playwright 1.56.0; the compose stack holds port 8110, so a local toy server cannot bind it; this container has no IPv6; there are no provider keys, so `make eval-live` writes `ran: false` (exit 2) and live numbers stay "not run".
+All tasks T-01 to T-46 are done and every item of the Global Definition of Done is checked; the evidence is in the task rows below and in [`docs/verification.md`](docs/verification.md). What is not done or done with a gap is listed in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 
 ## Tasks
 
@@ -77,31 +68,31 @@ Environment notes: tools in `.tools/bin` (`make tools`); `/opt/pw-browsers` hold
 | T-41 | CI workflows | M7 | done | `uv run pytest tests/harness/test_workflows.py` → 4 passed (ci, e2e, evals, docker, codeql, action-selftest, release; 3.12/3.13 matrix, uv cache, trivy HIGH/CRITICAL exit 1, PyPI trusted publishing); `.tools/bin/actionlint` → clean. Not yet observed on GitHub: workflows trigger on `pull_request`/`main`, and no PR is open |
 | T-42 | Scripted demo | M8 | done | `uv run pytest tests/integration/test_demo.py` → 2 passed; `make demo` against the compose stack → v2 `evalgate check exited 1` (label_accuracy -16.67 pp, 95% CI [-26.67, -8.33]), v1 `exited 0` (docs/demo-transcript.txt) |
 | T-43 | README, ADRs and documents | M8 | done | `uv run pytest tests/harness/test_docs.py` → test_required_docs_exist, test_readme_numbers_cite_reports, test_runbook_has_alert_anchors pass (test_relative_links_resolve waits for docs/verification.md, T-46); `make lint` → lint: clean (markdownlint 0 issues in 73 files, shellcheck, hadolint, actionlint) |
-| T-44 | Release preparation | M8 | in progress | `uv run pytest tests/harness/test_release.py` → 3 passed (CHANGELOG `## [0.1.0] - 2026-10-16`, pyproject and `evalgate.__version__` agree, README pins `action@v0.1.0`); `release.yml` in place; local tag `v0.1.0` is created on the final commit in T-46 |
+| T-44 | Release preparation | M8 | done | `uv run pytest tests/harness/test_release.py` → 3 passed (CHANGELOG `## [0.1.0] - 2026-10-16`, pyproject and `evalgate.__version__` agree, README pins `action@v0.1.0`); `.github/workflows/release.yml` (tag `v*`: wheel, sdist and SBOM to the GitHub Release, PyPI trusted publishing, GHCR images); local tag `v0.1.0` on the final commit (`git tag --list v0.1.0`), not pushed (see Needs the maintainer) |
 | T-45 | Reviews and fixes | M9 | done | Final reviews: stats (fix first: NaN scores failed the gate open), UX (fix first: meta refresh, HTML report scroll regions), code review (4 blockers: lower-is-better crash scoring, unbilled invalid output, empty runs, resume), security (0 critical/high; 2 medium, 7 low), reviewer (5 rounds of fail-open findings: empty split, NaN custom metric, judge errors on lower-is-better judges, absent expected fields, Promptfoo `contains`). All fixed with regression tests (e.g. `tests/unit/stats/test_gate_inputs.py`, `tests/unit/runner/test_engine.py::test_nan_custom_metric_is_a_metric_error`, `tests/unit/metrics/test_builtin.py::test_absent_expected_field_is_a_problem_not_a_pass`, `tests/e2e/test_viewer.py::test_html_report_has_no_serious_axe_violations`); the rest fixed or listed in docs/KNOWN_LIMITATIONS.md. Reviewer at c5a14cd → `Verdict: ship`; `make check-fast` → 271 passed; `make test` → 341 passed, coverage 87.89% overall, every core package ≥ 85% |
-| T-46 | Final verification | M9 | todo | |
+| T-46 | Final verification | M9 | done | §19 on a fresh clone of `db4ed36`: `make verify-clean` → passed in 310 s (lint clean, mypy clean, schemas, security clean, 359 tests, coverage 87.98%, extras, evals, bench, build); `docker compose up -d --wait`, `make seed`, `make demo` (exit 1 then 0), `make e2e` (6 passed), `make test-docker` (passed), `docker compose down -v` all exit 0; authorship check clean; `uv run pytest tests/harness/test_docs.py` → 5 passed; record in docs/verification.md; `BUILD.md` moved to docs/specs/000-build-spec.md |
 
 ## Global Definition of Done
 
-- [ ] `make verify` passes from a fresh clone (§19) with no API keys set.
+- [x] `make verify` passes from a fresh clone (§19) with no API keys set.
 - [x] `docker compose up -d --wait` brings every service to healthy; `make seed` and `make demo` run the scripted scenario end to end.
-- [ ] `make test-docker` runs the full test suite inside containers and passes.
-- [ ] Unit, integration, contract and E2E suites pass; line coverage is at least 85% on core packages and 70% overall.
+- [x] `make test-docker` runs the full test suite inside containers and passes.
+- [x] Unit, integration, contract and E2E suites pass; line coverage is at least 85% on core packages and 70% overall.
 - [x] Offline evals meet every threshold in §11, and `evals/REPORT.md` is generated by script from the latest run.
-- [ ] Lint, format and type checks are clean.
+- [x] Lint, format and type checks are clean.
 - [x] Security scans report no high or critical findings, or each one is documented with a reason in `docs/security.md`.
 - [ ] Every workflow in §17 exists and passes actionlint; if a GitHub remote exists and CI results can be observed, the pushed branch is green.
 - [x] Every screen in §13 is implemented with loading, empty, error and success states; axe reports no serious violations; Playwright captured the screenshots in `docs/images/`.
 - [x] The harness in §7 is complete: CLAUDE.md, AGENTS.md, settings, hooks with passing tests, rules, subagents, skills and `.mcp.json`.
-- [ ] Every document in §18 exists, and every number in the README points to the command or report that produced it.
-- [ ] The `reviewer` subagent's final verdict is "ship", and `security-review` findings are fixed or documented.
-- [ ] `PROGRESS.md` has every task checked with evidence, and `docs/KNOWN_LIMITATIONS.md` lists what is not done.
-- [ ] Every commit is authored and committed by the maintainer, and no commit message or pull request contains `Co-Authored-By`, `Claude-Session` or "Generated with Claude Code" (checked as in §19).
-- [ ] `BUILD.md` lives at `docs/specs/000-build-spec.md`; all work is committed, and pushed when a remote exists.
+- [x] Every document in §18 exists, and every number in the README points to the command or report that produced it.
+- [x] The `reviewer` subagent's final verdict is "ship", and `security-review` findings are fixed or documented.
+- [x] `PROGRESS.md` has every task checked with evidence, and `docs/KNOWN_LIMITATIONS.md` lists what is not done.
+- [x] Every commit is authored and committed by the maintainer, and no commit message or pull request contains `Co-Authored-By`, `Claude-Session` or "Generated with Claude Code" (checked as in §19).
+- [x] `BUILD.md` lives at `docs/specs/000-build-spec.md`; all work is committed, and pushed when a remote exists.
 - [x] FR-1, FR-2, FR-3: loader, target adapters and deterministic metrics pass their named tests.
 - [x] FR-4, FR-5: judge bias and injection tests pass; `make calibrate` reaches agreement ≥ 0.80 and kappa ≥ 0.70.
 - [x] FR-6, FR-7: budgets enforced; `evalgate check` is deterministic and fails the v2 runs.
 - [x] FR-8, FR-9: reports, viewer and action self-test pass with one upserted PR comment.
 - [x] FR-10, FR-11, FR-12, FR-13: zero provider calls on cached re-run; Langfuse, adapter, Promptfoo and helper tests pass.
 - [x] FR-14: `make meta-eval` detects ≥ 90% of regressions with ≤ 10% false positives.
-- [ ] `make bench` and `make build` meet NFR-1 to NFR-9; `schemas/` has no drift; local tag `v0.1.0` exists.
+- [x] `make bench` and `make build` meet NFR-1 to NFR-9; `schemas/` has no drift; local tag `v0.1.0` exists.
