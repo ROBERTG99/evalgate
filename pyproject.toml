@@ -88,7 +88,7 @@ dev = [
   "anthropic>=0.70",
   "openai>=1.90",
   "cyclonedx-bom>=6.0",
-  "pre-commit>=4.2",
+  "pre-commit>=4.7.0",
 ]
 
 [tool.ruff]
