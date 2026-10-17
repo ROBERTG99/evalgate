@@ -48,6 +48,10 @@ The `reviewer` subagent ran over the whole history (`git diff $(git rev-list --m
 
 No provider key was set, so `make eval-live` was not run against a model: `evals/reports/live-eval.json` records `ran: false` ("ANTHROPIC_API_KEY not set") and [`evals/REPORT.md`](../evals/REPORT.md) states that live evals were not run.
 
+## CI on GitHub
+
+The first CI run on the pull request (ROBERTG99/evalgate#1) found three problems that only hosted runners show; they were fixed in `02f708e` and `7c7495c`: composite action steps run with `bash -e`, so a failing `evalgate check` ended the step before its outputs were written; buildx bake refused the compose `network: host` build option (now `COMPOSE_BUILD_NETWORK`, `default` in CI); and a `uv run` toy server held the uv cache lock that setup-uv's post step waits for. At `7c7495c` all 18 checks succeeded: lint, mypy, tests on Python 3.12 and 3.13, security, wheel and sdist, both images with hadolint and trivy, CodeQL for Python, Actions and JavaScript, the compose E2E with Playwright and axe, the three gated eval suites with one upserted PR comment each, the eval thresholds, and the action self-test (v1 passes, v2 fails).
+
 ## Authorship check
 
 `git log --format='%an <%ae> | %cn <%ce>' | sort -u` at `e7835be` and again at the final commit:
