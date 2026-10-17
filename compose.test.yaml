@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: docker/test.Dockerfile
-      network: host
+      network: ${COMPOSE_BUILD_NETWORK:-host}
       args: *build-args
     image: evalgate-tests:local
     environment:
@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: docker/e2e.Dockerfile
-      network: host
+      network: ${COMPOSE_BUILD_NETWORK:-host}
       args: *build-args
     image: evalgate-e2e:local
     environment:

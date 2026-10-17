@@ -111,8 +111,9 @@ runs:
           args+=(--baseline "${BASELINE}")
           md_args+=(--baseline "${BASELINE}")
         fi
-        evalgate check "${args[@]}"
-        code=$?
+        # Composite bash steps run with -e: capture the gate's exit code instead of stopping here.
+        code=0
+        evalgate check "${args[@]}" || code=$?
         if [ "${code}" -gt 1 ]; then
           # Not a gate verdict (2 invalid input, 4 internal, ...): keep the original exit code.
           echo "::error title=evalgate::evalgate check exited ${code}"
