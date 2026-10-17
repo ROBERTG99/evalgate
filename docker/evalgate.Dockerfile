@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # evalgate CLI and report viewer. Multi-stage: python:3.13-slim builder, distroless Python 3.13 runtime
 # (no shell, no package manager), non-root uid 10001, no apt-get. See docs/DECISIONS.md for the size budget.
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 ARG HTTPS_PROXY
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1 UV_LINK_MODE=copy
 RUN pip install "uv==0.11.32"

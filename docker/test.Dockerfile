@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Test runner image for `make test-docker`: the repository with all dev dependencies and extras.
-FROM python:3.13-slim
+FROM python:3.14-slim
 ARG HTTPS_PROXY
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/opt/venv \
     PATH=/opt/venv/bin:$PATH PYTHONDONTWRITEBYTECODE=1 DEEPEVAL_TELEMETRY_OPT_OUT=YES

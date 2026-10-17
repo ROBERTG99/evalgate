@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Toy targets (FastAPI) used by the demo, the viewer seed and the meta-eval. Multi-stage: python:3.13-slim
 # builder, distroless Python 3.13 runtime, non-root uid 10001, no apt-get. Data is synthetic.
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 ARG HTTPS_PROXY
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1 UV_LINK_MODE=copy
 RUN pip install "uv==0.11.32"
