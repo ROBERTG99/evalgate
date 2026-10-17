@@ -1,0 +1,21 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "POST",
+        "url": "/api/public/ingestion",
+        "basicAuthCredentials": {"username": "pk-lf-test", "password": "sk-lf-test"}
+      },
+      "response": {
+        "status": 207,
+        "headers": {"Content-Type": "application/json"},
+        "jsonBody": {"successes": [], "errors": []}
+      }
+    },
+    {
+      "priority": 10,
+      "request": {"method": "POST", "url": "/api/public/ingestion"},
+      "response": {"status": 401, "jsonBody": {"message": "Invalid credentials"}}
+    }
+  ]
+}

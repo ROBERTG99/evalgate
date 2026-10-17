@@ -1,0 +1,16 @@
+schema: evalgate.suite.v1
+name: extract
+description: Invoice field extraction against the toy extract target.
+dataset: evals/datasets/toys/extract.v1.jsonl
+target:
+  http: {url: "${EVALGATE_TOYS_URL:-http://localhost:8110}/extract", method: POST, headers: {X-Toy-Version: "${EVALGATE_TOY_VERSION:-v1}"}, timeout_s: 10}
+concurrency: 8
+metrics:
+  - {name: schema_valid, kind: json_schema, params: {actual: output, schema_path: evals/schemas/invoice.v1.json}, threshold: 1.0, direction: higher, gate: true}
+  - {name: total_tolerance, kind: numeric_tolerance, params: {actual: output.total, expected: expected.total, abs_tol: 0.01}, threshold: 0.95, direction: higher, gate: true}
+  - {name: invoice_number_exact, kind: exact, params: {actual: output.invoice_number, expected: expected.invoice_number}, threshold: 0.95, gate: true}
+  - {name: date_exact, kind: exact, params: {actual: output.date, expected: expected.date}, threshold: 0.95, gate: true}
+  - {name: currency_exact, kind: exact, params: {actual: output.currency, expected: expected.currency}, threshold: 0.95, gate: true}
+  - {name: vendor_exact, kind: exact, params: {actual: output.vendor, expected: expected.vendor, normalize: true}, threshold: 0.95, gate: true}
+budget: {max_cost_usd: 0.02, max_p95_ms: 800}
+splits: [dev, test]

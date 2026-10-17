@@ -1,0 +1,3 @@
+{"id": "t-001", "split": "dev", "input": {"text": "hello", "label": "greeting"}, "expected": {"label": "greeting"}, "tags": ["smoke"], "meta": {}}
+{"id": "t-002", "split": "dev", "input": {"text": "bye", "label": "farewell"}, "expected": {"label": "farewell"}, "tags": ["smoke"], "meta": {}}
+{"id": "t-003", "split": "test", "input": {"text": "hi", "label": "greeting"}, "expected": {"label": "greeting"}, "tags": [], "meta": {}}

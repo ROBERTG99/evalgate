@@ -1,0 +1,82 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "rubric": {
+      "title": "Rubric",
+      "type": "string"
+    },
+    "split": {
+      "enum": [
+        "dev",
+        "test"
+      ],
+      "title": "Split",
+      "type": "string"
+    },
+    "input": {
+      "title": "Input",
+      "type": "string"
+    },
+    "reference": {
+      "title": "Reference",
+      "type": "string"
+    },
+    "candidate": {
+      "title": "Candidate",
+      "type": "string"
+    },
+    "candidate_b": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Candidate B"
+    },
+    "label": {
+      "enum": [
+        0,
+        1,
+        "A",
+        "B",
+        "tie"
+      ],
+      "title": "Label"
+    },
+    "source": {
+      "default": "construction",
+      "enum": [
+        "construction",
+        "maintainer"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "meta": {
+      "additionalProperties": true,
+      "title": "Meta",
+      "type": "object"
+    }
+  },
+  "required": [
+    "id",
+    "rubric",
+    "split",
+    "input",
+    "reference",
+    "candidate",
+    "label"
+  ],
+  "title": "evalgate.label_row.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/evalgate.label_row.v1.json"
+}

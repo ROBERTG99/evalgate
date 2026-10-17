@@ -1,0 +1,45 @@
+name: docker
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  images:
+    name: build, hadolint and trivy (${{ matrix.image }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [evalgate, toy-targets]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install hadolint and trivy (pinned in tools/versions.env)
+        run: |
+          ./scripts/install_tools.sh
+          echo "$PWD/.tools/bin" >> "$GITHUB_PATH"
+      - name: hadolint
+        run: hadolint docker/${{ matrix.image }}.Dockerfile
+      - name: Build
+        run: docker build -f docker/${{ matrix.image }}.Dockerfile -t evalgate-ci/${{ matrix.image }}:${{ github.sha }} .
+      - name: Smoke test
+        run: |
+          if [ "${{ matrix.image }}" = evalgate ]; then
+            docker run --rm evalgate-ci/evalgate:${{ github.sha }} --version
+          else
+            docker run --rm --entrypoint python3 evalgate-ci/toy-targets:${{ github.sha }} -c "import toy_targets"
+          fi
+      - name: trivy (fails on high or critical)
+        run: |
+          trivy image --quiet --scanners vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
+            --ignorefile .trivyignore evalgate-ci/${{ matrix.image }}:${{ github.sha }}

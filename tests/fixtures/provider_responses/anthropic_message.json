@@ -1,0 +1,13 @@
+{
+  "_note": "Synthetic fixture in the documented Messages API response shape (no live recording was possible offline).",
+  "id": "msg_fixture_0001",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-haiku-5-5",
+  "content": [
+    {"type": "text", "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"reasons\": [\"states 30 days\"], \"criteria\": {\"states_key_facts\": \"met\", \"no_contradiction\": \"met\", \"answers_question\": \"met\"}}"}
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {"input_tokens": 612, "output_tokens": 48}
+}

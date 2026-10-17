@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "RubricThresholds": {
+      "additionalProperties": false,
+      "properties": {
+        "agreement_min": {
+          "default": 0.8,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Agreement Min",
+          "type": "number"
+        },
+        "kappa_min": {
+          "default": 0.7,
+          "maximum": 1,
+          "minimum": -1,
+          "title": "Kappa Min",
+          "type": "number"
+        },
+        "position_inconsistency_max": {
+          "default": 0.1,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Position Inconsistency Max",
+          "type": "number"
+        },
+        "verbosity_bias_max": {
+          "default": 0.05,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Verbosity Bias Max",
+          "type": "number"
+        }
+      },
+      "title": "RubricThresholds",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "evalgate.rubric.v1",
+      "title": "Schema",
+      "type": "string"
+    },
+    "name": {
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "mode": {
+      "enum": [
+        "pointwise",
+        "pairwise"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "scale": {
+      "enum": [
+        "binary",
+        "likert5"
+      ],
+      "title": "Scale",
+      "type": "string"
+    },
+    "prompt": {
+      "description": "Prompt file, e.g. prompts/judge_answer_correctness.v1.md",
+      "title": "Prompt",
+      "type": "string"
+    },
+    "route": {
+      "default": "judge",
+      "enum": [
+        "judge",
+        "judge_hard"
+      ],
+      "title": "Route",
+      "type": "string"
+    },
+    "criteria": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Criteria",
+      "type": "array"
+    },
+    "thresholds": {
+      "$ref": "#/$defs/RubricThresholds"
+    },
+    "position_swap": {
+      "default": true,
+      "title": "Position Swap",
+      "type": "boolean"
+    },
+    "verbosity_probe": {
+      "default": true,
+      "title": "Verbosity Probe",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema",
+    "name",
+    "version",
+    "mode",
+    "scale",
+    "prompt",
+    "criteria"
+  ],
+  "title": "evalgate.rubric.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/evalgate.rubric.v1.json"
+}

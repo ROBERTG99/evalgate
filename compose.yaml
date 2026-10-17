@@ -1,0 +1,208 @@
+# evalgate local stack. Default services: toy-targets (8110) and report-viewer (8100).
+# Profiles: tools (seed), observability (collector, Prometheus, Grafana, Jaeger), langfuse.
+# Every port binds 127.0.0.1 in the 8100-8199 range.
+name: evalgate
+
+x-build-args: &build-args
+  HTTPS_PROXY: "${HTTPS_PROXY:-}"
+
+services:
+  toy-targets:
+    build:
+      context: .
+      dockerfile: docker/toy-targets.Dockerfile
+      network: ${COMPOSE_BUILD_NETWORK:-host} # host reaches the proxy in the cloud container; CI uses default
+      args: *build-args
+    image: evalgate-toy-targets:local
+    ports:
+      - "127.0.0.1:8110:8110"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8110/healthz', timeout=2).status == 200 else 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  report-viewer:
+    build:
+      context: .
+      dockerfile: docker/evalgate.Dockerfile
+      network: ${COMPOSE_BUILD_NETWORK:-host} # host reaches the proxy in the cloud container; CI uses default
+      args: *build-args
+    image: evalgate:local
+    command: ["serve", "/reports", "--host", "0.0.0.0", "--port", "8100"]
+    environment:
+      EVALGATE_SERVE_TOKEN: "${EVALGATE_SERVE_TOKEN:-}"
+      EVALGATE_SERVE_ALLOWED_HOSTS: report-viewer
+    ports:
+      - "127.0.0.1:8100:8100"
+    volumes:
+      - reports:/reports
+    depends_on:
+      toy-targets:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8100/healthz', timeout=2).status == 200 else 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  seed:
+    profiles: ["tools"]
+    image: evalgate:local
+    entrypoint: ["python3", "/work/scripts/seed_reports.py", "--out", "/reports", "--root", "/work"]
+    working_dir: /work
+    environment:
+      EVALGATE_TOYS_URL: http://toy-targets:8110
+      EVALGATE_HTTP_ALLOWED_HOSTS: toy-targets
+      EVALGATE_LLM_PROVIDER: fake
+      EVALGATE_HOME: /data/.evalgate
+    volumes:
+      - reports:/reports
+      - ./evals:/work/evals:ro
+      - ./scripts/seed_reports.py:/work/scripts/seed_reports.py:ro
+      - ./prompts:/work/prompts:ro
+    depends_on:
+      toy-targets:
+        condition: service_healthy
+
+  otel-collector:
+    profiles: ["observability"]
+    image: otel/opentelemetry-collector-contrib:0.135.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./deploy/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "127.0.0.1:8180:4317"
+      - "127.0.0.1:8181:4318"
+    depends_on:
+      - jaeger
+
+  prometheus:
+    profiles: ["observability"]
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "127.0.0.1:8191:9090"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9090/-/ready"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  grafana:
+    profiles: ["observability"]
+    image: grafana/grafana:12.1.1
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-change-me-locally}"
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:8190:3000"
+    depends_on:
+      - prometheus
+
+  jaeger:
+    profiles: ["observability"]
+    image: jaegertracing/all-in-one:1.73.0
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "127.0.0.1:8192:16686"
+
+  langfuse-web:
+    profiles: ["langfuse"]
+    image: langfuse/langfuse:3.225.11
+    depends_on: [langfuse-postgres, langfuse-redis, langfuse-clickhouse, langfuse-minio]
+    environment: &langfuse-env
+      DATABASE_URL: postgresql://langfuse:${LANGFUSE_DB_PASSWORD:-langfuse-local}@langfuse-postgres:5432/langfuse
+      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
+      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: "${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse-local}"
+      CLICKHOUSE_CLUSTER_ENABLED: "false"
+      REDIS_HOST: langfuse-redis
+      REDIS_PORT: "6379"
+      REDIS_AUTH: "${LANGFUSE_REDIS_PASSWORD:-redis-local}"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://langfuse-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: minio
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: "${LANGFUSE_MINIO_PASSWORD:-minio-local}"
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
+      NEXTAUTH_URL: http://localhost:8193
+      NEXTAUTH_SECRET: "${LANGFUSE_NEXTAUTH_SECRET:-local-only-change-me}"
+      SALT: "${LANGFUSE_SALT:-local-only-change-me}"
+      ENCRYPTION_KEY: "${LANGFUSE_ENCRYPTION_KEY:-0000000000000000000000000000000000000000000000000000000000000000}"
+      TELEMETRY_ENABLED: "false"
+    ports:
+      - "127.0.0.1:8193:3000"
+
+  langfuse-worker:
+    profiles: ["langfuse"]
+    image: langfuse/langfuse-worker:3.225.11
+    depends_on: [langfuse-postgres, langfuse-redis, langfuse-clickhouse, langfuse-minio]
+    environment: *langfuse-env
+
+  langfuse-postgres:
+    profiles: ["langfuse"]
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: "${LANGFUSE_DB_PASSWORD:-langfuse-local}"
+      POSTGRES_DB: langfuse
+    ports:
+      - "127.0.0.1:8120:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - langfuse-postgres:/var/lib/postgresql/data
+
+  langfuse-redis:
+    profiles: ["langfuse"]
+    image: redis:7.4
+    command: ["redis-server", "--requirepass", "${LANGFUSE_REDIS_PASSWORD:-redis-local}"]
+    ports:
+      - "127.0.0.1:8130:6379"
+
+  langfuse-clickhouse:
+    profiles: ["langfuse"]
+    image: clickhouse/clickhouse-server:25.8
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: clickhouse
+      CLICKHOUSE_PASSWORD: "${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse-local}"
+    ports:
+      - "127.0.0.1:8140:8123"
+    volumes:
+      - langfuse-clickhouse:/var/lib/clickhouse
+
+  langfuse-minio:
+    profiles: ["langfuse"]
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    entrypoint: sh
+    command: ["-c", "mkdir -p /data/langfuse && minio server --address :9000 /data"]
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: "${LANGFUSE_MINIO_PASSWORD:-minio-local}"
+    ports:
+      - "127.0.0.1:8141:9000"
+    volumes:
+      - langfuse-minio:/data
+
+volumes:
+  reports:
+  langfuse-postgres:
+  langfuse-clickhouse:
+  langfuse-minio:

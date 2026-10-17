@@ -1,0 +1,40 @@
+{
+  "generator": "data/generator",
+  "generator_version": "1.0.0",
+  "seed": 1337,
+  "synthetic": true,
+  "files": {
+    "evals/datasets/judge/answer_correctness.labels.v1.jsonl": {
+      "sha256": "22371461c41290e376d979593d8a9662a03423d8a7a31536ec7ee9b01d1e1b3c",
+      "rows": 200
+    },
+    "evals/datasets/judge/rubric_adherence.labels.v1.jsonl": {
+      "sha256": "fd2f464991e54b8b47ff07e177b360bef8c2462f9b223782df9fd48fa70b43ed",
+      "rows": 60
+    },
+    "evals/datasets/meta/variants.v1.jsonl": {
+      "sha256": "23b37136182127157cba67aecb95f0793fb0462d0660876ee0be2bd2624f2f8d",
+      "rows": 50
+    },
+    "evals/datasets/promptfoo/promptfooconfig.yaml": {
+      "sha256": "b97cd3174581c6e1f66a50ad1cb0a4a58aa5f8610409a47505f602f99683f779",
+      "rows": null
+    },
+    "evals/datasets/toys/answer.v1.jsonl": {
+      "sha256": "0bd7e3ece71aca2b78c4a4ba73bd9782b44ce720bef52aa242377121cd4b4bd0",
+      "rows": 150
+    },
+    "evals/datasets/toys/classify.v1.jsonl": {
+      "sha256": "6a62a941fea59624fc860cc64f39710b8e02f01df665500a18d9128cff1d2468",
+      "rows": 150
+    },
+    "evals/datasets/toys/extract.v1.jsonl": {
+      "sha256": "d7e4143424dc9d09c664ba87d66486d58dc09abbfa6edcae9ae1a26de76f1478",
+      "rows": 150
+    },
+    "evals/datasets/toys/faq_corpus.v1.jsonl": {
+      "sha256": "1f7f8a715888dac5530b1d4a56dfa177da2f1fdc05040da3eacb1c00cd09beb2",
+      "rows": 40
+    }
+  }
+}

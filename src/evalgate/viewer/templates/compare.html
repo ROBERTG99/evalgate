@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% from "macros.html" import badge, mode_tag %}
+{% block title %}Compare{% endblock %}
+{% block main_attrs %}{% if state == "loading" %}aria-busy="true"{% else %}aria-busy="false"{% endif %}{% endblock %}
+{% block content %}
+<h1>Compare runs</h1>
+{% if state == "pick" %}
+  {% if not reports %}
+  <section class="panel empty"><h2>No reports to compare</h2><p>Create two runs first, for example:</p>
+  <pre class="cmd">evalgate run evals/suites/classify.yaml --split test --out reports/classify-v1.json</pre></section>
+  {% else %}
+  {% if message %}<p class="panel error" role="alert">{{ message }}</p>{% endif %}
+  {% set default_cand = reports[1].run_id if reports|length > 1 else reports[0].run_id %}
+  <form class="filters" method="get" action="/compare">
+    <label>Baseline
+      <select name="base" required>{% for r in reports %}<option value="{{ r.run_id }}"{% if r.run_id == picked_base %} selected{% endif %}>{{ r.suite }} · {{ r.run_id[-8:] }} · {{ r.created_at }}</option>{% endfor %}</select>
+    </label>
+    <label>Candidate
+      <select name="cand" required>{% for r in reports %}<option value="{{ r.run_id }}"{% if r.run_id == (picked_cand or default_cand) %} selected{% endif %}>{{ r.suite }} · {{ r.run_id[-8:] }} · {{ r.created_at }}</option>{% endfor %}</select>
+    </label>
+    <button type="submit">Compare</button>
+  </form>
+  {% endif %}
+{% else %}
+<div class="meta">
+  <span>baseline <a href="/runs/{{ base.run_id }}">{{ base.suite }} <span class="mono">{{ base.run_id[-8:] }}</span></a> {{ mode_tag(base.mode) }}</span>
+  <span>candidate <a href="/runs/{{ cand.run_id }}">{{ cand.suite }} <span class="mono">{{ cand.run_id[-8:] }}</span></a> {{ mode_tag(cand.mode) }}</span>
+</div>
+{% if state == "loading" %}
+<section class="panel loading" role="status" aria-live="polite">
+  <h2>Computing the paired bootstrap…</h2>
+  <p>10,000 resamples per metric run in the background. With JavaScript on, this page refreshes every second.</p>
+  <p><a href="/compare?base={{ base.run_id }}&amp;cand={{ cand.run_id }}" data-auto-refresh="1000">Refresh now</a></p>
+</section>
+{% elif state == "error" %}
+<section class="panel error" role="alert"><h2>The comparison failed</h2><pre>{{ error }}</pre></section>
+{% else %}
+<h2>Result {{ badge(result.passed, result.failures|map(attribute="reason")|unique|join(", ")) }}</h2>
+<p class="muted">Paired bootstrap, {{ "{:,}".format(result.resamples) }} resamples, seed {{ result.seed }}, max regression {{ result.max_regression_pp }} pp{% if seconds is not none %}, computed in {{ seconds }} s{% endif %}.</p>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Metric deltas table (scrolls horizontally)">
+<table>
+  <caption>Metric deltas, candidate minus baseline, in percentage points</caption>
+  <thead><tr><th scope="col">Metric</th><th scope="col" class="num">Baseline</th><th scope="col" class="num">Candidate</th>
+  <th scope="col" class="num">Δ (pp)</th><th scope="col" class="num">95% CI of Δ (pp)</th><th scope="col" class="num">Paired n</th><th scope="col">Gate</th></tr></thead>
+  <tbody>
+  {% for c in result.comparisons %}
+  <tr>
+    <th scope="row" class="mono">{{ c.metric }}</th>
+    <td class="num">{{ "%.4f"|format(c.baseline) }}</td><td class="num">{{ "%.4f"|format(c.candidate) }}</td>
+    <td class="num">{{ "%+.2f"|format(c.delta_pp) }}</td>
+    <td class="num">[{{ "%+.2f"|format(c.ci_low_pp) }}, {{ "%+.2f"|format(c.ci_high_pp) }}]</td>
+    <td class="num">{{ c.n_paired }}</td>
+    <td>{% if c.metric in failures %}<span class="badge status-{{ 'regression' if failures[c.metric].reason == 'regression' else 'fail' }}"><span aria-hidden="true">▼</span> {{ failures[c.metric].reason }}</span>{% else %}<span class="badge status-pass"><span aria-hidden="true">✓</span> ok</span>{% endif %}</td>
+  </tr>
+  {% else %}<tr><td colspan="7">The runs share no cases, so nothing is paired.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% set other = result.failures|rejectattr("reason", "equalto", "regression")|list %}
+{% if other %}<section class="panel error" role="alert"><h2>Other gate failures</h2><ul>{% for f in other %}<li><strong>{{ f.reason }}</strong> <span class="mono">{{ f.metric }}</span>: {{ "%.4f"|format(f.value) if f.value is not none else "n/a" }} vs {{ f.threshold if f.threshold is not none else "n/a" }}</li>{% endfor %}</ul></section>{% endif %}
+<h2>Cases that moved</h2>
+<div class="table-wrap" tabindex="0" role="region" aria-label="Cases that moved table (scrolls horizontally)">
+<table>
+  <caption>{{ moved|length }} cases changed score, regressed cases first</caption>
+  <thead><tr><th scope="col">Case</th><th scope="col">Change</th><th scope="col" class="num">Baseline scores</th><th scope="col" class="num">Candidate scores</th></tr></thead>
+  <tbody>
+  {% for m in moved %}
+  <tr><th scope="row" class="mono">{{ m.case.id }}</th>
+    <td>{% if m.delta < 0 %}<span class="status-regression"><span aria-hidden="true">▼</span> regressed {{ "%+.2f"|format(m.delta) }}</span>{% else %}<span class="status-pass"><span aria-hidden="true">▲</span> improved {{ "%+.2f"|format(m.delta) }}</span>{% endif %}</td>
+    <td class="num">{% for k, v in m.before.items() %}{{ k }} {{ "%.2f"|format(v) }}{{ ", " if not loop.last }}{% endfor %}</td>
+    <td class="num">{% for k, v in m.case.scores.items() %}{{ k }} {{ "%.2f"|format(v) }}{{ ", " if not loop.last }}{% endfor %}</td></tr>
+  {% else %}<tr><td colspan="4">No case changed score.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

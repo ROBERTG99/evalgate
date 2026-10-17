@@ -1,0 +1,23 @@
+# make lint: markdownlint-cli2 over every Markdown file in the repository.
+config:
+  default: true
+  MD013: false # one paragraph per line; editors soft-wrap and diffs stay per paragraph
+  MD060: false # compact tables (`|---|`) are the house style
+  MD024:
+    siblings_only: true
+  MD033:
+    allowed_elements: [details, summary, br, img, picture, source, sub, sup]
+  MD041: false
+globs:
+  - "**/*.md"
+ignores:
+  - "**/node_modules/**"
+  - ".venv/**"
+  - ".tools/**"
+  - "tools/node/node_modules/**"
+  - "dist/**"
+  - "BUILD.md"
+  - "docs/specs/**"
+  - "evals/reports/**"
+  - "tests/fixtures/**"
+  - ".pytest_cache/**"

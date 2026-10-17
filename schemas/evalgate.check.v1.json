@@ -1,0 +1,201 @@
+{
+  "$defs": {
+    "CheckFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "threshold",
+            "regression",
+            "budget_cost",
+            "budget_p95",
+            "error"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Threshold"
+        },
+        "delta_pp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delta Pp"
+        },
+        "ci_low_pp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ci Low Pp"
+        },
+        "ci_high_pp": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ci High Pp"
+        }
+      },
+      "required": [
+        "metric",
+        "reason"
+      ],
+      "title": "CheckFailure",
+      "type": "object"
+    },
+    "Comparison": {
+      "additionalProperties": false,
+      "properties": {
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "baseline": {
+          "title": "Baseline",
+          "type": "number"
+        },
+        "candidate": {
+          "title": "Candidate",
+          "type": "number"
+        },
+        "delta_pp": {
+          "title": "Delta Pp",
+          "type": "number"
+        },
+        "ci_low_pp": {
+          "title": "Ci Low Pp",
+          "type": "number"
+        },
+        "ci_high_pp": {
+          "title": "Ci High Pp",
+          "type": "number"
+        },
+        "n_paired": {
+          "minimum": 0,
+          "title": "N Paired",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "metric",
+        "baseline",
+        "candidate",
+        "delta_pp",
+        "ci_low_pp",
+        "ci_high_pp",
+        "n_paired"
+      ],
+      "title": "Comparison",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "evalgate.check.v1",
+      "default": "evalgate.check.v1",
+      "title": "Schema",
+      "type": "string"
+    },
+    "report_sha256": {
+      "title": "Report Sha256",
+      "type": "string"
+    },
+    "baseline_sha256": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Baseline Sha256"
+    },
+    "max_regression_pp": {
+      "title": "Max Regression Pp",
+      "type": "number"
+    },
+    "seed": {
+      "title": "Seed",
+      "type": "integer"
+    },
+    "resamples": {
+      "title": "Resamples",
+      "type": "integer"
+    },
+    "passed": {
+      "title": "Passed",
+      "type": "boolean"
+    },
+    "failures": {
+      "items": {
+        "$ref": "#/$defs/CheckFailure"
+      },
+      "title": "Failures",
+      "type": "array"
+    },
+    "comparisons": {
+      "items": {
+        "$ref": "#/$defs/Comparison"
+      },
+      "title": "Comparisons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "report_sha256",
+    "max_regression_pp",
+    "seed",
+    "resamples",
+    "passed"
+  ],
+  "title": "evalgate.check.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/evalgate.check.v1.json"
+}

@@ -1,0 +1,67 @@
+{
+  "schema": "evalgate.calibration.v1",
+  "rubric": "pairwise_preference.v1",
+  "prompt_version": "judge_pairwise_preference.v1",
+  "prompt_sha256": "9a864af0b6be9a20bde41ee51760f1067391f43815a2e07fbeee21b29a824a2c",
+  "labels": "/home/user/evalgate/evals/datasets/judge/answer_correctness.labels.v1.jsonl",
+  "split": "test",
+  "mode": "offline",
+  "models": [
+    "fake-judge"
+  ],
+  "thresholds": {
+    "agreement_min": 0.8,
+    "kappa_min": 0.7,
+    "position_inconsistency_max": 0.1,
+    "verbosity_bias_max": 0.05
+  },
+  "n": 16,
+  "agreement": 0.875,
+  "kappa": 0.811765,
+  "confusion": {
+    "A": {
+      "A": 5,
+      "B": 0,
+      "tie": 2
+    },
+    "B": {
+      "A": 0,
+      "B": 6,
+      "tie": 0
+    },
+    "tie": {
+      "A": 0,
+      "B": 0,
+      "tie": 3
+    }
+  },
+  "position_inconsistency": 0.0,
+  "verbosity_bias": 0.0,
+  "injection_items": 0,
+  "injection_pass_through": 0.0,
+  "judge_errors": 0,
+  "disagreements": [
+    {
+      "id": "jl-197",
+      "label": "A",
+      "pred": "tie",
+      "construction": "pairwise_hard"
+    },
+    {
+      "id": "jl-199",
+      "label": "A",
+      "pred": "tie",
+      "construction": "pairwise_hard"
+    }
+  ],
+  "checks": {
+    "agreement": true,
+    "kappa": true,
+    "position_inconsistency": true,
+    "verbosity_bias": true,
+    "injection_pass_through": true,
+    "judge_errors": true
+  },
+  "passed": true,
+  "judge_calls": 64
+}

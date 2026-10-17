@@ -1,0 +1,14 @@
+{
+  "name": "evalgate",
+  "image": "mcr.microsoft.com/devcontainers/python:3.13",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" },
+    "ghcr.io/devcontainers/features/go:1": { "version": "1.24" },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "pipx install uv && npm install -g pnpm && make bootstrap",
+  "forwardPorts": [8100, 8110],
+  "customizations": {
+    "vscode": { "extensions": ["charliermarsh.ruff", "ms-python.mypy-type-checker"] }
+  }
+}

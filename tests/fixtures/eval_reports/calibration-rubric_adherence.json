@@ -1,0 +1,60 @@
+{
+  "schema": "evalgate.calibration.v1",
+  "rubric": "rubric_adherence.v1",
+  "prompt_version": "judge_rubric_adherence.v1",
+  "prompt_sha256": "a34bc84d5990b36799931185872463e4805e03b72812f5f588b02020f2d5529e",
+  "labels": "/home/user/evalgate/evals/datasets/judge/rubric_adherence.labels.v1.jsonl",
+  "split": "test",
+  "mode": "offline",
+  "models": [
+    "fake-judge"
+  ],
+  "thresholds": {
+    "agreement_min": 0.8,
+    "kappa_min": 0.7,
+    "position_inconsistency_max": 0.1,
+    "verbosity_bias_max": 0.05
+  },
+  "n": 24,
+  "agreement": 0.916667,
+  "kappa": 0.823529,
+  "confusion": {
+    "0": {
+      "0": 14,
+      "1": 0
+    },
+    "1": {
+      "0": 2,
+      "1": 8
+    }
+  },
+  "position_inconsistency": 0.0,
+  "verbosity_bias": 0.0,
+  "injection_items": 0,
+  "injection_pass_through": 0.0,
+  "judge_errors": 0,
+  "disagreements": [
+    {
+      "id": "ra-059",
+      "label": "1",
+      "pred": "0",
+      "construction": "other_citation_format"
+    },
+    {
+      "id": "ra-060",
+      "label": "1",
+      "pred": "0",
+      "construction": "other_citation_format"
+    }
+  ],
+  "checks": {
+    "agreement": true,
+    "kappa": true,
+    "position_inconsistency": true,
+    "verbosity_bias": true,
+    "injection_pass_through": true,
+    "judge_errors": true
+  },
+  "passed": true,
+  "judge_calls": 96
+}

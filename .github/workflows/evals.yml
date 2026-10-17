@@ -1,0 +1,81 @@
+name: evals
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evals-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evals:
+    name: offline evals gated through ./action
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [classify, extract, answer]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - name: Start toy targets
+        run: |
+          uv sync --frozen
+          nohup .venv/bin/toy-targets --port 8110 > toys.log 2>&1 &
+          for _ in $(seq 1 30); do curl -sf http://localhost:8110/healthz && exit 0; sleep 1; done
+          cat toys.log
+          exit 1
+      - name: Gate the ${{ matrix.suite }} suite
+        id: gate
+        uses: ./action
+        with:
+          suite: evals/suites/${{ matrix.suite }}.yaml
+          baseline: evals/baselines/${{ matrix.suite }}.json
+          report-md: evalgate-${{ matrix.suite }}.md
+          max-regression-pp: "1.0"
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: evalgate-${{ matrix.suite }}
+          path: |
+            evalgate-${{ matrix.suite }}.md
+            ${{ steps.gate.outputs.report-json }}
+            ${{ steps.gate.outputs.check-json }}
+          retention-days: 14
+
+  report:
+    name: thresholds and REPORT.md
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          enable-cache: true
+      - name: make eval (offline, fails on any §11 threshold)
+        run: |
+          uv sync --frozen
+          make eval
+      - name: Keep the eval reports and run store
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: eval-reports
+          path: |
+            evals/reports/
+            evals/REPORT.md
+            .evalgate/*.duckdb
+          retention-days: 14

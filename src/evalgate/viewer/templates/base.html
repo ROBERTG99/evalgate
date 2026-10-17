@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"{% if theme %} data-theme="{{ theme }}"{% endif %}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% block head %}{% endblock %}
+<title>{% block title %}evalgate{% endblock %} · evalgate</title>
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="brand" href="/">evalgate</a>
+  <nav aria-label="Main">
+    <a href="/">Runs</a>
+    <a href="/compare">Compare</a>
+    <button type="button" class="theme-toggle" data-theme-toggle hidden>Theme</button>
+  </nav>
+</header>
+<main id="main" {% block main_attrs %}{% endblock %}>
+{% block content %}{% endblock %}
+</main>
+<footer>evalgate {{ version }} · read-only report viewer · every number is from a report.v1 file</footer>
+</body>
+</html>

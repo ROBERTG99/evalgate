@@ -1,0 +1,30 @@
+{
+  "schema": "evalgate.check.v1",
+  "report_sha256": "882a3d0bf4d446b15e3029f2a0ceca53aab740d60ed54e3c43e9078a0e42360c",
+  "baseline_sha256": "2a923564342653ed3d303667e2ab68b1001a7c308069e8895862f111936fcb39",
+  "max_regression_pp": 1.0,
+  "seed": 1337,
+  "resamples": 10000,
+  "passed": true,
+  "failures": [],
+  "comparisons": [
+    {
+      "metric": "label_accuracy",
+      "baseline": 0.95,
+      "candidate": 0.95,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "label_format",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    }
+  ]
+}

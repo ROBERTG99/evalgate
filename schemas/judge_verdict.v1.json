@@ -1,0 +1,50 @@
+{
+  "additionalProperties": false,
+  "description": "``judge_verdict.v1``: the only shape a judge response may take.",
+  "properties": {
+    "verdict": {
+      "enum": [
+        "pass",
+        "fail",
+        "A",
+        "B",
+        "tie"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    },
+    "score": {
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Score",
+      "type": "number"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Reasons",
+      "type": "array"
+    },
+    "criteria": {
+      "additionalProperties": {
+        "enum": [
+          "met",
+          "unmet"
+        ],
+        "type": "string"
+      },
+      "title": "Criteria",
+      "type": "object"
+    }
+  },
+  "required": [
+    "verdict",
+    "score"
+  ],
+  "title": "judge_verdict.v1",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ROBERTG99/evalgate/schemas/judge_verdict.v1.json"
+}

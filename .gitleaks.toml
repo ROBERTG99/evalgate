@@ -1,0 +1,20 @@
+title = "evalgate gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Synthetic test values and fixtures"
+paths = [
+  '''tests/fixtures/provider_responses/.*''',
+  '''uv\.lock''',
+  '''tools/node/pnpm-lock\.yaml''',
+  # the cassette example's "key" and "request_digest" are SHA-256 digests of a synthetic request
+  '''docs/contracts/cassette\.md''',
+]
+regexes = [
+  '''sk-lf-test''',
+  '''pk-lf-test''',
+  '''s3cret''',
+  '''test-token''',
+]

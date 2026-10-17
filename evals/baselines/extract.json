@@ -1,0 +1,1051 @@
+{
+  "schema": "evalgate.report.v1",
+  "suite": "extract",
+  "run_id": "01a14626-5e12-7b7a-8110-6feb24f85d88",
+  "created_at": "2026-10-16T19:18:05Z",
+  "git_sha": "2204384f04102aefcdb2979a59cef112c1303be0",
+  "mode": "offline",
+  "models": [
+    "toy-model"
+  ],
+  "prompt_hashes": {},
+  "n_cases": 60,
+  "metrics": {
+    "schema_valid": {
+      "value": 1.0,
+      "threshold": 1.0,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "total_tolerance": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "invoice_number_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "date_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "currency_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "vendor_exact": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    }
+  },
+  "cost_usd_total": 0.0090855,
+  "cost_usd_per_case": 0.000151425,
+  "latency_p50_ms": 12.158,
+  "latency_p95_ms": 42.057,
+  "cases": [
+    {
+      "id": "ext-002",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001475,
+      "latency_ms": 51.238,
+      "error": null
+    },
+    {
+      "id": "ext-003",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 21.08,
+      "error": null
+    },
+    {
+      "id": "ext-006",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 22.834,
+      "error": null
+    },
+    {
+      "id": "ext-007",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000157,
+      "latency_ms": 24.976,
+      "error": null
+    },
+    {
+      "id": "ext-008",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 25.243,
+      "error": null
+    },
+    {
+      "id": "ext-009",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 15.359,
+      "error": null
+    },
+    {
+      "id": "ext-013",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 25.203,
+      "error": null
+    },
+    {
+      "id": "ext-015",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000161,
+      "latency_ms": 25.454,
+      "error": null
+    },
+    {
+      "id": "ext-017",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 11.464,
+      "error": null
+    },
+    {
+      "id": "ext-019",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 11.854,
+      "error": null
+    },
+    {
+      "id": "ext-020",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 11.042,
+      "error": null
+    },
+    {
+      "id": "ext-024",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001425,
+      "latency_ms": 12.285,
+      "error": null
+    },
+    {
+      "id": "ext-026",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 72.422,
+      "error": null
+    },
+    {
+      "id": "ext-029",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 21.649,
+      "error": null
+    },
+    {
+      "id": "ext-030",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001415,
+      "latency_ms": 11.311,
+      "error": null
+    },
+    {
+      "id": "ext-031",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 19.132,
+      "error": null
+    },
+    {
+      "id": "ext-034",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001565,
+      "latency_ms": 9.37,
+      "error": null
+    },
+    {
+      "id": "ext-039",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000159,
+      "latency_ms": 16.81,
+      "error": null
+    },
+    {
+      "id": "ext-053",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000146,
+      "latency_ms": 18.69,
+      "error": null
+    },
+    {
+      "id": "ext-055",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001525,
+      "latency_ms": 15.574,
+      "error": null
+    },
+    {
+      "id": "ext-060",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000151,
+      "latency_ms": 46.214,
+      "error": null
+    },
+    {
+      "id": "ext-062",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000159,
+      "latency_ms": 14.991,
+      "error": null
+    },
+    {
+      "id": "ext-065",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 13.367,
+      "error": null
+    },
+    {
+      "id": "ext-068",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 41.839,
+      "error": null
+    },
+    {
+      "id": "ext-069",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 6.12,
+      "error": null
+    },
+    {
+      "id": "ext-070",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 5.656,
+      "error": null
+    },
+    {
+      "id": "ext-071",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000151,
+      "latency_ms": 5.421,
+      "error": null
+    },
+    {
+      "id": "ext-073",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 14.512,
+      "error": null
+    },
+    {
+      "id": "ext-076",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 7.423,
+      "error": null
+    },
+    {
+      "id": "ext-079",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 7.675,
+      "error": null
+    },
+    {
+      "id": "ext-082",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 7.622,
+      "error": null
+    },
+    {
+      "id": "ext-084",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 16.23,
+      "error": null
+    },
+    {
+      "id": "ext-087",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 7.466,
+      "error": null
+    },
+    {
+      "id": "ext-090",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 7.747,
+      "error": null
+    },
+    {
+      "id": "ext-091",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 8.816,
+      "error": null
+    },
+    {
+      "id": "ext-093",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001545,
+      "latency_ms": 15.274,
+      "error": null
+    },
+    {
+      "id": "ext-096",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 7.294,
+      "error": null
+    },
+    {
+      "id": "ext-097",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 6.637,
+      "error": null
+    },
+    {
+      "id": "ext-098",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000149,
+      "latency_ms": 8.566,
+      "error": null
+    },
+    {
+      "id": "ext-099",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001555,
+      "latency_ms": 12.839,
+      "error": null
+    },
+    {
+      "id": "ext-100",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 10.792,
+      "error": null
+    },
+    {
+      "id": "ext-101",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000145,
+      "latency_ms": 6.039,
+      "error": null
+    },
+    {
+      "id": "ext-102",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 8.78,
+      "error": null
+    },
+    {
+      "id": "ext-103",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000143,
+      "latency_ms": 12.462,
+      "error": null
+    },
+    {
+      "id": "ext-104",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 8.775,
+      "error": null
+    },
+    {
+      "id": "ext-110",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000148,
+      "latency_ms": 12.661,
+      "error": null
+    },
+    {
+      "id": "ext-111",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000154,
+      "latency_ms": 12.392,
+      "error": null
+    },
+    {
+      "id": "ext-112",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001575,
+      "latency_ms": 12.159,
+      "error": null
+    },
+    {
+      "id": "ext-113",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 12.158,
+      "error": null
+    },
+    {
+      "id": "ext-116",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001445,
+      "latency_ms": 5.434,
+      "error": null
+    },
+    {
+      "id": "ext-117",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001515,
+      "latency_ms": 13.287,
+      "error": null
+    },
+    {
+      "id": "ext-118",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000158,
+      "latency_ms": 8.559,
+      "error": null
+    },
+    {
+      "id": "ext-121",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001475,
+      "latency_ms": 11.507,
+      "error": null
+    },
+    {
+      "id": "ext-129",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000144,
+      "latency_ms": 13.562,
+      "error": null
+    },
+    {
+      "id": "ext-133",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000147,
+      "latency_ms": 6.196,
+      "error": null
+    },
+    {
+      "id": "ext-136",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001495,
+      "latency_ms": 13.559,
+      "error": null
+    },
+    {
+      "id": "ext-138",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000146,
+      "latency_ms": 9.657,
+      "error": null
+    },
+    {
+      "id": "ext-140",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000153,
+      "latency_ms": 10.367,
+      "error": null
+    },
+    {
+      "id": "ext-148",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000147,
+      "latency_ms": 4.866,
+      "error": null
+    },
+    {
+      "id": "ext-149",
+      "split": "test",
+      "scores": {
+        "schema_valid": 1.0,
+        "total_tolerance": 1.0,
+        "invoice_number_exact": 1.0,
+        "date_exact": 1.0,
+        "currency_exact": 1.0,
+        "vendor_exact": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000155,
+      "latency_ms": 4.401,
+      "error": null
+    }
+  ],
+  "extensions": {
+    "run_health": "ok",
+    "error_rate": 0.0,
+    "attempts": {},
+    "gates": {
+      "schema_valid": true,
+      "total_tolerance": true,
+      "invoice_number_exact": true,
+      "date_exact": true,
+      "currency_exact": true,
+      "vendor_exact": true
+    },
+    "metric_errors": {},
+    "budget": {
+      "max_cost_usd": 0.02,
+      "max_p95_ms": 800.0
+    },
+    "split": "test",
+    "seed": 1337,
+    "resamples": 10000,
+    "unpriced_models": []
+  }
+}

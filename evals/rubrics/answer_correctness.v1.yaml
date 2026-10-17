@@ -1,0 +1,11 @@
+schema: evalgate.rubric.v1
+name: answer_correctness
+version: 1
+mode: pointwise
+scale: binary
+prompt: prompts/judge_answer_correctness.v1.md
+route: judge
+criteria: [states_key_facts, no_contradiction, answers_question]
+thresholds: {agreement_min: 0.80, kappa_min: 0.70, position_inconsistency_max: 0.10, verbosity_bias_max: 0.05}
+position_swap: true
+verbosity_probe: true

@@ -1,0 +1,2310 @@
+{
+  "schema": "evalgate.report.v1",
+  "suite": "answer",
+  "run_id": "01a14641-0315-768e-b442-d66100d03775",
+  "created_at": "2026-10-16T19:47:10Z",
+  "git_sha": "a3c9c742ca203c909f599ac12261f4e9d657cb4b",
+  "mode": "offline",
+  "models": [
+    "fake-judge",
+    "toy-model"
+  ],
+  "prompt_hashes": {
+    "judge_answer_correctness.v1": "36a51d7b6b097bde289452204c708815412ee34f7d5c92c68ae56bd3d8810b90"
+  },
+  "n_cases": 60,
+  "metrics": {
+    "answer_contains": {
+      "value": 1.0,
+      "threshold": 0.85,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "tool_calls": {
+      "value": 1.0,
+      "threshold": 0.95,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    },
+    "answer_correctness": {
+      "value": 1.0,
+      "threshold": 0.85,
+      "direction": "higher",
+      "passed": true,
+      "ci_low": 1.0,
+      "ci_high": 1.0
+    }
+  },
+  "cost_usd_total": 0.012693,
+  "cost_usd_per_case": 0.00021155,
+  "latency_p50_ms": 5.527,
+  "latency_p95_ms": 40.938,
+  "cases": [
+    {
+      "id": "ans-001",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002035,
+      "latency_ms": 22.544,
+      "error": null
+    },
+    {
+      "id": "ans-004",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000207,
+      "latency_ms": 28.362,
+      "error": null
+    },
+    {
+      "id": "ans-005",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002155,
+      "latency_ms": 35.157,
+      "error": null
+    },
+    {
+      "id": "ans-006",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002155,
+      "latency_ms": 39.488,
+      "error": null
+    },
+    {
+      "id": "ans-007",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000213,
+      "latency_ms": 40.864,
+      "error": null
+    },
+    {
+      "id": "ans-010",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000205,
+      "latency_ms": 42.355,
+      "error": null
+    },
+    {
+      "id": "ans-012",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000208,
+      "latency_ms": 45.164,
+      "error": null
+    },
+    {
+      "id": "ans-013",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000219,
+      "latency_ms": 43.602,
+      "error": null
+    },
+    {
+      "id": "ans-015",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000218,
+      "latency_ms": 5.559,
+      "error": null
+    },
+    {
+      "id": "ans-016",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002115,
+      "latency_ms": 5.393,
+      "error": null
+    },
+    {
+      "id": "ans-018",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002155,
+      "latency_ms": 7.485,
+      "error": null
+    },
+    {
+      "id": "ans-019",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002035,
+      "latency_ms": 4.355,
+      "error": null
+    },
+    {
+      "id": "ans-028",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002145,
+      "latency_ms": 4.429,
+      "error": null
+    },
+    {
+      "id": "ans-032",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002135,
+      "latency_ms": 9.434,
+      "error": null
+    },
+    {
+      "id": "ans-039",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000205,
+      "latency_ms": 4.075,
+      "error": null
+    },
+    {
+      "id": "ans-040",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002035,
+      "latency_ms": 4.284,
+      "error": null
+    },
+    {
+      "id": "ans-043",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000215,
+      "latency_ms": 5.013,
+      "error": null
+    },
+    {
+      "id": "ans-044",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002145,
+      "latency_ms": 4.533,
+      "error": null
+    },
+    {
+      "id": "ans-045",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002265,
+      "latency_ms": 4.675,
+      "error": null
+    },
+    {
+      "id": "ans-047",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000227,
+      "latency_ms": 4.839,
+      "error": null
+    },
+    {
+      "id": "ans-048",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002125,
+      "latency_ms": 4.248,
+      "error": null
+    },
+    {
+      "id": "ans-051",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002115,
+      "latency_ms": 10.817,
+      "error": null
+    },
+    {
+      "id": "ans-055",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000205,
+      "latency_ms": 28.441,
+      "error": null
+    },
+    {
+      "id": "ans-056",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000207,
+      "latency_ms": 23.594,
+      "error": null
+    },
+    {
+      "id": "ans-058",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000215,
+      "latency_ms": 5.492,
+      "error": null
+    },
+    {
+      "id": "ans-059",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000221,
+      "latency_ms": 5.257,
+      "error": null
+    },
+    {
+      "id": "ans-063",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002085,
+      "latency_ms": 5.118,
+      "error": null
+    },
+    {
+      "id": "ans-066",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002075,
+      "latency_ms": 5.495,
+      "error": null
+    },
+    {
+      "id": "ans-067",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0001995,
+      "latency_ms": 4.694,
+      "error": null
+    },
+    {
+      "id": "ans-068",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000204,
+      "latency_ms": 5.976,
+      "error": null
+    },
+    {
+      "id": "ans-073",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002205,
+      "latency_ms": 4.599,
+      "error": null
+    },
+    {
+      "id": "ans-076",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002165,
+      "latency_ms": 5.625,
+      "error": null
+    },
+    {
+      "id": "ans-077",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002035,
+      "latency_ms": 7.026,
+      "error": null
+    },
+    {
+      "id": "ans-078",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000212,
+      "latency_ms": 5.572,
+      "error": null
+    },
+    {
+      "id": "ans-079",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002165,
+      "latency_ms": 5.296,
+      "error": null
+    },
+    {
+      "id": "ans-081",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002135,
+      "latency_ms": 4.528,
+      "error": null
+    },
+    {
+      "id": "ans-085",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002025,
+      "latency_ms": 5.414,
+      "error": null
+    },
+    {
+      "id": "ans-087",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002145,
+      "latency_ms": 5.006,
+      "error": null
+    },
+    {
+      "id": "ans-088",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000228,
+      "latency_ms": 4.757,
+      "error": null
+    },
+    {
+      "id": "ans-091",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000206,
+      "latency_ms": 6.266,
+      "error": null
+    },
+    {
+      "id": "ans-093",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000204,
+      "latency_ms": 5.003,
+      "error": null
+    },
+    {
+      "id": "ans-095",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000215,
+      "latency_ms": 4.139,
+      "error": null
+    },
+    {
+      "id": "ans-096",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000222,
+      "latency_ms": 4.035,
+      "error": null
+    },
+    {
+      "id": "ans-099",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002115,
+      "latency_ms": 4.843,
+      "error": null
+    },
+    {
+      "id": "ans-102",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000205,
+      "latency_ms": 4.392,
+      "error": null
+    },
+    {
+      "id": "ans-105",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002105,
+      "latency_ms": 8.891,
+      "error": null
+    },
+    {
+      "id": "ans-107",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002135,
+      "latency_ms": 9.775,
+      "error": null
+    },
+    {
+      "id": "ans-109",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000199,
+      "latency_ms": 3.963,
+      "error": null
+    },
+    {
+      "id": "ans-111",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000201,
+      "latency_ms": 5.706,
+      "error": null
+    },
+    {
+      "id": "ans-117",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000215,
+      "latency_ms": 5.998,
+      "error": null
+    },
+    {
+      "id": "ans-128",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002035,
+      "latency_ms": 8.757,
+      "error": null
+    },
+    {
+      "id": "ans-130",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000213,
+      "latency_ms": 14.011,
+      "error": null
+    },
+    {
+      "id": "ans-131",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000213,
+      "latency_ms": 13.694,
+      "error": null
+    },
+    {
+      "id": "ans-132",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000218,
+      "latency_ms": 7.468,
+      "error": null
+    },
+    {
+      "id": "ans-133",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002125,
+      "latency_ms": 6.045,
+      "error": null
+    },
+    {
+      "id": "ans-136",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002155,
+      "latency_ms": 4.135,
+      "error": null
+    },
+    {
+      "id": "ans-137",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.00021,
+      "latency_ms": 4.669,
+      "error": null
+    },
+    {
+      "id": "ans-144",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000214,
+      "latency_ms": 6.655,
+      "error": null
+    },
+    {
+      "id": "ans-146",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.0002145,
+      "latency_ms": 6.054,
+      "error": null
+    },
+    {
+      "id": "ans-147",
+      "split": "test",
+      "scores": {
+        "answer_contains": 1.0,
+        "tool_calls": 1.0,
+        "answer_correctness": 1.0
+      },
+      "passed": true,
+      "cost_usd": 0.000203,
+      "latency_ms": 4.138,
+      "error": null
+    }
+  ],
+  "extensions": {
+    "run_health": "ok",
+    "error_rate": 0.0,
+    "attempts": {},
+    "gates": {
+      "answer_contains": true,
+      "tool_calls": true,
+      "answer_correctness": true
+    },
+    "metric_errors": {},
+    "budget": {
+      "max_cost_usd": 0.05,
+      "max_p95_ms": 800.0
+    },
+    "split": "test",
+    "seed": 1337,
+    "resamples": 10000,
+    "unpriced_models": [],
+    "cache_hits": 120,
+    "judge_calls": 120,
+    "provider_calls": 0,
+    "judge": {
+      "answer_correctness": {
+        "label": "AI judge",
+        "rubric": "answer_correctness.v1",
+        "prompt_version": "judge_answer_correctness.v1",
+        "route": "judge",
+        "verdicts": {
+          "pass": 60
+        },
+        "position_inconsistent": 0,
+        "injections_blocked": 0,
+        "errors": 0,
+        "cases": 60
+      }
+    },
+    "judge_cost_usd": 0.0,
+    "judge_details": {
+      "ans-001": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-004": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-005": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-006": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-007": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-010": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-012": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-013": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-015": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-016": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-018": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-019": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-028": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-032": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-039": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-040": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-043": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-044": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-045": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-047": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-048": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-051": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-055": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-056": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-058": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-059": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-063": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-066": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-067": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-068": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-073": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-076": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-077": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-078": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-079": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-081": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-085": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-087": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-088": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-091": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-093": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-095": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-096": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-099": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-102": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-105": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-107": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-109": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-111": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-117": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-128": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-130": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-131": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-132": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-133": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-136": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-137": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-144": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-146": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      },
+      "ans-147": {
+        "answer_correctness": {
+          "label": "AI judge",
+          "rubric": "answer_correctness.v1",
+          "prompt_version": "judge_answer_correctness.v1",
+          "verdict": "pass",
+          "reasons": [
+            "all key facts present"
+          ],
+          "criteria": {
+            "answers_question": "met",
+            "no_contradiction": "met",
+            "states_key_facts": "met"
+          },
+          "model": "fake-judge",
+          "source": "cache",
+          "cost_usd": 0.0,
+          "calls": 2
+        }
+      }
+    },
+    "case_tags": {
+      "ans-001": [
+        "gift_cards",
+        "kitchenware"
+      ],
+      "ans-004": [
+        "damaged",
+        "garden_tools"
+      ],
+      "ans-005": [
+        "support_hours",
+        "kitchenware"
+      ],
+      "ans-006": [
+        "support_hours",
+        "garden_tools"
+      ],
+      "ans-007": [
+        "warranty",
+        "kitchenware"
+      ],
+      "ans-010": [
+        "shipping_cost",
+        "garden_tools"
+      ],
+      "ans-012": [
+        "repairs",
+        "kitchenware"
+      ],
+      "ans-013": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-015": [
+        "delivery_time",
+        "garden_tools"
+      ],
+      "ans-016": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-018": [
+        "support_hours",
+        "kitchenware"
+      ],
+      "ans-019": [
+        "gift_cards",
+        "garden_tools"
+      ],
+      "ans-028": [
+        "delivery_time",
+        "garden_tools"
+      ],
+      "ans-032": [
+        "delivery_time",
+        "kitchenware"
+      ],
+      "ans-039": [
+        "shipping_cost",
+        "garden_tools"
+      ],
+      "ans-040": [
+        "gift_cards",
+        "garden_tools"
+      ],
+      "ans-043": [
+        "delivery_time",
+        "kitchenware"
+      ],
+      "ans-044": [
+        "repairs",
+        "garden_tools"
+      ],
+      "ans-045": [
+        "returns",
+        "kitchenware"
+      ],
+      "ans-047": [
+        "returns",
+        "kitchenware"
+      ],
+      "ans-048": [
+        "warranty",
+        "kitchenware"
+      ],
+      "ans-051": [
+        "support_hours",
+        "garden_tools"
+      ],
+      "ans-055": [
+        "shipping_cost",
+        "kitchenware"
+      ],
+      "ans-056": [
+        "damaged",
+        "garden_tools"
+      ],
+      "ans-058": [
+        "delivery_time",
+        "kitchenware"
+      ],
+      "ans-059": [
+        "returns",
+        "garden_tools"
+      ],
+      "ans-063": [
+        "damaged",
+        "garden_tools"
+      ],
+      "ans-066": [
+        "damaged",
+        "kitchenware"
+      ],
+      "ans-067": [
+        "bulk",
+        "garden_tools"
+      ],
+      "ans-068": [
+        "shipping_cost",
+        "kitchenware"
+      ],
+      "ans-073": [
+        "returns",
+        "garden_tools"
+      ],
+      "ans-076": [
+        "delivery_time",
+        "kitchenware"
+      ],
+      "ans-077": [
+        "gift_cards",
+        "kitchenware"
+      ],
+      "ans-078": [
+        "price_match",
+        "kitchenware"
+      ],
+      "ans-079": [
+        "warranty",
+        "kitchenware"
+      ],
+      "ans-081": [
+        "support_hours",
+        "kitchenware"
+      ],
+      "ans-085": [
+        "gift_cards",
+        "garden_tools"
+      ],
+      "ans-087": [
+        "repairs",
+        "garden_tools"
+      ],
+      "ans-088": [
+        "returns",
+        "garden_tools"
+      ],
+      "ans-091": [
+        "damaged",
+        "kitchenware"
+      ],
+      "ans-093": [
+        "shipping_cost",
+        "garden_tools"
+      ],
+      "ans-095": [
+        "delivery_time",
+        "garden_tools"
+      ],
+      "ans-096": [
+        "returns",
+        "kitchenware"
+      ],
+      "ans-099": [
+        "repairs",
+        "kitchenware"
+      ],
+      "ans-102": [
+        "shipping_cost",
+        "kitchenware"
+      ],
+      "ans-105": [
+        "support_hours",
+        "kitchenware"
+      ],
+      "ans-107": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-109": [
+        "bulk",
+        "kitchenware"
+      ],
+      "ans-111": [
+        "bulk",
+        "garden_tools"
+      ],
+      "ans-117": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-128": [
+        "bulk",
+        "garden_tools"
+      ],
+      "ans-130": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-131": [
+        "price_match",
+        "garden_tools"
+      ],
+      "ans-132": [
+        "warranty",
+        "garden_tools"
+      ],
+      "ans-133": [
+        "support_hours",
+        "garden_tools"
+      ],
+      "ans-136": [
+        "repairs",
+        "garden_tools"
+      ],
+      "ans-137": [
+        "repairs",
+        "kitchenware"
+      ],
+      "ans-144": [
+        "price_match",
+        "kitchenware"
+      ],
+      "ans-146": [
+        "support_hours",
+        "garden_tools"
+      ],
+      "ans-147": [
+        "bulk",
+        "garden_tools"
+      ]
+    }
+  }
+}

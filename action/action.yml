@@ -1,0 +1,155 @@
+name: evalgate
+description: Run an evalgate suite, gate on quality, cost and latency regressions, and upsert one PR comment.
+author: ROBERTG99
+branding:
+  icon: check-circle
+  color: green
+inputs:
+  suite:
+    description: Path to the suite YAML (schema evalgate.suite.v1).
+    required: true
+  baseline:
+    description: Baseline report.v1 JSON for paired-bootstrap regression checks.
+    required: false
+    default: ""
+  report-md:
+    description: Where to write the Markdown report.
+    required: false
+    default: evalgate-report.md
+  split:
+    description: Dataset split to run (dev or test).
+    required: false
+    default: test
+  max-regression-pp:
+    description: Allowed drop in percentage points before a significant regression fails the gate.
+    required: false
+    default: "1.0"
+  python-version:
+    description: Python version for evalgate.
+    required: false
+    default: "3.13"
+  extras:
+    description: Comma-separated evalgate extras to install (for example "anthropic,langgraph").
+    required: false
+    default: ""
+  comment:
+    description: Upsert one PR comment with the report (true or false).
+    required: false
+    default: "true"
+  comment-author:
+    description: Login whose comments may be updated (the account behind github-token).
+    required: false
+    default: github-actions[bot]
+  github-token:
+    description: Token used to comment; needs pull-requests write.
+    required: false
+    default: ${{ github.token }}
+outputs:
+  passed:
+    description: "true when the gate passed."
+    value: ${{ steps.check.outputs.passed }}
+  report-json:
+    description: Path of the report.v1 JSON.
+    value: ${{ steps.run.outputs.report-json }}
+  check-json:
+    description: Path of the check.v1 JSON.
+    value: ${{ steps.check.outputs.check-json }}
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Install evalgate
+      shell: bash
+      env:
+        EXTRAS: ${{ inputs.extras }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        set -euo pipefail
+        # Dependencies come from uv.lock with hashes (never fresh resolution at run time); evalgate itself
+        # is installed from the action's checkout without re-resolving.
+        project="${ACTION_PATH}/.."
+        python -m pip install --disable-pip-version-check --quiet "uv==0.11.32"
+        extra_args=()
+        IFS=',' read -r -a extras <<< "${EXTRAS}"
+        for extra in "${extras[@]}"; do
+          extra="$(echo "${extra}" | tr -d '[:space:]')"
+          if [ -n "${extra}" ]; then extra_args+=(--extra "${extra}"); fi
+        done
+        reqs="${RUNNER_TEMP}/evalgate-requirements.txt"
+        uv export --project "${project}" --package evalgate --frozen --no-dev --no-emit-workspace \
+          --quiet "${extra_args[@]}" -o "${reqs}"
+        python -m pip install --disable-pip-version-check --quiet --require-hashes -r "${reqs}"
+        python -m pip install --disable-pip-version-check --quiet --no-deps "${project}"
+    - name: Run suite
+      id: run
+      shell: bash
+      env:
+        SUITE: ${{ inputs.suite }}
+        SPLIT: ${{ inputs.split }}
+      run: |
+        set -euo pipefail
+        out="${RUNNER_TEMP}/evalgate-report.json"
+        evalgate run "${SUITE}" --split "${SPLIT}" --out "${out}"
+        echo "report-json=${out}" >> "${GITHUB_OUTPUT}"
+    - name: Check gate
+      id: check
+      shell: bash
+      env:
+        BASELINE: ${{ inputs.baseline }}
+        MAX_PP: ${{ inputs.max-regression-pp }}
+        REPORT_JSON: ${{ steps.run.outputs.report-json }}
+        REPORT_MD: ${{ inputs.report-md }}
+      run: |
+        set -uo pipefail
+        check_json="${RUNNER_TEMP}/evalgate-check.json"
+        args=("${REPORT_JSON}" --max-regression-pp "${MAX_PP}" --out-json "${check_json}" --format github)
+        md_args=("${REPORT_JSON}" --md "${REPORT_MD}" --max-regression-pp "${MAX_PP}")
+        if [ -n "${BASELINE}" ]; then
+          args+=(--baseline "${BASELINE}")
+          md_args+=(--baseline "${BASELINE}")
+        fi
+        # Composite bash steps run with -e: capture the gate's exit code instead of stopping here.
+        code=0
+        evalgate check "${args[@]}" || code=$?
+        if [ "${code}" -gt 1 ]; then
+          # Not a gate verdict (2 invalid input, 4 internal, ...): keep the original exit code.
+          echo "::error title=evalgate::evalgate check exited ${code}"
+          echo "passed=false" >> "${GITHUB_OUTPUT}"
+          echo "exit-code=${code}" >> "${GITHUB_OUTPUT}"
+          exit "${code}"
+        fi
+        if ! evalgate report "${md_args[@]}"; then
+          echo "::error title=evalgate::could not render the Markdown report"
+          exit 4
+        fi
+        cat "${REPORT_MD}" >> "${GITHUB_STEP_SUMMARY}"
+        if [ "${code}" -eq 0 ]; then echo "passed=true" >> "${GITHUB_OUTPUT}"; else echo "passed=false" >> "${GITHUB_OUTPUT}"; fi
+        echo "check-json=${check_json}" >> "${GITHUB_OUTPUT}"
+        echo "exit-code=${code}" >> "${GITHUB_OUTPUT}"
+    - name: Comment on the pull request
+      if: ${{ inputs.comment == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+        REPORT_MD: ${{ inputs.report-md }}
+        REPORT_JSON: ${{ steps.run.outputs.report-json }}
+        EVALGATE_COMMENT_AUTHOR: ${{ inputs.comment-author }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: |
+        set -euo pipefail
+        # The suite name inside the report keys the comment (file names can repeat across folders).
+        name="$(python -c 'import json, sys; print(json.load(open(sys.argv[1]))["suite"])' "${REPORT_JSON}")"
+        python "${ACTION_PATH}/../scripts/pr_comment.py" --repo "${REPO}" --pr "${PR_NUMBER}" --suite "${name}" --body-file "${REPORT_MD}"
+    - name: Fail when the gate failed
+      if: ${{ steps.check.outputs.exit-code != '0' }}
+      shell: bash
+      env:
+        CODE: ${{ steps.check.outputs.exit-code }}
+      run: |
+        echo "evalgate gate failed (exit ${CODE}); see the report above."
+        exit "${CODE}"

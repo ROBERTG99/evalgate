@@ -1,0 +1,138 @@
+{
+  "mappings": [
+    {
+      "scenarioName": "evalgate-comment",
+      "requiredScenarioState": "Started",
+      "request": {
+        "method": "GET",
+        "urlPath": "/repos/acme/widgets/issues/7/comments"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 13,
+            "user": {
+              "login": "mallory",
+              "type": "User"
+            },
+            "body": "<!-- evalgate:report -->\nfake PASS\n<!-- evalgate:suite=classify -->\n"
+          }
+        ]
+      }
+    },
+    {
+      "scenarioName": "evalgate-comment",
+      "requiredScenarioState": "Started",
+      "newScenarioState": "commented",
+      "request": {
+        "method": "POST",
+        "urlPath": "/repos/acme/widgets/issues/7/comments"
+      },
+      "response": {
+        "status": 201,
+        "jsonBody": {
+          "id": 4242,
+          "body": "created"
+        }
+      }
+    },
+    {
+      "scenarioName": "evalgate-comment",
+      "requiredScenarioState": "commented",
+      "request": {
+        "method": "GET",
+        "urlPath": "/repos/acme/widgets/issues/7/comments"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "id": 17,
+            "user": {
+              "login": "reviewer",
+              "type": "User"
+            },
+            "body": "Looks good to me"
+          },
+          {
+            "id": 13,
+            "user": {
+              "login": "mallory",
+              "type": "User"
+            },
+            "body": "<!-- evalgate:report -->\nfake PASS\n<!-- evalgate:suite=classify -->\n"
+          },
+          {
+            "id": 4242,
+            "user": {
+              "login": "github-actions[bot]",
+              "type": "Bot"
+            },
+            "body": "<!-- evalgate:report -->\n## evalgate \u00b7 classify\n<!-- evalgate:suite=classify -->\n"
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "method": "PATCH",
+        "urlPath": "/repos/acme/widgets/issues/comments/4242"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "id": 4242
+        }
+      }
+    },
+    {
+      "priority": 6,
+      "request": {
+        "method": "POST",
+        "urlPath": "/repos/acme/widgets/issues/7/comments"
+      },
+      "response": {
+        "status": 201,
+        "jsonBody": {
+          "id": 5151,
+          "body": "created for another suite"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/repos/acme/forked/issues/9/comments"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": []
+      }
+    },
+    {
+      "request": {
+        "method": "POST",
+        "urlPath": "/repos/acme/forked/issues/9/comments"
+      },
+      "response": {
+        "status": 403,
+        "jsonBody": {
+          "message": "Resource not accessible by integration"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "PATCH",
+        "urlPath": "/repos/acme/widgets/issues/comments/13"
+      },
+      "response": {
+        "status": 403,
+        "jsonBody": {
+          "message": "must not be called"
+        }
+      }
+    }
+  ]
+}

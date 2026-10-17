@@ -1,0 +1,12 @@
+schema: evalgate.suite.v1
+name: classify
+description: Support-ticket classification against the toy classify target.
+dataset: evals/datasets/toys/classify.v1.jsonl
+target:
+  http: {url: "${EVALGATE_TOYS_URL:-http://localhost:8110}/classify", method: POST, headers: {X-Toy-Version: "${EVALGATE_TOY_VERSION:-v1}"}, timeout_s: 10}
+concurrency: 8
+metrics:
+  - {name: label_accuracy, kind: exact, params: {actual: output.label, expected: expected.label}, threshold: 0.90, direction: higher, gate: true}
+  - {name: label_format, kind: regex, params: {actual: output.label, pattern: "^[a-z_]+$"}, threshold: 1.0, direction: higher, gate: false}
+budget: {max_cost_usd: 0.01, max_p95_ms: 800}
+splits: [dev, test]

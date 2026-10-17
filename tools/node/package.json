@@ -1,0 +1,10 @@
+{
+  "name": "evalgate-tools",
+  "private": true,
+  "description": "Node tools used by the evalgate build (markdownlint and the Playwright MCP server).",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/mcp": "0.0.83",
+    "markdownlint-cli2": "0.23.3"
+  }
+}

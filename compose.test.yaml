@@ -1,0 +1,83 @@
+# `make test-docker`: the full test suite in containers. Joins the network of the main stack
+# (`docker compose up -d --wait` first) so the e2e service can reach the seeded report viewer.
+name: evalgate-test
+
+x-build-args: &build-args
+  HTTPS_PROXY: "${HTTPS_PROXY:-}"
+
+networks:
+  default:
+    name: evalgate_default
+    external: true
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: docker/test.Dockerfile
+      network: ${COMPOSE_BUILD_NETWORK:-host}
+      args: *build-args
+    image: evalgate-tests:local
+    environment:
+      WIREMOCK_LANGFUSE_URL: http://wiremock-langfuse:8080
+      WIREMOCK_GITHUB_URL: http://wiremock-github:8080
+    command:
+      - pytest
+      - tests/unit
+      - tests/integration
+      - tests/contract
+      - tests/harness
+      - -q
+      - --allow-hosts=127.0.0.1,localhost,::1,wiremock-langfuse,wiremock-github
+    volumes:
+      - ./docs/images:/src/docs/images:ro # kept out of the image by .dockerignore; README links point at them
+    depends_on:
+      wiremock-langfuse:
+        condition: service_healthy
+      wiremock-github:
+        condition: service_healthy
+
+  e2e:
+    build:
+      context: .
+      dockerfile: docker/e2e.Dockerfile
+      network: ${COMPOSE_BUILD_NETWORK:-host}
+      args: *build-args
+    image: evalgate-e2e:local
+    environment:
+      EVALGATE_VIEWER_URL: http://report-viewer:8100
+    volumes:
+      - ./tests:/src/tests:ro
+      - ./evals:/src/evals:ro
+      - ./docs/images:/src/docs/images
+    user: "${HOST_UID:-1001}:${HOST_GID:-1001}" # the host user (never root); screenshots stay theirs
+
+  wiremock-langfuse:
+    image: wiremock/wiremock:3.13.1
+    volumes:
+      - ./deploy/wiremock/langfuse:/home/wiremock:ro
+    ports:
+      - "127.0.0.1:8142:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8080/__admin/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  wiremock-github:
+    image: wiremock/wiremock:3.13.1
+    volumes:
+      - ./deploy/wiremock/github:/home/wiremock:ro
+    ports:
+      - "127.0.0.1:8143:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8080/__admin/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  promtool:
+    image: prom/prometheus:v3.5.0
+    entrypoint: ["promtool", "test", "rules", "/rules/alerts.test.yml"]
+    volumes:
+      - ./deploy/prometheus:/rules:ro

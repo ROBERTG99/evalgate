@@ -1,0 +1,66 @@
+{
+  "schema": "evalgate.check.v1",
+  "report_sha256": "13b4e0158ea732f20dd4b8dced645285d17ea1cb84f42d6ee226b0ad30409cd0",
+  "baseline_sha256": "150534aeee92b5e7d10de822555bae025208c6f8d98db6782fb4c8b193865967",
+  "max_regression_pp": 1.0,
+  "seed": 1337,
+  "resamples": 10000,
+  "passed": true,
+  "failures": [],
+  "comparisons": [
+    {
+      "metric": "schema_valid",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "total_tolerance",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "invoice_number_exact",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "date_exact",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "currency_exact",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    },
+    {
+      "metric": "vendor_exact",
+      "baseline": 1.0,
+      "candidate": 1.0,
+      "delta_pp": 0.0,
+      "ci_low_pp": 0.0,
+      "ci_high_pp": 0.0,
+      "n_paired": 60
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+# promtool test rules deploy/prometheus/alerts.test.yml (run by `make test-docker`)
+rule_files:
+  - alerts.yml
+evaluation_interval: 1m
+tests:
+  - interval: 1m
+    input_series:
+      - series: 'toy_requests_total{endpoint="classify",version="v1",status="200"}'
+        values: "0+100x20"
+      - series: 'toy_requests_total{endpoint="classify",version="v1",status="500"}'
+        values: "0+5x20"
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: ToyTargetErrorRate
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+            exp_annotations:
+              summary: Toy targets answer more than 1% of requests with an error.
+              runbook: docs/runbook.md#toy-target-errors
+  - interval: 1m
+    input_series:
+      - series: 'toy_requests_total{endpoint="classify",version="v1",status="200"}'
+        values: "0+100x20"
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: ToyTargetErrorRate
+        exp_alerts: []
+  - interval: 5m
+    input_series:
+      - series: 'evalgate_judge_calls_total{route="judge"}'
+        values: "0+120x24"
+      - series: "evalgate_cache_hits_total"
+        values: "0+12x24"
+    alert_rule_test:
+      - eval_time: 100m
+        alertname: JudgeCacheHitLow
+        exp_alerts:
+          - exp_labels:
+              severity: info
+            exp_annotations:
+              summary: Fewer than half of judge calls hit the cache on re-runs; check cache keys and the CI cache artifact.
+              runbook: docs/runbook.md#judge-cache
+  - interval: 30m
+    input_series:
+      - series: 'evalgate_gate_last_decision{suite="classify"}'
+        values: "1 0 1 0 1"
+      - series: 'evalgate_gate_last_decision{suite="extract"}'
+        values: "1 1 1 1 1"
+    alert_rule_test:
+      - eval_time: 2h
+        alertname: GateFlapping
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              suite: classify
+            exp_annotations:
+              summary: "The gate for classify changed its decision 3 or more times across recent runs."
+              runbook: docs/runbook.md#gate-flapping
