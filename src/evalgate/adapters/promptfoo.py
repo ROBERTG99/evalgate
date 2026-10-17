@@ -128,7 +128,13 @@ def import_promptfoo(
                 "name": "contains",
                 "kind": "contains_all",
                 "threshold": 1.0,
-                "params": {"actual": output, "expected": "expected.contains", "skip_missing": True},
+                "params": {
+                    "actual": output,
+                    "expected": "expected.contains",
+                    "skip_missing": True,
+                    # Promptfoo's `contains` is case-sensitive; only `icontains` (alone or mixed in) relaxes it.
+                    "case_insensitive": "icontains" in kinds,
+                },
             }
         )
     if "regex" in kinds:

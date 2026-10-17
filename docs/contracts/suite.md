@@ -65,11 +65,13 @@ Common `params` keys, as read by [src/evalgate/metrics/builtin.py](../../src/eva
 | `exact` | `actual` (default `output`), `expected` (default `expected`), `normalize`, `skip_missing`. |
 | `json_schema` | `actual` (default `output`), and `schema` (inline) or `schema_path`. |
 | `numeric_tolerance` | `actual`, `expected`, `abs_tol`, `rel_tol`. |
-| `contains_all` | `actual`, `expected` (or `values`), `case_insensitive` (default true). |
+| `contains_all` | `actual`, `expected` (or `values`), `case_insensitive` (default true), `skip_missing`. |
 | `regex` | `pattern` (required), `actual`, `flags` (`i` for case-insensitive), `skip_missing`. |
-| `tool_calls` | `actual` (default `output.steps`), `expected` (default `expected.tools`), `exact_sequence`. |
+| `tool_calls` | `actual` (default `output.steps`), `expected` (default `expected.tools`), `exact_sequence`, `skip_missing`. |
 | `judge` | `rubric` (required, path to an `evalgate.rubric.v1` file), `candidate` (default `output.answer`), `reference` (default `expected.answer`), `input` (default `input`), `candidate_b` (pairwise). |
 | `custom` | `metric` (registered name, default the metric's `name`; `ragas:<name>` and `deepeval:<name>` load adapters); other keys are passed to the implementation. |
+
+An `expected` field that a case does not have (a typo in the selector, or a row without the field) is a problem: the case scores the worst value for the metric's direction, never a pass. With `skip_missing: true` (`exact`, `contains_all`, `tool_calls`, `regex`) such cases are neutral instead (the best value), and an explicit `null` is a value, not an absent field.
 
 ### Budget
 

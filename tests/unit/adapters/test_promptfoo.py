@@ -46,3 +46,16 @@ def test_non_http_provider_rejected(tmp_path: Path) -> None:
     cfg.write_text(yaml.safe_dump({"providers": ["openai:gpt-x"], "tests": [{"vars": {"a": 1}}]}))
     with pytest.raises(InvalidInputError, match="only the http provider"):
         import_promptfoo(cfg, tmp_path)
+
+
+@pytest.mark.parametrize(("asserts", "insensitive"), [(["contains"], False), (["icontains"], True)])
+def test_contains_keeps_promptfoo_case_sensitivity(tmp_path: Path, asserts: list[str], insensitive: bool) -> None:
+    config = {
+        "providers": [{"id": "http", "config": {"url": "http://localhost:8110/classify", "body": {"text": "{{q}}"}}}],
+        "tests": [{"vars": {"q": "x"}, "assert": [{"type": kind, "value": "Refund"} for kind in asserts]}],
+    }
+    path = tmp_path / "promptfooconfig.yaml"
+    path.write_text(yaml.safe_dump(config))
+    suite_path, _, _ = import_promptfoo(path, tmp_path / "out", name="pf")
+    metric = next(m for m in yaml.safe_load(suite_path.read_text())["metrics"] if m["name"] == "contains")
+    assert metric["params"]["case_insensitive"] is insensitive
