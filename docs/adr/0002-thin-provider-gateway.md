@@ -35,7 +35,7 @@ Provider SDKs are optional extras (`evalgate[anthropic]`, `evalgate[bedrock]`, `
 
 - One module to read and test for every rule that matters to the gate; a unit test fails if any other module imports a provider SDK.
 - The default install has no provider SDK and makes no network calls; offline runs use `FakeLLM` and cassettes (NFR-5 measured 0 non-loopback connections during an offline judged run, `evals/reports/bench.json`, `make bench`).
-- `import evalgate` measured 2.9737 ms (median of 5 fresh interpreters) and the wheel 0.1176 MB (NFR-6 and NFR-7, `evals/reports/bench.json`).
+- `import evalgate` measured 2.8366 ms (median of 5 fresh interpreters) and the wheel 0.1188 MB (NFR-6 and NFR-7, `evals/reports/bench.json`).
 
 ### Negative
 

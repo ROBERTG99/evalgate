@@ -23,7 +23,7 @@ The inputs, outputs and comment markers are documented in [docs/contracts/action
 ## Alternatives considered
 
 - **Docker container action (rejected).** A Docker action would pin the whole toolchain in an image and give a hermetic environment. It was rejected because:
-  - Every run pays an image build or pull before the gate starts; the composite action only installs a small wheel (0.1176 MB, `evals/reports/bench.json`) and its dependencies.
+  - Every run pays an image build or pull before the gate starts; the composite action only installs a small wheel (0.1188 MB, `evals/reports/bench.json`) and its dependencies.
   - GitHub runs Docker container actions only on Linux runners; the composite action runs where `actions/setup-python` and `bash` are available.
   - A container is isolated from the job's Python environment, so `python:` and `langgraph:` targets that import the user's packages, and user-selected extras, would need a custom image or extra mounting. The composite action installs into the job's own Python.
   - The release would have to publish and version an image in step with the library; the composite action installs the library from the action's own commit, so the action ref and the library version cannot drift.

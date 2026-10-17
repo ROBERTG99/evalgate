@@ -39,11 +39,11 @@ Overall: **all thresholds met**.
 
 | Suite | Run | Mode | Cases | Git SHA | Models | Cost (USD) | p95 (ms) | Source |
 |---|---|---|---:|---|---|---:|---:|---|
-| classify | `c1e258399ae4` | offline | 60 | `a1bc3d748b36` | toy-model | 0.0044 | 59 | [`classify.json`](reports/classify.json) |
-| extract | `a4f9d8e2a6c1` | offline | 60 | `a1bc3d748b36` | toy-model | 0.0091 | 71 | [`extract.json`](reports/extract.json) |
-| answer | `78906f94d0fd` | offline | 60 | `a1bc3d748b36` | fake-judge, toy-model | 0.0127 | 43 | [`answer.json`](reports/answer.json) |
+| classify | `0fc0f14bf367` | offline | 60 | `3d99f36dbbd2` | toy-model | 0.0044 | 48 | [`classify.json`](reports/classify.json) |
+| extract | `daa54ee8f312` | offline | 60 | `3d99f36dbbd2` | toy-model | 0.0091 | 63 | [`extract.json`](reports/extract.json) |
+| answer | `9c849aea3181` | offline | 60 | `3d99f36dbbd2` | fake-judge, toy-model | 0.0127 | 42 | [`answer.json`](reports/answer.json) |
 
-Git SHA of the runs: `a1bc3d748b36`.
+Git SHA of the runs: `3d99f36dbbd2`.
 
 Prompt hashes (sha256 of the judge prompt files):
 

@@ -52,7 +52,7 @@ The report is the stable output of `evalgate run`: one JSON document per run wit
 | `passed` | boolean | yes | Whether every gated metric passed its per-case level (`pass_at`) on this case; false when the case errored. |
 | `cost_usd` | number at least 0 | yes | Priced cost of the case's steps. |
 | `latency_ms` | number at least 0 | yes | Case latency. |
-| `error` | string or null, default null | no | Target error after retries; its metrics score 0. |
+| `error` | string or null, default null | no | Target error after retries; its metrics score their worst value (0, or 1 for `direction: lower`). |
 
 ### Extensions written by evalgate
 
