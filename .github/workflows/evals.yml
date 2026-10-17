@@ -33,7 +33,7 @@ jobs:
       - name: Start toy targets
         run: |
           uv sync --frozen
-          nohup uv run --frozen toy-targets --port 8110 > toys.log 2>&1 &
+          nohup .venv/bin/toy-targets --port 8110 > toys.log 2>&1 &
           for _ in $(seq 1 30); do curl -sf http://localhost:8110/healthz && exit 0; sleep 1; done
           cat toys.log
           exit 1
