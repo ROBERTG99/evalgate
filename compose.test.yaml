@@ -29,6 +29,8 @@ services:
       - tests/harness
       - -q
       - --allow-hosts=127.0.0.1,localhost,::1,wiremock-langfuse,wiremock-github
+    volumes:
+      - ./docs/images:/src/docs/images:ro # kept out of the image by .dockerignore; README links point at them
     depends_on:
       wiremock-langfuse:
         condition: service_healthy
@@ -46,6 +48,7 @@ services:
       EVALGATE_VIEWER_URL: http://report-viewer:8100
     volumes:
       - ./tests:/src/tests:ro
+      - ./evals:/src/evals:ro
       - ./docs/images:/src/docs/images
     user: "${HOST_UID:-1001}:${HOST_GID:-1001}" # the host user (never root); screenshots stay theirs
 
