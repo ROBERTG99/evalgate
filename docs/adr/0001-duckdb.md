@@ -7,7 +7,7 @@
 
 evalgate keeps two kinds of local state. The run store records every run, its cases, metric scores, priced steps and an append-only audit trail of gate decisions. The response cache stores judge responses (and, with `--cache-targets`, target responses) so that an unchanged re-run makes no provider calls (FR-10). Both must work offline, inside a CI job and on a laptop, with no service to start, and the library installs with `pip install evalgate`.
 
-The data is analytical: the viewer, the comparator and ad hoc questions ("p95 latency per suite over the last month", "which cases regressed") read many rows of a few columns. Reports are the contract (`evalgate.report.v1`); the database is a local index next to them, kept as a 14-day CI artifact (build spec §4.3).
+The data is analytical: the viewer, the comparator and ad hoc questions ("p95 latency per suite over the last month", "which cases regressed") read many rows of a few columns. Reports are the contract (`evalgate.report.v1`); the database is a local index next to them, kept as a 14-day CI artifact.
 
 ## Decision
 

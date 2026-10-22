@@ -6,7 +6,7 @@ paths:
   - "scripts/eval_live.py"
 ---
 
-# LLM code (Appendix B of the build spec)
+# LLM code
 
 - Only `src/evalgate/llm/gateway.py` imports provider SDKs (`anthropic`, `openai`).
 - Model IDs come from configuration; defaults `claude-haiku-5-5` (judge) and `claude-opus-5-5` (judge_hard). No date suffixes.

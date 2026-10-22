@@ -5,7 +5,7 @@
 
 ## Context
 
-The only AI component in evalgate is the judge pipeline. Every judge call must follow the same rules (build spec Appendix B and §4.5): PII is redacted before the call; model IDs come from configuration (`EVALGATE_JUDGE_MODEL`, `EVALGATE_JUDGE_HARD_MODEL`); output is structured JSON validated against `judge_verdict.v1`, and invalid output is an error, never a pass; only 408, 409, 429, 5xx and connection errors are retried, at most 3 attempts with jitter; a live run refuses to spend beyond `LIVE_EVAL_BUDGET_USD` and refuses a model with no price; there is no silent fallback to the fake judge inside a run; and every call can be recorded as a cassette and replayed offline.
+The only AI component in evalgate is the judge pipeline. Every judge call must follow the same rules (see `docs/architecture.md`): PII is redacted before the call; model IDs come from configuration (`EVALGATE_JUDGE_MODEL`, `EVALGATE_JUDGE_HARD_MODEL`); output is structured JSON validated against `judge_verdict.v1`, and invalid output is an error, never a pass; only 408, 409, 429, 5xx and connection errors are retried, at most 3 attempts with jitter; a live run refuses to spend beyond `LIVE_EVAL_BUDGET_USD` and refuses a model with no price; there is no silent fallback to the fake judge inside a run; and every call can be recorded as a cassette and replayed offline.
 
 Those rules only hold if there is exactly one place where requests leave the process. The library also has to stay small and fast to import (wheel < 1 MB, `import evalgate` < 300 ms) and its default install has to work offline with no provider SDK.
 

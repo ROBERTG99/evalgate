@@ -25,7 +25,7 @@ The gate rule ([src/evalgate/stats/gate.py](../../src/evalgate/stats/gate.py)): 
   - It relies on the mean difference being approximately normal. With binary scores, a baseline near 1.0 and 60 cases, the differences are a few nonzero values among many zeros, so the normal approximation is poor, and the t interval can extend past the feasible range of the delta.
   - When every paired difference is 0 (as for both classify metrics in [evals/reports/check-classify.json](../../evals/reports/check-classify.json), interval [0.0, 0.0]) the standard error is 0 and the t statistic is undefined; the bootstrap returns the degenerate interval without a special case.
   - The bootstrap handles binary, three-valued and continuous metrics with one code path, and the same machinery yields the per-metric intervals in the report.
-  - It would add `scipy` for the t distribution; the build spec rejects scipy in favour of vectorised numpy (§5).
+  - It would add `scipy` for the t distribution; the project prefers vectorised numpy.
 
   No head-to-head simulation of the t-test was run for this decision; the rejection rests on the reasons above, not on a measured comparison.
 - **Unpaired comparison of two means (rejected).** It ignores that both runs score the same cases, so case difficulty inflates the variance and real regressions are missed.

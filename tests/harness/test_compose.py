@@ -81,7 +81,6 @@ def test_env_example_documents_variables() -> None:
     for path in [
         *(ROOT / "src").rglob("*.py"),
         *(ROOT / "scripts").glob("*.py"),
-        ROOT / "docs/specs/000-build-spec.md",
     ]:
         used |= set(re.findall(r"\bEVALGATE_[A-Z0-9_]+\b", path.read_text()))
     used -= {"EVALGATE_GUARD_ROOT", "EVALGATE_STOP_CHECK_CMD", "EVALGATE_LANGFUSE_URL", "EVALGATE_GITHUB_URL"}

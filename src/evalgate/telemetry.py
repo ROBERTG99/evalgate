@@ -1,4 +1,4 @@
-"""OpenTelemetry spans and JSON logs (§14). No-ops unless ``--otel`` or ``OTEL_EXPORTER_OTLP_ENDPOINT``.
+"""OpenTelemetry spans and JSON logs. No-ops unless ``--otel`` or ``OTEL_EXPORTER_OTLP_ENDPOINT``.
 
 Spans: ``evalgate.run`` > ``evalgate.case`` > ``evalgate.target`` / ``evalgate.step`` / ``evalgate.metric``
 / ``evalgate.judge``, with ``gen_ai.*`` and ``app.*`` attributes. The collector being down only drops spans.

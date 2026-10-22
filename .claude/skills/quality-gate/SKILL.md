@@ -1,6 +1,6 @@
 ---
 name: quality-gate
-description: Run evalgate's quality gates in the right order and summarise them as evidence. Use before closing a task or milestone, before asking the reviewer subagent for a verdict, and in final verification.
+description: Run evalgate's quality gates in the right order and summarise them as evidence. Use before opening a pull request, before asking the reviewer subagent for a review, and before a release.
 ---
 
 # Quality gate
@@ -26,10 +26,10 @@ The single gate is `make verify` (lint, typecheck, schemas, security, test, test
 
 3. Full tests with coverage: `make test` (unit, integration, contract, harness; `scripts/check_coverage.py` enforces ≥ 85% on `suite runner targets metrics judge stats cache store report` and ≥ 70% overall). Then `make test-extras`.
 4. Security: `make security` (gitleaks, bandit, pip-audit, `scripts/check_licenses.py`, trivy). Any high or critical finding is fixed or documented with a reason in `docs/security.md`.
-5. Evals and performance: `make eval` (writes `evals/REPORT.md`, checks §11 thresholds), `make bench` (NFR budgets), `make build` (wheel under 1 MB).
+5. Evals and performance: `make eval` (writes `evals/REPORT.md`, checks the thresholds), `make bench` (NFR budgets), `make build` (wheel under 1 MB).
 6. When the stack is up (`make up`): `make e2e` (Playwright and axe); before release, `make test-docker`.
-7. Milestone end: run the `reviewer` subagent on the milestone diff; add `stats-reviewer`, `ux-reviewer` or `security-auditor` when their areas changed. Fix every blocker and repeat from step 1.
-8. Record evidence in `PROGRESS.md`: each command with a one-line result and duration.
+7. Before merging: run the `reviewer` subagent on the branch diff; add `stats-reviewer`, `ux-reviewer` or `security-auditor` when their areas changed. Fix every blocker and repeat from step 1.
+8. Report the evidence: each command with a one-line result and duration.
 
 ## Rules
 

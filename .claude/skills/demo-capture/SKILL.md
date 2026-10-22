@@ -1,6 +1,6 @@
 ---
 name: demo-capture
-description: Capture evalgate's viewer screenshots with Playwright into docs/images/ and the scripted demo transcript. Use after viewer changes, in milestones M4 and M8, and before updating the README.
+description: Capture evalgate's viewer screenshots with Playwright into docs/images/ and the scripted demo transcript. Use after viewer changes and before updating the README.
 ---
 
 # Demo capture
@@ -33,4 +33,4 @@ Screenshots and the demo transcript are real outputs of commands, never mocked o
    (or `make demo`). It must show the v2 check failing with exit 1, then exit 0 after switching to v1.
 5. Run `uv run pytest tests/integration/test_demo.py -q` to confirm the scripted scenario still holds.
 6. Reference the images and transcript from `README.md` with relative links; numbers shown in captions cite their report.
-7. Stop the stack with `make down`, and record the commands and results in `PROGRESS.md`.
+7. Stop the stack with `make down`, and note the commands and results in the pull request.

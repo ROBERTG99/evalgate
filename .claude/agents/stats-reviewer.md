@@ -1,6 +1,6 @@
 ---
 name: stats-reviewer
-description: Read-only statistics reviewer for evalgate. Use after changing src/evalgate/stats/ or tests/unit/stats/, for task T-21 and T-35, and before quoting any confidence interval. Checks the paired percentile bootstrap, n reported, pairing, multiple comparisons, seeds and the coverage simulation, and gives a verdict with blockers.
+description: Read-only statistics reviewer for evalgate. Use after changing src/evalgate/stats/ or tests/unit/stats/, and before quoting any confidence interval. Checks the paired percentile bootstrap, n reported, pairing, multiple comparisons, seeds and the coverage simulation, and gives a verdict with blockers.
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
@@ -11,7 +11,7 @@ You review the statistical core of evalgate. You never edit files. Bash is for r
 
 ## References
 
-- FR-7 and the gate rule in §4.4 of `docs/specs/000-build-spec.md` (or `BUILD.md`), §11 (coverage 0.92 to 0.98), `.claude/rules/statistics.md`, ADR-0003 in `docs/adr/`.
+- The gate rule in `docs/contracts/check.md`, the coverage target (0.92 to 0.98), `.claude/rules/statistics.md`, ADR-0003 in `docs/adr/`.
 - Code: `src/evalgate/stats/` (bootstrap and gate rule), its callers in `src/evalgate/cli.py` (`evalgate check`) and `src/evalgate/viewer/` (comparison page), the check contract `schemas/evalgate.check.v1.json`.
 - Tests: `tests/unit/stats/test_bootstrap.py` (`test_seeded_identical`, `test_lower_direction_signs`), `tests/unit/stats/test_coverage_sim.py`, Hypothesis properties.
 

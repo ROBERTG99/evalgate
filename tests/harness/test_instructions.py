@@ -24,7 +24,7 @@ def test_claude_md_short_and_targets_exist(root: Path) -> None:
     assert len(mentioned) >= 20
     assert mentioned <= targets, mentioned - targets
     assert "Co-Authored-By" in claude
-    assert "PROGRESS.md" in claude and "docs/DECISIONS.md" in claude
+    assert "docs/DECISIONS.md" in claude
     agents = (root / "AGENTS.md").read_text()
     assert "make check-fast" in agents and "Co-Authored-By" in agents
 

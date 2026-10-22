@@ -63,7 +63,7 @@ def coverage(
     }
 
 
-#: The primary scenario is the §11 check (400 datasets, 10,000 resamples). The others are reported so the
+#: The primary scenario is the coverage check (400 datasets, 10,000 resamples). The others are reported so the
 #: regimes where the percentile bootstrap under-covers (small n, near-perfect baselines) stay visible.
 SCENARIOS: dict[str, dict[str, Any]] = {
     "primary_n150_binary": {"n_cases": 150, "p_base": 0.85, "p_cand": 0.80},

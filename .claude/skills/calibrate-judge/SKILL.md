@@ -5,7 +5,7 @@ description: Create or change an LLM-judge rubric and calibrate it against label
 
 # Calibrate a judge
 
-A judge is adopted only if, on the `test` labels, agreement ≥ 0.80 and Cohen's kappa ≥ 0.70, with position inconsistency ≤ 0.10, verbosity bias ≤ 0.05 and zero injection pass-through (§11 of `docs/specs/000-build-spec.md` or `BUILD.md`).
+A judge is adopted only if, on the `test` labels, agreement ≥ 0.80 and Cohen's kappa ≥ 0.70, with position inconsistency ≤ 0.10, verbosity bias ≤ 0.05 and zero injection pass-through (`.claude/rules/evals.md`).
 
 ## Steps
 
@@ -28,4 +28,4 @@ A judge is adopted only if, on the `test` labels, agreement ≥ 0.80 and Cohen's
    It exits 1 if agreement < 0.80 or kappa < 0.70.
 5. Adopt only on a pass: reference the rubric from the suite in `evals/suites/`. On a fail, do not tune on `test`; go back to step 3 with a new prompt version, or record the gap in `docs/KNOWN_LIMITATIONS.md`.
 6. Confirm the injection and bias tests still pass: `uv run pytest tests/unit/judge -q`.
-7. Run the `eval-analyst` subagent on `evals/reports/`, regenerate `evals/REPORT.md` with `make eval`, and record the numbers with their report paths in `PROGRESS.md`. A live check of the same rubric runs only through `make eval-live`.
+7. Run the `eval-analyst` subagent on `evals/reports/`, regenerate `evals/REPORT.md` with `make eval`, and cite the numbers with their report paths in the pull request. A live check of the same rubric runs only through `make eval-live`.

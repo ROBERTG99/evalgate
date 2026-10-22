@@ -18,7 +18,7 @@ sum(rate(toy_requests_total{status!~"2.."}[5m])) / clamp_min(sum(rate(toy_reques
 for: 5m
 ```
 
-More than 1% of toy-target requests over a 5-minute rate window returned a non-2xx status, and the condition held for 5 minutes. This matches the build spec (`docs/specs/000-build-spec.md`) §14 (> 1% for 5 min).
+More than 1% of toy-target requests over a 5-minute rate window returned a non-2xx status, and the condition held for 5 minutes. The threshold is 1% for 5 minutes.
 
 **Why it matters.** Target errors become case errors with metric values 0. Above 50% errored cases the run is marked `run_health: degraded` and the gate fails, so a toy-target outage looks like a quality regression in the meta-evaluation, the demo and CI.
 
@@ -49,7 +49,7 @@ sum(increase(evalgate_cache_hits_total[1h])) / clamp_min(sum(increase(evalgate_j
 for: 15m
 ```
 
-Over the last hour, fewer than half of the judge calls were served from `cache.duckdb`, there was at least one judge call, and this held for 15 minutes. the build spec (`docs/specs/000-build-spec.md`) §14 states the intent as "< 50% on re-runs"; the rule measures a 1-hour window, so the first run of a new suite or prompt version can trigger it on its own.
+Over the last hour, fewer than half of the judge calls were served from `cache.duckdb`, there was at least one judge call, and this held for 15 minutes. The intended condition is "< 50% on re-runs"; the rule measures a 1-hour window, so the first run of a new suite or prompt version can trigger it on its own.
 
 **Why it matters.** On an unchanged re-run every judge call should be a cache hit (FR-10: zero provider calls). Misses cost money and time in live mode, and in offline mode they mean the cache is not being reused.
 
@@ -78,7 +78,7 @@ changes(evalgate_gate_last_decision[6h]) >= 3
 
 The gauge `evalgate_gate_last_decision{suite}` is set by every `evalgate check` (1 pass, 0 fail). The alert fires when one series changed value 3 or more times within the last 6 hours. There is no `for:` clause, so it fires on the first evaluation that sees the third change.
 
-**Window.** The rule uses a 6-hour time window (`[6h]`). the build spec (`docs/specs/000-build-spec.md`) §14 specifies "3 decision changes in 5 runs", a count-based window that PromQL cannot express on a gauge; the 6-hour window is the deviation from the spec. It matches the spec only when about 5 gate runs of a suite happen within 6 hours: for a suite checked much less often the alert stays silent even if every run flips, and for one checked much more often 3 changes spread over many more than 5 runs still fire it. The promtool test feeds one series per suite at 30-minute intervals (`1 0 1 0 1`) and expects the alert for `classify` at 2 hours.
+**Window.** The rule uses a 6-hour time window (`[6h]`). The intended condition is "3 decision changes in 5 runs", a count-based window that PromQL cannot express on a gauge, so the 6-hour window is an approximation. It matches the intent only when about 5 gate runs of a suite happen within 6 hours: for a suite checked much less often the alert stays silent even if every run flips, and for one checked much more often 3 changes spread over many more than 5 runs still fire it. The promtool test feeds one series per suite at 30-minute intervals (`1 0 1 0 1`) and expects the alert for `classify` at 2 hours.
 
 **Why it matters.** A gate that alternates between pass and fail on similar inputs is not trustworthy: either the inputs are nondeterministic, or a metric sits on its threshold and noise moves it across.
 
@@ -98,7 +98,7 @@ uv run python -c "import duckdb; c = duckdb.connect('.evalgate/runs.duckdb', rea
 
 ## Release
 
-Releases are cut from a local tag; pushing the tag is a maintainer action (the agent harness blocks tag pushes and `gh release create`).
+Releases are cut from a local tag; pushing the tag is a maintainer action (the development hooks block tag pushes and `gh release create`).
 
 1. Run `make verify` with no API keys set; it must pass.
 2. Set the version in `pyproject.toml` (`[project] version = "x.y.z"`) and keep `__version__` in `src/evalgate/__init__.py` equal to it.
@@ -127,7 +127,7 @@ Never move, delete and re-create, or force-push a published tag: action users an
 
 ## Baseline rotation
 
-Baselines in `evals/baselines/` are append-only. A committed baseline is never edited; the `pre_tool_guard.py` hook blocks edits by the agent, and `DECISIONS.md` records how each one was made. Rotate a baseline only when the reference behaviour changes on purpose (a new v1 target, a new dataset version or a new metric), never to make a failing gate pass.
+Baselines in `evals/baselines/` are append-only. A committed baseline is never edited; the `pre_tool_guard.py` hook blocks edits from the AI-assisted development setup, and `DECISIONS.md` records how each one was made. Rotate a baseline only when the reference behaviour changes on purpose (a new v1 target, a new dataset version or a new metric), never to make a failing gate pass.
 
 1. Start the v1 toy targets: `docker compose up -d --wait` (or `uv run --frozen toy-targets --port 8110`).
 2. Create the new versioned file on the `test` split, offline, without the cache:

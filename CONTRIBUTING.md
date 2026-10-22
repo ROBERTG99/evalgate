@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. This page is the short version; [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) has the environment details and [`CLAUDE.md`](CLAUDE.md) and [`.claude/rules/`](.claude/rules/) hold the conventions that both people and coding agents follow.
+Thanks for helping. This page is the short version; [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md) has the environment details and [`CLAUDE.md`](CLAUDE.md) and [`.claude/rules/`](.claude/rules/) hold the conventions that contributors and AI coding assistants follow.
 
 ## Setup
 
@@ -19,7 +19,7 @@ No API key is needed: every test, the demo and `make verify` run offline with Fa
 4. Run `make verify` before asking for review; `make test-docker` and `make e2e` when you touched the viewer, the images or the compose stack.
 5. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat(judge): ...`, `fix(stats): ...`).
 
-## Rules that reviewers check
+## Rules checked in review
 
 - Never skip, xfail or weaken a test or threshold to get green; fix the code or document the gap in [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md).
 - Datasets and baselines are append-only: add `*.vN.jsonl` or a new baseline file; never edit a committed one.

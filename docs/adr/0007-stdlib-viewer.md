@@ -32,4 +32,4 @@ FastAPI stays where it fits: the toy targets in `examples/toy-targets/`, which n
 
 - Routing, query parsing, rate limiting, security headers and error pages are hand-written and must be maintained and reviewed as security-sensitive code.
 - `ThreadingHTTPServer` has no TLS, HTTP/2 or production hardening; the viewer is for local or trusted-network use and is not meant to be exposed publicly.
-- The viewer has no generated OpenAPI document; its routes are listed in the module docstring and in the build spec §4.4.
+- The viewer has no generated OpenAPI document; its routes are listed in the module docstring and in `docs/architecture.md`.

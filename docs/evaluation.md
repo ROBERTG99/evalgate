@@ -8,7 +8,7 @@ All data is synthetic, produced by `data/generator/` version 1.0.0 with seed 133
 
 The toy targets (`examples/toy-targets/`, FastAPI, port 8110) imitate three small AI systems. `X-Toy-Version: v1` is the reference behaviour, `v2` is a deliberate regression, and `X-Toy-Variant: <id>` selects one of 50 catalogued mutations used by the meta-evaluation. Steps carry synthetic token counts priced as model `toy-model`.
 
-Each suite runs over 150 rows (90 `dev`, 60 `test`); the gate and the baselines use the `test` split. Thresholds are the build spec §11 values and are only ever raised.
+Each suite runs over 150 rows (90 `dev`, 60 `test`); the gate and the baselines use the `test` split. Thresholds are listed in [`evals/REPORT.md`](../evals/REPORT.md) and are only ever raised.
 
 | Suite | System | Dataset | Gated metrics (kind, threshold) | Budget |
 |---|---|---|---|---|
@@ -51,7 +51,7 @@ Results (`evals/reports/meta-eval.json`):
 | Regressions detected | 30/30 (1.00) | [0.8843, 1.0] |
 | Neutral changes failed | 0/20 (0.00) | [0.0, 0.1684] |
 
-By system, each of classify, extract and answer detected 10/10 regressions; neutral changes failed 0/7, 0/7 and 0/6 respectively (`evals/reports/meta-eval.json`, `by.system`). Failure reasons across the detected regressions: `regression` 24, `threshold` 24, `budget_cost` 3, `budget_p95` 3 (`regressions_by_failure_reason`; one variant can have several reasons). The §11 targets (detection ≥ 0.90, false positives ≤ 0.10) are met as point estimates; the lower bound of the detection interval, 0.8843, is below 0.90, so they are not met with certainty.
+By system, each of classify, extract and answer detected 10/10 regressions; neutral changes failed 0/7, 0/7 and 0/6 respectively (`evals/reports/meta-eval.json`, `by.system`). Failure reasons across the detected regressions: `regression` 24, `threshold` 24, `budget_cost` 3, `budget_p95` 3 (`regressions_by_failure_reason`; one variant can have several reasons). The targets (detection ≥ 0.90, false positives ≤ 0.10) are met as point estimates; the lower bound of the detection interval, 0.8843, is below 0.90, so they are not met with certainty.
 
 ## Judge calibration
 
@@ -67,7 +67,7 @@ The first two rubrics share `evals/datasets/judge/answer_correctness.labels.v1.j
 
 ## Bootstrap coverage simulation
 
-The gate's claim "the 95% CI of the delta excludes 0" is only as good as the interval's coverage. `src/evalgate/stats/simulation.py`, run by `make eval` (`scripts/run_evals.py`), draws 400 simulated paired datasets per scenario, with a latent per-case difficulty that each run reuses with probability 0.6 (`correlation` in the report; a latent correlation of 0.36, and less between the binary scores) and a known true delta, and counts how often the 95% paired percentile interval (10,000 resamples, seed 1337 plus the dataset index) contains it. Outcomes are binary except in `n60_continuous`, which uses graded scores in [0, 1]. The §11 target is coverage between 0.92 and 0.98 for the primary scenario.
+The gate's claim "the 95% CI of the delta excludes 0" is only as good as the interval's coverage. `src/evalgate/stats/simulation.py`, run by `make eval` (`scripts/run_evals.py`), draws 400 simulated paired datasets per scenario, with a latent per-case difficulty that each run reuses with probability 0.6 (`correlation` in the report; a latent correlation of 0.36, and less between the binary scores) and a known true delta, and counts how often the 95% paired percentile interval (10,000 resamples, seed 1337 plus the dataset index) contains it. Outcomes are binary except in `n60_continuous`, which uses graded scores in [0, 1]. The target is coverage between 0.92 and 0.98 for the primary scenario.
 
 | Scenario | Cases | Baseline → candidate parameter | True delta | Coverage | Mean CI width (pp) |
 |---|---:|---|---:|---:|---:|
@@ -97,13 +97,13 @@ Source: `evals/reports/bootstrap-coverage.json`. The primary scenario meets the 
 | NFR-8 | Comparison, 200 cases × 10,000 resamples (2 metrics) | 0.0324 s | 2 s |
 | NFR-9 | Identical reports except `run_id`, `created_at`, latencies | 0.0 differences | 0 (budget < 1) |
 
-NFR-4 is an estimate from token assumptions in `src/evalgate/budget.py`, not a measured live spend. NFR-10 to NFR-12 (clone-to-viewer time and image sizes, security limits, Python and OS support) are not part of `make bench`; their evidence is in `PROGRESS.md` (tasks T-07, T-37, T-39) and `docs/security.md`.
+NFR-4 is an estimate from token assumptions in `src/evalgate/budget.py`, not a measured live spend. NFR-10 to NFR-12 (clone-to-viewer time and image sizes, security limits, Python and OS support) are not part of `make bench`; their evidence is in `docs/security.md` and `docs/DEVELOPMENT.md`.
 
 ## Live evals
 
 `make eval-live` (`scripts/eval_live.py`) calibrates `answer_correctness.v1` on its test labels with a real judge model (`EVALGATE_JUDGE_MODEL`, default `claude-haiku-5-5`). It needs a provider key, prints the cost estimate first, stops before any call when the estimate is above `LIVE_EVAL_BUDGET_USD` (default 2), and keeps a hard stop during the run. `make record-fixtures` runs the same script with `EVALGATE_RECORD_CASSETTES=1` to record cassettes.
 
-Live evals were not run: no provider key was available. `evals/reports/live-eval.json` records `"ran": false` with reason `ANTHROPIC_API_KEY not set` (created 2026-10-16T19:47:26Z). Every number on this page is therefore offline, and `tests/fixtures/llm/` holds no recorded cassettes. Running it is listed for the maintainer in `PROGRESS.md`; see also [`runbook.md`](runbook.md#live-evals-and-budget).
+Live evals were not run: no provider key was available. `evals/reports/live-eval.json` records `"ran": false` with reason `ANTHROPIC_API_KEY not set` (created 2026-10-16T19:47:26Z). Every number on this page is therefore offline, and `tests/fixtures/llm/` holds no recorded cassettes. See [`runbook.md`](runbook.md#live-evals-and-budget).
 
 ## Reproducing each number
 
@@ -123,7 +123,7 @@ Reports are reproducible: same inputs and seed give identical reports except `ru
 ## Limits
 
 - The toy targets are deterministic and the injected regressions are coarse; most also fail an absolute threshold or a budget, so the meta-evaluation shows the gate works on clear cases, not that it is sensitive to subtle ones.
-- Judge labels are by construction and the maintainer review of 40 labels is pending; calibration numbers describe FakeJudge, not a live model.
+- Judge labels are by construction and a review of 40 labels by a person is pending; calibration numbers describe FakeJudge, not a live model.
 - The percentile bootstrap under-covers at small n and near-perfect rates, and there is no multiple-comparison adjustment across gated metrics.
 - No live numbers and no recorded cassettes exist yet.
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SessionStart hook: prepares Claude Code on the web containers (Appendix A of the build spec).
+# SessionStart hook: prepares Claude Code on the web containers (Docker daemon through a registry mirror).
 # Idempotent; does nothing on local runs.
 set -euo pipefail
 

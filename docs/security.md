@@ -61,7 +61,7 @@ health checks). Requests whose `Host` header is not a loopback name or listed in
 
 `make security` (`scripts/security.sh`) runs gitleaks over the working tree and history, bandit on `src/`,
 pip-audit on the locked dependencies (all extras), the license check (`scripts/check_licenses.py`) and trivy on
-both images, failing on high or critical findings. `make sbom` writes a CycloneDX SBOM of the locked environment to `dist/sbom.cdx.json`; the release workflow attaches it to the GitHub Release. Last result: see [`docs/verification.md`](verification.md).
+both images, failing on high or critical findings. `make sbom` writes a CycloneDX SBOM of the locked environment to `dist/sbom.cdx.json`; the release workflow attaches it to the GitHub Release.
 
 ### Dependency findings
 

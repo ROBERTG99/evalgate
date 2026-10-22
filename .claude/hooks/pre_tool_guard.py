@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse hook (Bash|Write|Edit|MultiEdit|NotebookEdit): blocks the forbidden actions of the build spec.
+"""PreToolUse hook (Bash|Write|Edit|MultiEdit|NotebookEdit): blocks actions the project forbids (see CLAUDE.md, "Never do").
 
 Exit code 2 blocks the tool call and shows stderr to Claude. Malformed input fails closed for Bash.
 """

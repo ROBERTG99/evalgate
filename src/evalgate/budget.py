@@ -1,4 +1,4 @@
-"""Budgets: live cost estimates before a run and hard stops during it (FR-6, NFR-4)."""
+"""Budgets: live cost estimates before a run and hard stops during it (NFR-4)."""
 
 from __future__ import annotations
 

@@ -14,7 +14,7 @@ Library and CLI that turn golden sets, deterministic metrics and calibrated LLM 
 
 ## The problem
 
-An engineer changes a prompt or a model, spot-checks a handful of cases and merges. Reviewers see a prompt diff and cannot tell whether quality, cost or latency moved, and uncalibrated LLM judges are not trusted. (These are the synthetic assumptions of the [product brief](docs/specs/000-build-spec.md#2-product-brief).)
+An engineer changes a prompt or a model, spot-checks a handful of cases and merges. Reviewers see a prompt diff and cannot tell whether quality, cost or latency moved, and uncalibrated LLM judges are not trusted.
 
 ## What evalgate does
 
@@ -52,7 +52,7 @@ The meta-evaluation's injected regressions are coarse and the judge labels are g
 
 ## Quick start
 
-Reviewer path, under five minutes with Docker:
+Docker path, under five minutes:
 
 ```bash
 git clone https://github.com/ROBERTG99/evalgate.git && cd evalgate
@@ -143,8 +143,10 @@ Captured by Playwright in `make e2e` (`tests/e2e/test_viewer.py::test_screenshot
 | Security model and scan results | [`docs/security.md`](docs/security.md), [`SECURITY.md`](SECURITY.md) |
 | Operations, alerts, releases, baseline rotation | [`docs/runbook.md`](docs/runbook.md) |
 | Development setup | [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md), [`CONTRIBUTING.md`](CONTRIBUTING.md) |
-| How it was built with Claude Code | [`docs/ai-development.md`](docs/ai-development.md), [`docs/specs/000-build-spec.md`](docs/specs/000-build-spec.md) |
 | Decisions and known limitations | [`docs/DECISIONS.md`](docs/DECISIONS.md), [`docs/KNOWN_LIMITATIONS.md`](docs/KNOWN_LIMITATIONS.md) |
-| Verification record | [`docs/verification.md`](docs/verification.md) |
 
-Part of a 10-repository AI engineering portfolio by [@ROBERTG99](https://github.com/ROBERTG99). All data is synthetic.
+## Development
+
+The project uses an AI-assisted workflow (Claude Code configuration in [`CLAUDE.md`](CLAUDE.md) and [`.claude/`](.claude/)), with tests and evals gating every change. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+All data is synthetic.

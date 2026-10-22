@@ -1,11 +1,11 @@
 ---
 name: release
-description: Prepare an evalgate release locally (CHANGELOG, version in pyproject.toml, build, local tag v0.1.0). Use for task T-44 or any later version. Pushing tags, GitHub Releases and PyPI publishing are maintainer only.
+description: Prepare an evalgate release locally (CHANGELOG, version in pyproject.toml, build, local tag v0.1.0). Pushing tags, GitHub Releases and PyPI publishing are done by a maintainer.
 ---
 
 # Release
 
-The release workflow `.github/workflows/release.yml` runs on a pushed `v*` tag. Creating the tag locally is your job; pushing it is the maintainer's.
+The release workflow `.github/workflows/release.yml` runs on a pushed `v*` tag. Creating the tag locally is your job; pushing it is done by a maintainer.
 
 ## Steps
 
@@ -28,5 +28,5 @@ The release workflow `.github/workflows/release.yml` runs on a pushed `v*` tag. 
    ```
 
    Never run `git push --tags`, `git push origin v0.1.0`, `gh release create` or a PyPI upload; the `pre_tool_guard.py` hook blocks them.
-7. Add "Push tag `v0.1.0` to trigger `release.yml` (GitHub Release, PyPI trusted publishing, GHCR images)" under "Needs the maintainer" in `PROGRESS.md`, and update `docs/runbook.md` (release, tag rollback, baseline rotation) if the process changed.
+7. Tell the maintainer to push tag `v0.1.0` to trigger `release.yml` (GitHub Release, PyPI trusted publishing, GHCR images), and update `docs/runbook.md` (release, tag rollback, baseline rotation) if the process changed.
 8. Push the current branch only (`git push -u origin <branch>`) if a remote exists.

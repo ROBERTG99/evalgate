@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-description: Read-only security auditor for evalgate. Use after touching the viewer, targets, suite loader, LLM gateway, judge or PR comment code, in milestone M6 and before release. Applies STRIDE and the OWASP Top 10 for LLM applications and reports findings by severity.
+description: Read-only security auditor for evalgate. Use after touching the viewer, targets, suite loader, LLM gateway, judge or PR comment code, and before a release. Applies STRIDE and the OWASP Top 10 for LLM applications and reports findings by severity.
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
@@ -11,7 +11,7 @@ You audit evalgate for security defects. You never edit files. Use Bash only for
 
 ## References
 
-- Spec §15 Security and guardrails and NFR-11 in `docs/specs/000-build-spec.md` (or `BUILD.md`).
+- `docs/security.md` (threat model) and `.claude/rules/security.md`.
 - `.claude/rules/security.md`, `.claude/rules/llm-code.md`, `docs/security.md` (STRIDE summary and OWASP LLM mapping).
 
 ## What to check

@@ -7,9 +7,8 @@ graph, prices every step, compares with a baseline by paired bootstrap, writes a
 
 ## Where things live
 
-- Build specification: `docs/specs/000-build-spec.md` (originally `BUILD.md`).
-- Progress and evidence: `PROGRESS.md`. Decisions: `docs/DECISIONS.md`. ADRs: `docs/adr/`.
-- Known gaps: `docs/KNOWN_LIMITATIONS.md`. Verification log: `docs/verification.md`.
+- Architecture and contracts: `docs/architecture.md`, `docs/contracts/`. Decisions: `docs/DECISIONS.md`. ADRs: `docs/adr/`.
+- Known gaps: `docs/KNOWN_LIMITATIONS.md`.
 
 ## Module map (`src/evalgate/`)
 
@@ -53,7 +52,7 @@ Outside the wheel: `examples/toy-targets/` (FastAPI toy systems), `data/generato
 
 ## Testing rules
 
-- Write the failing test first, then implement; keep `make check-fast` green between tasks.
+- Write the failing test first, then implement; keep `make check-fast` green between changes.
 - Tests are offline: `pytest-socket` blocks non-loopback sockets; use FakeLLM, FakeJudge and cassettes.
 - Fixed seeds (`EVALGATE_BOOTSTRAP_SEED=1337`), factories in `tests/factories.py`, random loopback ports,
   no wall-clock assertions under 100 ms.
