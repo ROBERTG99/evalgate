@@ -2,7 +2,7 @@
 
 evalgate is a library and a CLI. It loads a suite, calls a target for every case, scores the outputs with deterministic metrics and calibrated LLM judges, prices every step, writes a `evalgate.report.v1` JSON report, and then gates that report against thresholds, budgets and a baseline. There is no server component to deploy: the viewer and the toy targets exist for local review and for evaluating evalgate itself.
 
-The build specification is [`docs/specs/000-build-spec.md`](specs/000-build-spec.md) (§4). Decisions without an ADR are in [`DECISIONS.md`](DECISIONS.md); known gaps are in [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md).
+Decisions without an ADR are in [`DECISIONS.md`](DECISIONS.md); known gaps are in [`KNOWN_LIMITATIONS.md`](KNOWN_LIMITATIONS.md).
 
 ## Components
 

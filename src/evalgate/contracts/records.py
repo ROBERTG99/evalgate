@@ -13,7 +13,7 @@ Split = Literal["dev", "test"]
 
 
 class StepRecord(BaseModel):
-    """One step of a target or judge call; the record shared across the portfolio."""
+    """One step of a target or judge call; the record shared across tools."""
 
     model_config = ConfigDict(extra="forbid")
 

@@ -1,7 +1,7 @@
 """Coverage gates for ``make test``: >= 85% line coverage on the core packages, >= 70% overall.
 
 Reads the JSON written by ``pytest --cov-report=json:<path>``; exit 1 on a miss.
-Core packages (§10 of the build spec): suite, runner, targets, metrics, judge, stats, cache, store, report.
+Core packages: suite, runner, targets, metrics, judge, stats, cache, store, report.
 """
 
 from __future__ import annotations

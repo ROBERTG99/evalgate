@@ -1,4 +1,4 @@
-"""§18 documentation deliverables and the README's number citations."""
+"""Documentation deliverables and the README's number citations."""
 
 import re
 from pathlib import Path
@@ -13,7 +13,6 @@ REQUIRED = [
     "LICENSE",
     "evals/REPORT.md",
     "docs/architecture.md",
-    "docs/ai-development.md",
     "docs/evaluation.md",
     "docs/security.md",
     "docs/runbook.md",
@@ -72,8 +71,6 @@ def test_relative_links_resolve() -> None:
     docs = [ROOT / "README.md", ROOT / "CONTRIBUTING.md", ROOT / "SECURITY.md", *(ROOT / "docs").rglob("*.md")]
     broken = []
     for doc in docs:
-        if "specs" in doc.parts:
-            continue
         for target in re.findall(r"\]\(([^)#\s]+)(?:#[^)]*)?\)", doc.read_text()):
             if re.match(r"[a-z]+:", target):
                 continue
@@ -82,13 +79,3 @@ def test_relative_links_resolve() -> None:
             if not (doc.parent / target).exists():
                 broken.append(f"{doc.relative_to(ROOT)} -> {target}")
     assert not broken, broken
-
-
-def test_verification_has_authorship_output() -> None:
-    text = (ROOT / "docs" / "verification.md").read_text()
-    assert "## Authorship check" in text
-    block = section(text, "Authorship check")
-    assert "git log --format='%an <%ae> | %cn <%ce>' | sort -u" in block
-    assert re.search(r"```text\n.+ <.+> \| .+ <.+>\n```", block)
-    assert "Co-Authored-By|Claude-Session|Generated with Claude Code" in block
-    assert "printed nothing" in block

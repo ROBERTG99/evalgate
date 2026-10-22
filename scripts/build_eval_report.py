@@ -1,7 +1,7 @@
 """Write evals/REPORT.md from the JSON reports in evals/reports/ (never by hand).
 
 Every number in REPORT.md is read from a report file, and each section names the file it came from.
-``--check`` exits 1 when a §11 threshold fails or a required report is missing.
+``--check`` exits 1 when a threshold fails or a required report is missing.
 """
 
 from __future__ import annotations
@@ -270,7 +270,7 @@ def build(reports: Path, out: Path, manifest_path: Path | None = None) -> tuple[
 
     passed = all(r[4] for r in rows) and not missing
     summary = [
-        "## Thresholds (§11 of the build spec)",
+        "## Thresholds",
         "",
         "| Check | Value | Threshold | Result | Source |",
         "|---|---:|---|---|---|",

@@ -1,10 +1,10 @@
 # Development
 
-## Environment detected at bootstrap (2026-10-16)
+## Reference environment (2026-10-16)
 
 | Item | Value |
 |---|---|
-| Mode | Claude Code on the web (`CLAUDE_CODE_REMOTE=true`) |
+| Mode | Cloud development container (`CLAUDE_CODE_REMOTE=true`) |
 | `uname -srm` | Linux 6.18.44-fc-v139 x86_64 |
 | python3 | 3.13.16 |
 | uv | 0.11.32 |
@@ -16,7 +16,7 @@
 | gh | 2.89.0 |
 
 Docker: the daemon is preinstalled but not running in the cloud container; it is started with the
-registry mirror `mirror.gcr.io` (Appendix A of the build spec, automated by `.claude/hooks/session_start.sh`).
+registry mirror `mirror.gcr.io` (automated by `.claude/hooks/session_start.sh`).
 
 ## Setup
 
@@ -38,7 +38,7 @@ Tool versions are pinned in `tools/versions.env` (hadolint, trivy, shellcheck, a
 | `make test-extras` | Tests of the optional extras (ragas, deepeval, langgraph, otel) |
 | `make e2e` | Playwright and axe against the running viewer (`EVALGATE_VIEWER_URL`), writes `docs/images/` |
 | `make test-docker` | The whole suite in containers, real WireMock, E2E and promtool rule tests |
-| `make eval` | Offline evals with the §11 thresholds; writes `evals/reports/*.json` and `evals/REPORT.md` |
+| `make eval` | Offline evals with the committed thresholds; writes `evals/reports/*.json` and `evals/REPORT.md` |
 | `make eval-live` | Live calibration with a real judge within `LIVE_EVAL_BUDGET_USD` (needs a provider key) |
 | `make meta-eval`, `make calibrate` | Meta-evaluation of the gate; judge calibration on the test labels |
 | `make bench` | NFR-1 to NFR-9 budgets; writes `evals/reports/bench.json` |

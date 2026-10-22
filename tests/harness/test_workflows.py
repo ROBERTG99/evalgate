@@ -1,4 +1,4 @@
-"""§17 workflows: present, least privilege, uv cache, Python 3.12/3.13 matrix, no Terraform."""
+"""Workflows: present, least privilege, uv cache, Python 3.12/3.13 matrix, no Terraform."""
 
 import re
 from pathlib import Path

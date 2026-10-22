@@ -23,7 +23,7 @@ A target is `async def target(case_input: dict) -> TargetResult` with `TargetRes
 5. Implement `src/evalgate/targets/<kind>.py` and register it in the target factory. Sync callables run in a worker thread. Network adapters enforce `EVALGATE_HTTP_ALLOWED_HOSTS` (SSRF) like `src/evalgate/targets/http.py`. Optional heavy dependencies go behind an extra in `pyproject.toml` and tests marked `extras`.
 6. Run `make check-fast`, `uv run mypy --strict src/evalgate` and, for an extra, `make test-extras`.
 7. Run the `security-auditor` subagent if the adapter opens sockets or runs code.
-8. Document the kind in `docs/contracts/suite.md` with an example suite, and record evidence in `PROGRESS.md`.
+8. Document the kind in `docs/contracts/suite.md` with an example suite.
 
 ## Done when
 

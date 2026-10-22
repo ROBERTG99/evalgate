@@ -49,5 +49,5 @@ class CassetteMismatchError(EvalgateError):
     """A cassette exists for the key but its ``request_digest`` does not match the request."""
 
 
-# Public alias named in the spec (FR-13).
+# Public alias.
 CassetteMismatch = CassetteMismatchError

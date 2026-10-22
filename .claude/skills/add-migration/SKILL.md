@@ -27,4 +27,4 @@ Migrations are plain SQL files `src/evalgate/store/migrations/NNN_<name>.sql`, a
 5. Update the Python side: queries and dataclasses in `src/evalgate/store/` (and `src/evalgate/cache/` for `cache.duckdb`), always with parameterised queries. If the change is visible in a contract, update `src/evalgate/contracts/` and regenerate `schemas/` with `uv run python scripts/export_schemas.py` (`make schemas` then checks for drift).
 6. Add an upgrade test: create a database at the previous version with sample rows, migrate, and assert the rows survive and `evalgate gc --verify-audit` still passes.
 7. Run `uv run pytest tests/integration/store tests/integration/cache -q`, then `make check-fast`.
-8. Record evidence in `PROGRESS.md`; if the change is architectural, add a note to `docs/DECISIONS.md` or use the `new-adr` skill.
+8. Note the commands and results in the pull request; if the change is architectural, add a note to `docs/DECISIONS.md` or use the `new-adr` skill.

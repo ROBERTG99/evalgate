@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# make verify-clean: §19 step 1. Clone the committed repository into a temporary folder and run
+# make verify-clean: clone the committed repository into a temporary folder and run
 # `make bootstrap && make verify` there with no .env file and no provider keys.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

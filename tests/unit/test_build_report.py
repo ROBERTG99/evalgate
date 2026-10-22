@@ -57,7 +57,7 @@ def test_numbers_come_from_reports(tmp_path: Path) -> None:
         "1337",
         "95",
         "256",
-    }  # §11 thresholds and number, generator version, seed, "95% CI", "sha256"
+    }  # threshold count, generator version, seed, "95% CI", "sha256"
     body = re.sub(r"\(reports/[^)]*\)|`[^`]*`", "", text)  # file links and code spans (ids, hashes, names)
     numbers = re.findall(r"[+-]?\d+(?:,\d{3})*(?:\.\d+)?", body)
     unexplained = sorted({n for n in numbers if n not in allowed and n.lstrip("+-") not in allowed})

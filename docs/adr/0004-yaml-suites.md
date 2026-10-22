@@ -5,7 +5,7 @@
 
 ## Context
 
-A suite names a dataset, a target, metrics with thresholds, a budget and the splits to run. Suites are read by the CLI, by the composite GitHub Action, by the Promptfoo importer and by people reviewing pull requests. The systems under test are not all Python: an HTTP target can be written in any language, and the other portfolio repositories consume evalgate's contracts. A suite change should be reviewable as data, validated before anything runs, and fail with a clear location (exit 2) when it is wrong.
+A suite names a dataset, a target, metrics with thresholds, a budget and the splits to run. Suites are read by the CLI, by the composite GitHub Action, by the Promptfoo importer and by people reviewing pull requests. The systems under test are not all Python: an HTTP target can be written in any language, and other tools can consume evalgate's contracts. A suite change should be reviewable as data, validated before anything runs, and fail with a clear location (exit 2) when it is wrong.
 
 ## Decision
 

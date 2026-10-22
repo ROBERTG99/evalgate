@@ -1,6 +1,6 @@
 ---
 name: eval-report
-description: Regenerate and verify evalgate's offline eval results and evals/REPORT.md. Use after changing a suite, rubric, prompt, metric, judge or toy target, before quoting eval numbers in docs, and in milestone M5.
+description: Regenerate and verify evalgate's offline eval results and evals/REPORT.md. Use after changing a suite, rubric, prompt, metric, judge or toy target, and before quoting eval numbers in docs.
 ---
 
 # Eval report
@@ -18,10 +18,10 @@ description: Regenerate and verify evalgate's offline eval results and evals/REP
 
    It runs `scripts/run_evals.py` (v1 and v2 suites in `evals/suites/` against `evals/baselines/`), `make calibrate`, `make meta-eval`, then `scripts/build_eval_report.py --check`.
 3. Inspect the outputs in `evals/reports/`: one report.v1 and check.v1 per suite, `meta-eval.json`, and the calibration results. Confirm `mode` is `offline` and `git_sha` matches `HEAD`.
-4. Run the `eval-analyst` subagent to compare every value with the thresholds of §11 (meta-eval detection ≥ 0.90 and false positives ≤ 0.10; judge agreement ≥ 0.80, kappa ≥ 0.70, position inconsistency ≤ 0.10, verbosity bias ≤ 0.05, injection pass-through 0; classify ≥ 0.90; extract schema 1.00 and total ≥ 0.95; answer `contains_all` ≥ 0.85, `tool_calls` ≥ 0.95, judge ≥ 0.85).
+4. Run the `eval-analyst` subagent to compare every value with the thresholds in `evals/REPORT.md` (meta-eval detection ≥ 0.90 and false positives ≤ 0.10; judge agreement ≥ 0.80, kappa ≥ 0.70, position inconsistency ≤ 0.10, verbosity bias ≤ 0.05, injection pass-through 0; classify ≥ 0.90; extract schema 1.00 and total ≥ 0.95; answer `contains_all` ≥ 0.85, `tool_calls` ≥ 0.95, judge ≥ 0.85).
 5. Check `evals/REPORT.md` lists mode, models, prompt hashes, git SHA and the baseline comparison, and states that live evals were not run unless a live report exists.
 6. Only if a provider key is set and live evals are wanted: `make eval-live` (prints the estimate, stops at `LIVE_EVAL_BUDGET_USD`, default 2); label those numbers live with date, model and cost.
-7. Record the commands and one-line results in `PROGRESS.md`; quote numbers elsewhere only with a link to the report file.
+7. Note the commands and one-line results in the pull request; quote numbers elsewhere only with a link to the report file.
 
 ## Rules
 

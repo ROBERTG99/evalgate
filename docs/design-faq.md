@@ -1,6 +1,6 @@
 # Design FAQ
 
-Short answers to the design questions of the build specification (`docs/specs/000-build-spec.md`, §18). Every claim points at the code that implements it, and every number comes from a code constant or a report in `evals/reports/` written by the `make` target named next to it (the reports are generated and gitignored; `evals/REPORT.md` is the committed summary).
+Short answers to common design questions. Every claim points at the code that implements it, and every number comes from a code constant or a report in `evals/reports/` written by the `make` target named next to it (the reports are generated and gitignored; `evals/REPORT.md` is the committed summary).
 
 ## 1. Why a paired bootstrap with 10,000 resamples?
 

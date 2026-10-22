@@ -5,7 +5,7 @@ description: Add or change an HTTP route in the evalgate viewer (src/evalgate/vi
 
 # Add an endpoint
 
-Two HTTP surfaces exist: the viewer on port 8100 (stdlib `ThreadingHTTPServer` plus Jinja2, ships in the wheel) and the toy targets on port 8110 (FastAPI, never in the wheel). Contracts for both are in §4.4 of `docs/specs/000-build-spec.md` (or `BUILD.md`).
+Two HTTP surfaces exist: the viewer on port 8100 (stdlib `ThreadingHTTPServer` plus Jinja2, ships in the wheel) and the toy targets on port 8110 (FastAPI, never in the wheel). Contracts for both are in `docs/architecture.md` and `docs/contracts/`.
 
 ## Steps
 
@@ -18,9 +18,9 @@ Two HTTP surfaces exist: the viewer on port 8100 (stdlib `ThreadingHTTPServer` p
    - Viewer: add the route to the dispatch in `src/evalgate/viewer/server.py`, render a template under `src/evalgate/viewer/templates/` with autoescape on, read only inside the reports directory, and implement all four states (loading, empty, error, success). JSON routes live under `/api/`.
    - Toy targets: add a Pydantic request and response model and the route in `examples/toy-targets/src/toy_targets/app.py`; responses include `steps` with synthetic token counts priced as `toy-model`.
 5. For a toy-target route, regenerate the OpenAPI document with `uv run python scripts/export_openapi.py` (part of `make docs`) and commit it.
-6. For a viewer page, run the `ux-reviewer` subagent and add the page to `tests/e2e/test_viewer.py` (axe check, screenshot in `docs/images/` if it is a §13 screen).
+6. For a viewer page, run the `ux-reviewer` subagent and add the page to `tests/e2e/test_viewer.py` (axe check, screenshot in `docs/images/` if it is a new screen).
 7. Run `make check-fast`, then `uv run pytest tests/integration tests/contract -q`.
-8. Document the route in `docs/architecture.md` or `docs/contracts/`, and record evidence in `PROGRESS.md`.
+8. Document the route in `docs/architecture.md` or `docs/contracts/`.
 
 ## Done when
 

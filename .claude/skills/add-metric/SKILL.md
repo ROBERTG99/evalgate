@@ -32,4 +32,4 @@ A metric implements `class Metric(Protocol): name: str; def score(self, case: Ca
 5. Keep it pure and deterministic: no I/O, no network, no randomness without a seed. Anything that calls a model belongs to `src/evalgate/judge/`, not here.
 6. Run `make check-fast` and `uv run mypy --strict src/evalgate`.
 7. Document it in `docs/contracts/suite.md` (params, range, example YAML) and, for a custom-metric example, in `examples/metrics/`.
-8. Record evidence in `PROGRESS.md`.
+8. Note the commands and results in the pull request.
