@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # E2E runner: the official Playwright image (browsers preinstalled), the test dependencies, and evalgate itself
 # (the HTML report axe test renders a report) with its dependencies from uv.lock.
-FROM mcr.microsoft.com/playwright/python:v1.56.0-noble
+FROM mcr.microsoft.com/playwright/python:v1.64.1-noble
 ARG HTTPS_PROXY
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_NO_CACHE_DIR=1 PYTHONDONTWRITEBYTECODE=1
 RUN pip install --break-system-packages "uv==0.11.32" "playwright==1.56.0" "pytest==8.4.2" "httpx==0.28.1" \
