@@ -33,7 +33,7 @@ langgraph = ["langgraph>=0.6"]
 # The Langfuse exporter speaks the public ingestion HTTP API through httpx, so the
 # extra adds no packages; it is kept so `pip install evalgate[langfuse]` is stable.
 langfuse = []
-otel = ["opentelemetry-sdk>=1.30", "opentelemetry-exporter-otlp-proto-http>=1.30"]
+otel = ["opentelemetry-sdk>=1.45.1", "opentelemetry-exporter-otlp-proto-http>=1.30"]
 ragas = ["ragas>=0.4", "langchain-community<0.4", "rapidfuzz>=3.9"]
 deepeval = ["deepeval>=3.0"]
 
@@ -83,7 +83,7 @@ dev = [
   "playwright==1.56.0",
   "axe-playwright-python>=0.1.4",
   "langgraph>=0.6",
-  "opentelemetry-sdk>=1.30",
+  "opentelemetry-sdk>=1.45.1",
   "opentelemetry-exporter-otlp-proto-http>=1.30",
   "anthropic>=0.70",
   "openai>=1.90",
