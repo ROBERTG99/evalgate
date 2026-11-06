@@ -77,7 +77,7 @@ dev = [
   "types-PyYAML>=6.0",
   "types-jsonschema>=4.24",
   "bandit>=1.8",
-  "pip-audit>=2.9",
+  "pip-audit>=2.10.1",
   "pip-licenses>=5.0",
   "schemathesis>=4.0",
   "playwright==1.56.0",
